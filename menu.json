@@ -1,0 +1,90 @@
+{
+    "Pizzas": [
+        {
+            "nombre": "Muzzarella",
+            "descripcion": "Salsa de tomate, muzzarella, orégano y aceitunas",
+            "precio": 5000
+        },
+        
+        
+        {
+            "nombre": "Especial",
+            "descripcion": "Salsa de tomate, muzzarella, jamón, orégano, morrón y aceitunas",
+            "precio": 3200
+        },
+                
+        
+        {
+            "nombre": "Napolitana",
+            "descripcion": "Muzzarella, tomate en rodajas, ajo, orégano y aceitunas",
+            "precio": 3500
+        }
+    ],
+    "Hamburguesas": [
+        {
+            "nombre": "Clásica",
+            "descripcion": "Carne, lechuga, tomate y mayonesa",
+            "precio": 2500
+        },
+        {
+            "nombre": "Especial",
+            "descripcion": "Carne, jamón, queso, huevo, lechua y tomate",
+            "precio": 3200
+        }
+    ],
+    "Pizzanesas": [
+        {
+            "nombre": "Pizzanesa Muzza",
+            "descripcion": "Milanesas con salsa, muzzarella, oregano y aceitunas",
+            "precio": 3900
+        },
+        {
+            "nombre": "Pizzanesa Napolitana",
+            "descripcion": "Milanesa con salsa, muzzarella, tomate, ajo y aceitunas",
+            "precio": 4200
+        }
+    ],
+    "Empanadas": [
+        {
+            "nombre": "Carne",
+            "descripcion": "Empanada clásica de carne",
+            "precio": 800
+        },
+        {
+            "nombre": "Jamón y Queso",
+            "descripcion": "Rellena de jamón cocido y muzzarella",
+            "precio": 850
+        }
+    ],
+    "Papas Fritas": [
+        {
+            "nombre": "Papas Clásicas",
+            "descripcion": "Porción individual de papas",
+            "precio": 1200
+        }
+    ],
+    "Menú al Plato": [
+        {
+            "nombre": "Milanesa con Guarnición",
+            "descripcion": "Milanesa con papas o ensalada",
+            "precio": 3500
+        },
+        {
+            "nombre": "Suprema ",
+            "descripcion": "Pechuga con salsa blanca, jamón y muzzarella",
+            "precio": 3900
+        }
+    ],
+    "Bebidas": [
+        {
+            "nombre": "Coca-Cola 500ml",
+            "descripcion": "Botella individual",
+            "precio": 700
+        },
+        {
+            "nombre": "Agua sin gas",
+            "descripcion": "Botella 500ml",
+            "precio": 500
+        }
+    ]
+}
