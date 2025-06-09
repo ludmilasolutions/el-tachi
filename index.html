@@ -1,0 +1,127 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotisería El Tachi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; background: #f8f9fa; color: #333; margin: 0; padding: 0; }
+        header { background: #003366; color: #fff; padding: 1rem; text-align: center; }
+        header img { max-height: 60px; }
+        main { padding: 1rem; max-width: 800px; margin: auto; }
+        h2 { color: #003366; border-bottom: 2px solid #ffcc00; padding-bottom: 0.2rem; display: flex; align-items: center; gap: 0.5rem; }
+        .producto { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #ddd; }
+        .producto-info { text-align: left; }
+        .producto h3 { margin: 0.2rem 0; color: #004c99; }
+        .producto p { margin: 0.1rem 0; }
+        #resumen { margin-top: 2rem; padding: 1rem; background: #fff3cd; border: 1px solid #ffeeba; }
+        button { background: #ffcc00; color: #003366; border: none; padding: 0.6rem 1rem; margin-top: 1rem; cursor: pointer; font-weight: bold; }
+        button:hover { background: #e6b800; }
+        label { display: block; margin-top: 1rem; }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="https://raw.githubusercontent.com/ludmilasolutions/el-tachi/main/logo.png" alt="Rotisería El Tachi">
+        <h1>Rotisería El Tachi</h1>
+        <p>¡Hacé tu pedido desde la web!</p>
+    </header>
+    <main>
+        <h2>🍕 Pizzas</h2>
+        <div class="producto"><div class="producto-info"><h3>Pizza Muzarella - $1800</h3><p>Clásica con tomate y queso</p></div><input type="checkbox" value="Pizza Muzarella|1800"></div>
+        <div class="producto"><div class="producto-info"><h3>Pizza Napolitana - $2000</h3><p>Con tomate, ajo y albahaca</p></div><input type="checkbox" value="Pizza Napolitana|2000"></div>
+
+        <h2>🍔 Hamburguesas</h2>
+        <div class="producto"><div class="producto-info"><h3>Hamburguesa Simple - $1200</h3><p>Pan, carne y aderezos</p></div><input type="checkbox" value="Hamburguesa Simple|1200"></div>
+        <div class="producto"><div class="producto-info"><h3>Hamburguesa Doble - $1500</h3><p>Doble carne y queso</p></div><input type="checkbox" value="Hamburguesa Doble|1500"></div>
+
+        <h2>🥟 Empanadas</h2>
+        <div class="producto"><div class="producto-info"><h3>Empanada de Carne - $350</h3><p>Jugosa y tradicional</p></div><input type="checkbox" value="Empanada de Carne|350"></div>
+        <div class="producto"><div class="producto-info"><h3>Empanada de Pollo - $350</h3><p>Con cebolla y huevo</p></div><input type="checkbox" value="Empanada de Pollo|350"></div>
+
+        <h2>🍟 Papas Fritas</h2>
+        <div class="producto"><div class="producto-info"><h3>Papas Clásicas - $900</h3><p>Porción grande</p></div><input type="checkbox" value="Papas Clásicas|900"></div>
+        <div class="producto"><div class="producto-info"><h3>Papas con Cheddar - $1300</h3><p>Con queso y panceta</p></div><input type="checkbox" value="Papas con Cheddar|1300"></div>
+
+        <h2>🍽️ Menú al Plato</h2>
+        <div class="producto"><div class="producto-info"><h3>Milanesa con Papas - $2500</h3><p>Milanesa grande con guarnición</p></div><input type="checkbox" value="Milanesa con Papas|2500"></div>
+
+        <h2>🥤 Bebidas</h2>
+        <div class="producto"><div class="producto-info"><h3>Coca-Cola 500ml - $700</h3><p>Gaseosa</p></div><input type="checkbox" value="Coca-Cola 500ml|700"></div>
+        <div class="producto"><div class="producto-info"><h3>Agua sin gas - $500</h3><p>Botella 500ml</p></div><input type="checkbox" value="Agua sin gas|500"></div>
+
+        <label>
+            <input type="radio" name="envio" value="retiro" checked> Retiro en el local
+        </label>
+        <label>
+            <input type="radio" name="envio" value="envio"> Envío a domicilio (+$1000)
+        </label>
+        <label>
+            Nombre: <input type="text" id="nombre">
+        </label>
+        <label>
+            Dirección: <input type="text" id="direccion">
+        </label>
+
+        <div id="resumen">
+            <h3>Resumen del pedido</h3>
+            <ul id="lista"></ul>
+            <p><strong>Total: $<span id="total">0</span></strong></p>
+            <button onclick="enviarPedido()">Hacer pedido por WhatsApp</button>
+        </div>
+    </main>
+
+    <script>
+        const checkboxes = document.querySelectorAll('input[type=checkbox]');
+        const lista = document.getElementById('lista');
+        const totalSpan = document.getElementById('total');
+
+        checkboxes.forEach(cb => cb.addEventListener('change', actualizarResumen));
+        document.querySelectorAll('input[name=envio]').forEach(radio => radio.addEventListener('change', actualizarResumen));
+
+        function actualizarResumen() {
+            lista.innerHTML = '';
+            let total = 0;
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    const [nombre, precio] = cb.value.split('|');
+                    const li = document.createElement('li');
+                    li.textContent = `${nombre} - $${precio}`;
+                    lista.appendChild(li);
+                    total += parseInt(precio);
+                }
+            });
+            const envio = document.querySelector('input[name=envio]:checked').value;
+            if (envio === 'envio') total += 1000;
+            totalSpan.textContent = total;
+        }
+
+        function enviarPedido() {
+            const nombre = document.getElementById('nombre').value;
+            const direccion = document.getElementById('direccion').value;
+            const envio = document.querySelector('input[name=envio]:checked').value;
+            let mensaje = `Hola, soy ${nombre}. Quiero hacer un pedido:
+`;
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    const [nombre, precio] = cb.value.split('|');
+                    mensaje += `- ${nombre} - $${precio}
+`;
+                }
+            });
+            if (envio === 'envio') {
+                mensaje += `Envío a domicilio a: ${direccion} (+$1000)
+`;
+            } else {
+                mensaje += `Retiro en el local
+`;
+            }
+            mensaje += `Total: $${totalSpan.textContent}`;
+            const url = `https://wa.me/3415923882?text=${encodeURIComponent(mensaje)}`;
+            window.open(url, '_blank');
+        }
+    </script>
+</body>
+</html>
