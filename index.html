@@ -20,7 +20,8 @@
       text-align: center;
     }
     header img {
-      max-height: 60px;
+      max-height: 120px;
+      margin-bottom: 0.5rem;
     }
     main {
       padding: 1rem;
@@ -95,7 +96,7 @@
 </head>
 <body>
   <header>
-    <img src="https://raw.githubusercontent.com/ludmilasolutions/el-tachi/main/logo.png" alt="Rotisería El Tachi" />
+    <img src="https://raw.githubusercontent.com/ludmilasolutions/el-tachi/main/logo-negro.png" alt="Rotisería El Tachi" />
     <h1>Rotisería El Tachi</h1>
     <p>¡Hacé tu pedido desde la web!</p>
   </header>
@@ -119,29 +120,64 @@
   <script>
     const productos = {
       "🍕 Pizzas": [
-        { nombre: "Pizza Muzarella", precio: 5000, desc: "Clásica con tomate y queso muzarella" },
-        { nombre: "Pizza Especial", precio: 7000, desc: "Con salsa de tomate, jamon, queso muzarella, huevo, morron, aceitunas" }
+        { nombre: "Pizza Muzzarella", precio: 6500, desc: "Salsa de tomate, queso muzzarella y aceitunas" },
+        { nombre: "Pizza Doble Muzza", precio: 7000, desc: "Salsa de tomate, queso muzzarella doble y aceitunas" },
+        { nombre: "Pizza Muzza con Jamón", precio: 7000, desc: "Salsa de tomate y queso muzarella con jamón" },
+        { nombre: "Pizza Especial", precio: 7500, desc: "Salsa de tomate, jamon, queso muzarella, huevo, morron y aceitunas" },
+        { nombre: "Pizza Viena", precio: 7900, desc: "Salsa de tomate, queso muzzarella, salchicha y huevo revuelto" },
+        { nombre: "Pizza Napolitana", precio: 7500, desc: "Salsa de tomate, queso muzzarella, tomate, ajo y aceitunas" },
+        { nombre: "Pizza Dante", precio: 8500, desc: "Salsa de tomate, queso muzzarella, salchichas y papas fritas" },
+        { nombre: "Pizza Va Como Piña", precio: 8500, desc: "Salsa de tomate, queso muzzarella, huevo frito y papas fritas" },
+        { nombre: "Pizza Roquefort", precio: 8500, desc: "Salsa de tomate, queso muzzarella, roquefort y aceitunas " },
+        { nombre: "Pizza Salame", precio: 8000, desc: "Salsa de tomate, queso muzzarella, salame y aceitunas" },
+        { nombre: "Pizza 1/2 MUZZA", precio: 3500, desc: "Salsa de tomate, queso muzzarella y aceitunas" }
       ],
-      "🍔 Hamburguesas": [
-        { nombre: "Hamburguesa Clasica", precio: 5000, desc: "Pan, carne, lechuga y tomate (viene con papas)" },
-        { nombre: "Hamburguesa Especial", precio: 6000, desc: "Pan, carne, jamon, queso, huevo, lechuga, y tomate (viene con papas)" }
+      "🍔 Hamburguesas o Bifes con Papas": [
+        { nombre: "Hamburguesa Común", precio: 6000, desc: "Pan, carne, lechuga, tomate y aderezo" },
+        { nombre: "Hamburguesa Especial", precio: 6900, desc: "Pan, carne, jamon, queso, huevo, lechuga, tomate y aderezo" }
+      ],
+      "🍔 Torpedos con Papas": [
+        { nombre: "Especial de 2 hamburguesas", precio: 8900, desc: "Pan, carne, lechuga, tomate, adereso y doble hamburguesa" },
+        { nombre: "Especial de 3 hamburguesas", precio: 9900, desc: "Pan, carne, jamon, queso, huevo, lechuga, tomate, aderezo y triple hamburguesa" },
+        { nombre: "Primavera", precio: 7000, desc: "Pan, jamón, queso, lechuga, tomate, huevo y aderezo" },
+        { nombre: "Vegetariano", precio: 7000, desc: "Pan, doble queso, lechuga, tomate, huevo y aderezo" },
+        { nombre: "Especial de Suprema", precio: 10500, desc: "Pan, Suprema, lechuga, tomate, huevo, jamón, queso y aderezo" },
+        { nombre: "Especial de Suprema", precio: 11000, desc: "Pan, Milanesa, lechuga, tomate, huevo, jamón, queso y aderezo" }
+      ],
+      "🍔 Familiares con Papas": [
+        { nombre: "Especial de Suprema", precio: 6000, desc: "Pan, suprema, lechuga, tomate, jamón, queso, huevo y aderezo" },
+        { nombre: "Especial de Milanesa", precio: 6900, desc: "Pan, milanesa, queso, huevo, lechuga, tomate, jamón y aderezo" },
+        { nombre: "Suprema Común", precio: 5500, desc: "Pan, suprema, lechuga, tomate y aderezo" },
+        { nombre: "Milanesa Común", precio: 6000, desc: "Pan, milanesa, lechuga, tomate y aderezo" }
       ],
       "🥟 Empanadas": [
-        { nombre: "Empanada de Carne", precio: 1000 },
-        { nombre: "Empanada de Jamon y queso", precio: 1000 }
+        { nombre: "Empanada de Carne salada", precio: 1000 },
+        { nombre: "Empanada de Jamon y queso", precio: 1000 },
+        { nombre: "Empanada de Pollo", precio: 1000 },
+        { nombre: "Empanada de Verdura", precio: 1000 }
       ],
       "🍟 Papas Fritas": [
-        { nombre: "Papas Medianas", precio: 900 },
-        { nombre: "Papas Grandes", precio: 1300 }
+        { nombre: "Papas Medianas", precio: 3500 },
+        { nombre: "Papas Grandes", precio: 5000 },
+        { nombre: "Aderezo Adicional", precio: 1000 }
       ],
-      "🍽️ Menú al Plato": [
-        { nombre: "Milanesa con Papas", precio: 2500, desc: "Milanesa grande con guarnición" },
-        { nombre: "Suprema con Papas", precio: 2500, desc: "Suprema grande con guarnición" },
-        { nombre: "Tortilla de papas", precio: 2500 }
+      "🍽️ Carlitos": [
+        { nombre: "Común", precio: 6000, desc: "Jamón, queso y ketchup" },
+        { nombre: "Especial", precio: 2500, desc: "Jamón, queso, ketchup, pan con mayonesa, huevo rayado y morrón" }
       ],
-      "🥤 Bebidas": [
-        { nombre: "Coca-Cola 500ml", precio: 2000, desc: "Gaseosa" },
-        { nombre: "Agua sin gas", precio: 2000, desc: "Botella 500ml" }
+      "🍽️ Pizzanesas con colchón de papas fritas": [
+        { nombre: "Carne para 3 personas", precio: 22500, desc: "Especial" },
+        { nombre: "Carne para 3 personas", precio: 22500, desc: "Napolitana" },
+        { nombre: "Carne para 3 personas", precio: 22500, desc: "Salame" },
+        { nombre: "Carne para 3 personas", precio: 21000, desc: "Muzzarella" },
+        { nombre: "Carne para 3 personas", precio: 23500, desc: "Roquefort" },
+        { nombre: "Carne para 3 personas", precio: 23500, desc: "Bomba" },
+        { nombre: "Pollo para 3 personas", precio: 21500, desc: "Especial" },
+        { nombre: "Pollo para 3 personas", precio: 21500, desc: "Napolitana" },
+        { nombre: "Pollo para 3 personas", precio: 21500, desc: "Salame" },
+        { nombre: "Pollo para 3 personas", precio: 20000, desc: "Muzzarella" },
+        { nombre: "Pollo para 3 personas", precio: 22500, desc: "Roquefort" },
+        { nombre: "Pollo para 3 personas", precio: 22500, desc: "Bomba" }
       ]
     };
 
@@ -215,7 +251,7 @@
 
       if (!nombre) return alert("Por favor, ingresá tu nombre.");
       if (envio === 'envio' && !direccion) return alert("Por favor, ingresá tu dirección.");
-      
+
       let mensaje = `Hola, soy ${nombre}. Quiero hacer un pedido:\n`;
       let algoSeleccionado = false;
 
