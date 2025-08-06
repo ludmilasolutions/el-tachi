@@ -38,12 +38,12 @@
     }
     header img { max-height: 180px; margin: 0 auto 1rem; }
 
-    /* Dejamos aire para que el FAB nunca tape contenido final */
+    /* Aire extra para que el FAB no tape el contenido final */
     main {
       padding: 1rem;
       max-width: 900px;
       margin: auto;
-      padding-bottom: 112px; /* aire detrás del FAB */
+      padding-bottom: 112px;
     }
 
     /* Tabs */
@@ -116,9 +116,7 @@
       border: none; padding: 0.8rem 1.2rem; margin-top: 1rem; cursor: pointer;
       font-weight: bold; font-size: 1rem; border-radius: 5px;
     }
-    #btn-vaciar {
-      background:#fff; color:#333; border:1px solid var(--gris-borde);
-    }
+    #btn-vaciar { background:#fff; color:#333; border:1px solid var(--gris-borde); }
     #btn-whatsapp:disabled{ opacity:.6; cursor:not-allowed; }
 
     label { display: block; margin-top: 1rem; }
@@ -151,15 +149,12 @@
     @keyframes bump { 0%,100%{ transform: translateY(0) scale(1);} 50%{ transform: translateY(0) scale(1.08);} }
     .cart-fab.bump{ animation: bump .3s ease; }
 
-    /* Levantar más cuando hay contenido abajo visible */
+    /* Levantar más cuando hay contenido de promo/footer visible */
     .cart-fab.raise{ transform: translateY(-112px); }
 
     /* En móvil, mantener pastilla (no volver a círculo) */
     @media (max-width:520px){
-      .cart-fab{
-        width:auto; height:auto;
-        padding:.55rem .8rem; gap:.5rem;
-      }
+      .cart-fab{ width:auto; height:auto; padding:.55rem .8rem; gap:.5rem; }
       .cart-icon{ display:inline; }
       .cart-total{ display:inline; font-size:.95rem; }
       .cart-count{ min-width:22px; height:22px; font-size:.85rem; }
@@ -181,65 +176,37 @@
     .toast.err{ border-left-color: var(--error); }
     @keyframes fadeIn{ from{opacity:0; transform:translate(-50%,10px)} to{opacity:1; transform:translate(-50%,0)} }
 
-    /* ===== Promo de creación de webs ===== */
-    .promo-web{
-      margin: 2rem auto 0;
-      max-width: 900px;
-      padding: 1.2rem;
-    }
+    /* ===== Promo de creación de webs (solo email) ===== */
+    .promo-web{ margin: 2rem auto 0; max-width: 900px; padding: 1.2rem; }
     .promo-card{
       background: linear-gradient(135deg, var(--azul) 0%, #062247 100%);
-      color:#fff;
-      border-radius: 16px;
-      padding: 1.2rem;
-      box-shadow: 0 18px 36px rgba(0,0,0,.25);
-      display:grid; gap:1rem;
+      color:#fff; border-radius: 16px; padding: 1.2rem;
+      box-shadow: 0 18px 36px rgba(0,0,0,.25); display:grid; gap:1rem;
     }
-    .promo-card h3{
-      margin:.2rem 0 .2rem;
-      font-size:1.4rem;
-    }
+    .promo-card h3{ margin:.2rem 0 .2rem; font-size:1.4rem; }
     .promo-sub{ margin:0; opacity:.9; }
     .promo-badges{ display:flex; flex-wrap:wrap; gap:.5rem; }
     .badge{
       background: rgba(255,255,255,.12);
       border:1px solid rgba(255,255,255,.25);
-      color:#fff;
-      padding:.35rem .6rem;
-      border-radius:999px;
-      font-size:.9rem;
+      color:#fff; padding:.35rem .6rem; border-radius:999px; font-size:.9rem;
       display:flex; align-items:center; gap:.35rem;
     }
     .promo-actions{ display:flex; flex-wrap:wrap; gap:.6rem; }
     .btn{
       display:inline-flex; align-items:center; gap:.5rem;
       padding:.7rem 1rem; border-radius:10px; font-weight:700;
-      text-decoration:none; cursor:pointer;
-      transition:transform .12s ease, opacity .12s ease;
+      text-decoration:none; cursor:pointer; transition:transform .12s ease, opacity .12s ease;
       border:2px solid transparent;
     }
     .btn:hover{ transform:translateY(-1px); }
-    .btn-primary{
-      background: var(--amarillo);
-      color: var(--azul-2);
-      border-color: var(--amarillo);
-    }
-    .btn-outline{
-      background: transparent;
-      color: #fff;
-      border-color: rgba(255,255,255,.6);
-    }
+    .btn-primary{ background: var(--amarillo); color: var(--azul-2); border-color: var(--amarillo); }
     .promo-note{ font-size:.9rem; opacity:.9; }
 
     /* Footer base */
-    .site-footer{
-      margin: 1rem auto 2rem;
-      max-width: 900px;
-      text-align:center; font-size:.95rem;
-    }
+    .site-footer{ margin: 1rem auto 2rem; max-width: 900px; text-align:center; font-size:.95rem; }
     .site-footer .cta-mail{
-      background:#003366; color:#ffcc00;
-      padding:.6rem 1rem; border-radius:6px;
+      background:#003366; color:#ffcc00; padding:.6rem 1rem; border-radius:6px;
       text-decoration:none; display:inline-block; margin-top:.4rem;
     }
   </style>
@@ -260,20 +227,23 @@
     <div id="menu-rotiseria"></div>
     <div id="menu-almacen" style="display:none"></div>
 
-    <label><input type="radio" name="envio" value="retiro" checked> Retiro en el local</label>
-    <label><input type="radio" name="envio" value="envio"> Envío a domicilio (+$1000)</label>
-    <label>Nombre: <input type="text" id="nombre" /></label>
-    <label>Dirección: <input type="text" id="direccion" /></label>
+    <!-- BLOQUE DE CHECKOUT: desde opciones de envío hasta botones del carrito -->
+    <section id="checkout">
+      <label><input type="radio" name="envio" value="retiro" checked> Retiro en el local</label>
+      <label><input type="radio" name="envio" value="envio"> Envío a domicilio (+$1000)</label>
+      <label>Nombre: <input type="text" id="nombre" /></label>
+      <label>Dirección: <input type="text" id="direccion" /></label>
 
-    <div id="resumen">
-      <h3>Resumen del pedido</h3>
-      <ul id="lista"></ul>
-      <p><strong>Total: <span id="total">$ 0</span></strong></p>
-      <div class="acciones">
-        <button id="btn-whatsapp" onclick="enviarPedido()">Hacer pedido por WhatsApp</button>
-        <button id="btn-vaciar" type="button" onclick="vaciarCarrito()">Vaciar carrito</button>
+      <div id="resumen">
+        <h3>Resumen del pedido</h3>
+        <ul id="lista"></ul>
+        <p><strong>Total: <span id="total">$ 0</span></strong></p>
+        <div class="acciones">
+          <button id="btn-whatsapp" onclick="enviarPedido()">Hacer pedido por WhatsApp</button>
+          <button id="btn-vaciar" type="button" onclick="vaciarCarrito()">Vaciar carrito</button>
+        </div>
       </div>
-    </div>
+    </section>
   </main>
 
   <!-- FAB Carrito -->
@@ -283,7 +253,7 @@
     <span class="cart-count" id="fabCount">0</span>
   </div>
 
-  <!-- Promo: creación de webs -->
+  <!-- Promo: creación de webs (solo email) -->
   <section id="promoWeb" class="promo-web" aria-labelledby="promo-web-title">
     <div class="promo-card">
       <div>
@@ -296,15 +266,12 @@
         <span class="badge">📱 100% responsive</span>
         <span class="badge">🛒 Panel para productos</span>
         <span class="badge">🔒 Hosting & dominio opcional</span>
-        <span class="badge">💬 Soporte por WhatsApp</span>
+        <span class="badge">💬 Soporte por email</span>
       </div>
 
       <div class="promo-actions">
         <a id="promoMail" class="btn btn-primary" href="#">
-          ✉️ Pedí un presupuesto
-        </a>
-        <a id="promoWapp" class="btn btn-outline" href="#" target="_blank" rel="noopener">
-          🟢 Hablame por WhatsApp
+          ✉️ Pedí un presupuesto por email
         </a>
       </div>
 
@@ -360,7 +327,7 @@
     const totalEl = document.getElementById('total');
     const btnWA = document.getElementById('btn-whatsapp');
 
-    // FAB elements
+    // FAB
     const fab = document.getElementById('cartFab');
     const fabCount = document.getElementById('fabCount');
     const fabTotal = document.getElementById('fabTotal');
@@ -506,9 +473,12 @@
     document.getElementById('nombre').addEventListener('input', actualizarResumen);
     document.querySelectorAll('input[name=envio]').forEach(r => r.addEventListener('change', actualizarResumen));
 
-    // click en FAB: ir al resumen
+    // FAB: desplazar para que se vea desde las opciones de envío hasta los botones del resumen
     fab.addEventListener('click', () => {
-      document.getElementById('resumen').scrollIntoView({ behavior: 'smooth' });
+      const section = document.getElementById('checkout');
+      if (!section) return;
+      const top = section.getBoundingClientRect().top + window.scrollY - 8; // leve margen
+      window.scrollTo({ top, behavior:'smooth' });
     });
 
     function vaciarCarrito(){
@@ -559,7 +529,7 @@
       showToast('Abriendo WhatsApp...', 'ok');
     }
 
-    /* ===== Promo CTA: completar links y elevar FAB cuando aparece ===== */
+    /* ===== Promo CTA: solo email y elevar FAB cuando aparece promo/footer ===== */
     (function promoInit(){
       const site = location.hostname || 'tu-negocio';
       const page = location.href;
@@ -583,17 +553,6 @@ Gracias!`
       );
       const mailEl = document.getElementById('promoMail');
       if (mailEl) mailEl.href = `mailto:ludmilasolutions2.0@gmail.com?subject=${subj}&body=${body}`;
-
-      // WhatsApp (opcional): poné tu número con código de país, sin + ni 0 ni -
-      // Ejemplo Argentina: 54911XXXXXXXX
-      const WAPP_NUMBER = ""; // <-- completá tu número aquí para mostrar el botón
-      const wappBtn = document.getElementById('promoWapp');
-      if (WAPP_NUMBER) {
-        const wmsg = encodeURIComponent(`Hola Ludmila, vi tu trabajo en ${site} y me gustaría una web para mi negocio.`);
-        wappBtn.href = `https://wa.me/${WAPP_NUMBER}?text=${wmsg}`;
-      } else if (wappBtn) {
-        wappBtn.style.display = 'none';
-      }
 
       // Elevar FAB cuando el bloque promo o el footer están visibles
       const promoEl = document.getElementById('promoWeb');
