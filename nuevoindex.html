@@ -13,11 +13,18 @@
       --azul-3:#004080;
       --amarillo:#ffcc00;
       --gris-borde:#ccc;
+      --bg:#f8f9fa;
+      --text:#333;
+      --card:#fff;
+      --card-hover:#f1f1f1;
+      --resumen-bg:#fff3cd;
+      --resumen-borde:#ffeeba;
     }
+    *{box-sizing:border-box}
     body {
       font-family: 'Roboto', sans-serif;
-      background: #f8f9fa;
-      color: #333;
+      background: var(--bg);
+      color: var(--text);
       margin: 0;
       padding: 0;
     }
@@ -27,50 +34,31 @@
       padding: 2rem 1rem;
       text-align: center;
     }
-    header img {
-      max-height: 180px;
-      margin: 0 auto 1rem;
-    }
-    main {
-      padding: 1rem;
-      max-width: 900px;
-      margin: auto;
-    }
+    header img { max-height: 180px; margin: 0 auto 1rem; }
+    main { padding: 1rem; max-width: 900px; margin: auto; }
 
     /* Tabs */
     .tabs {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 1rem;
-      gap: 1rem;
-      flex-wrap: wrap;
+      display: flex; justify-content: center; margin-bottom: 1rem; gap: 1rem; flex-wrap: wrap;
     }
     .tabs button {
-      padding: 0.8rem 1.8rem;
-      font-size: 1.1rem;
-      border: none;
-      background: var(--azul-3);
-      color: var(--amarillo);
-      font-weight: bold;
-      border-radius: 30px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border: 2px solid transparent;
+      padding: 0.8rem 1.8rem; font-size: 1.1rem; border: none;
+      background: var(--azul-3); color: var(--amarillo); font-weight: bold;
+      border-radius: 30px; box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+      cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent;
     }
     .tabs button:hover { background: #0055aa; }
     .tabs button.active {
-      background: var(--azul-2);
-      border-color: var(--amarillo);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      background: var(--azul-2); border-color: var(--amarillo); box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
 
-    /* Acordeón (ambas secciones) */
+    /* Acordeón */
     details {
       border: 1px solid var(--gris-borde);
       border-radius: 8px;
       margin-bottom: 1rem;
       overflow: hidden;
+      background: var(--card);
     }
     summary {
       background: var(--azul);
@@ -83,56 +71,53 @@
       list-style: none;
     }
 
-    /* Listado de productos */
+    /* Producto */
     .producto {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: .75rem;
-      padding: 0.5rem 1rem;
-      border-top: 1px solid #ddd;
-      background: #fff;
+      display: flex; justify-content: space-between; align-items: center; gap: .75rem;
+      padding: 0.5rem 1rem; border-top: 1px solid #ddd; background: var(--card);
+      transition: background .2s ease;
     }
-    .producto:hover { background: #f1f1f1; }
+    .producto:hover { background: var(--card-hover); }
     .producto-info { max-width: 65%; }
-    .producto h3 {
-      margin: 0.2rem 0;
-      color: #004c99;
-      font-size: 1rem;
-    }
-    .producto p { margin: 0.1rem 0; font-size: 0.9rem; }
+    .producto h3 { margin: 0.2rem 0; color: #004c99; font-size: 1rem; }
+    .producto p { margin: 0.1rem 0; font-size: 0.9rem; color: var(--text); }
     .contador { display: flex; align-items: center; gap: 0.5rem; }
     .contador button {
-      background: var(--azul);
-      color: var(--amarillo);
-      border: none;
-      padding: 0.3rem 0.6rem;
-      font-weight: bold;
-      font-size: 1.2rem;
-      cursor: pointer;
-      border-radius: 5px;
+      background: var(--azul); color: var(--amarillo); border: none;
+      padding: 0.3rem 0.6rem; font-weight: bold; font-size: 1.2rem;
+      cursor: pointer; border-radius: 5px; transform-origin:center;
     }
 
-    /* Bloque Resumen */
+    /* Animaciones */
+    @keyframes pop { 0%{transform:scale(1)} 50%{transform:scale(1.2)} 100%{transform:scale(1)} }
+    .btn-pop{ animation: pop .22s ease-out; }
+    @keyframes flash { 0%{box-shadow:0 0 0 rgba(255,204,0,0)} 50%{box-shadow:0 0 0 4px rgba(255,204,0,.35)} 100%{box-shadow:0 0 0 rgba(255,204,0,0)} }
+    .row-flash{ animation: flash .35s ease-out; }
+
+    /* Resumen */
     #resumen {
-      margin-top: 2rem;
-      padding: 1rem;
-      background: #fff3cd;
-      border: 1px solid #ffeeba;
-      border-radius: 8px;
+      margin-top: 2rem; padding: 1rem; background: var(--resumen-bg);
+      border: 1px solid var(--resumen-borde); border-radius: 8px;
     }
     #resumen button {
-      background: var(--azul);
-      color: var(--amarillo);
-      border: none;
-      padding: 0.8rem 1.2rem;
-      margin-top: 1rem;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 1rem;
-      border-radius: 5px;
+      background: var(--azul); color: var(--amarillo);
+      border: none; padding: 0.8rem 1.2rem; margin-top: 1rem; cursor: pointer;
+      font-weight: bold; font-size: 1rem; border-radius: 5px;
     }
     label { display: block; margin-top: 1rem; }
+
+    /* Contador flotante */
+    .floating-counter{
+      position: fixed; right: 16px; bottom: 16px; z-index: 99;
+      background: var(--azul); color: var(--amarillo);
+      border: 2px solid var(--amarillo);
+      width: 56px; height: 56px; border-radius: 999px;
+      display: flex; align-items:center; justify-content:center;
+      font-weight: 800; cursor: pointer; box-shadow: 0 8px 18px rgba(0,0,0,.25);
+      transition: transform .15s ease;
+    }
+    .floating-counter:hover{ transform: translateY(-2px); }
+    .floating-counter[hidden]{ display:none; }
   </style>
 </head>
 <body>
@@ -164,6 +149,9 @@
     </div>
   </main>
 
+  <!-- Contador flotante -->
+  <div id="floatingCounter" class="floating-counter" hidden>0</div>
+
   <script>
     /* ---------- Utilidades ---------- */
     function asset(path) {
@@ -171,9 +159,9 @@
       if (host.endsWith('github.io')) {
         const parts = location.pathname.split('/').filter(Boolean);
         const repo = parts[0] || '';
-        return /${repo}/${path};
+        return `/${repo}/${path}`;
       }
-      return /${path};
+      return `/${path}`;
     }
     function normalizarDatosDesdeCMS(data) {
       if (data && Array.isArray(data.categorias)) {
@@ -188,6 +176,7 @@
     const cantidades = {};
     const lista = document.getElementById('lista');
     const totalSpan = document.getElementById('total');
+    const floatEl = document.getElementById('floatingCounter');
 
     /* ---------- Render ---------- */
     function renderProductos(contenedorId, productos) {
@@ -198,29 +187,29 @@
       for (let categoria in data) {
         const items = data[categoria] || [];
 
-        // Acordeón para todas las secciones
+        // Acordeón
         const detail = document.createElement('details');
         const summary = document.createElement('summary');
         summary.textContent = categoria;
         detail.appendChild(summary);
 
         items.forEach((prod, i) => {
-          const id = ${contenedorId}-${categoria}-${i};
+          const id = `${contenedorId}-${categoria}-${i}`;
           if (!(id in cantidades)) cantidades[id] = 0;
 
           const div = document.createElement('div');
           div.className = 'producto';
-          div.innerHTML = 
+          div.innerHTML = `
             <div class="producto-info">
               <h3>${prod.nombre} - $${prod.precio}</h3>
-              ${prod.desc ? <p>${prod.desc}</p> : ""}
+              ${prod.desc ? `<p>${prod.desc}</p>` : ""}
             </div>
             <div class="contador">
-              <button onclick="cambiarCantidad('${id}', -1)">−</button>
+              <button onclick="cambiarCantidad('${id}', -1, this)">−</button>
               <span id="cantidad-${id}">0</span>
-              <button onclick="cambiarCantidad('${id}', 1)">+</button>
+              <button onclick="cambiarCantidad('${id}', 1, this)">+</button>
             </div>
-          ;
+          `;
           div.dataset.nombre = prod.nombre;
           div.dataset.precio = prod.precio;
           detail.appendChild(div);
@@ -231,13 +220,11 @@
     }
 
     function cargarProductos() {
-      // Rotisería
       fetch(asset('data/productos-rotiseria.json'))
         .then(res => res.json())
         .then(data => renderProductos('menu-rotiseria', data))
         .catch(err => console.error('Rotisería JSON error:', err));
 
-      // Almacén (ahora también desplegable)
       fetch(asset('data/productos-almacen.json'))
         .then(res => res.json())
         .then(data => renderProductos('menu-almacen', data))
@@ -245,69 +232,67 @@
     }
     cargarProductos();
 
-    /* ---------- Carrito ---------- */
-    function cambiarCantidad(id, delta) {
+    /* ---------- Carrito + Animaciones ---------- */
+    function cambiarCantidad(id, delta, btn) {
       cantidades[id] = Math.max(0, (cantidades[id] || 0) + delta);
-      const el = document.getElementById(cantidad-${id});
+      const el = document.getElementById(`cantidad-${id}`);
       if (el) el.textContent = cantidades[id];
+
+      if (delta > 0 && btn) {
+        // animación botón
+        btn.classList.add('btn-pop');
+        btn.addEventListener('animationend', () => btn.classList.remove('btn-pop'), { once: true });
+        // flash de fila
+        const row = btn.closest('.producto');
+        row.classList.add('row-flash');
+        row.addEventListener('animationend', () => row.classList.remove('row-flash'), { once: true });
+      }
+
       actualizarResumen();
     }
 
     function actualizarResumen() {
       lista.innerHTML = '';
       let total = 0;
+      let count = 0;
+
       for (let id in cantidades) {
         const cantidad = cantidades[id];
         if (cantidad > 0) {
-          const span = document.getElementById(cantidad-${id});
+          const span = document.getElementById(`cantidad-${id}`);
           if (!span) continue;
           const productoDiv = span.closest('.producto');
           const nombre = productoDiv?.dataset?.nombre || '';
           const precio = parseInt(productoDiv?.dataset?.precio || '0', 10);
+
           const li = document.createElement('li');
-          li.textContent = ${nombre} x${cantidad} - $${precio * cantidad};
+          li.textContent = `${nombre} x${cantidad} - $${precio * cantidad}`;
           lista.appendChild(li);
+
           total += precio * cantidad;
+          count += cantidad;
         }
       }
+
       const envio = document.querySelector('input[name=envio]:checked').value;
       if (envio === 'envio') total += 1000;
       totalSpan.textContent = total;
+
+      // contador flotante
+      if (count > 0) {
+        floatEl.textContent = count;
+        floatEl.hidden = false;
+      } else {
+        floatEl.hidden = true;
+      }
     }
+
     document.querySelectorAll('input[name=envio]').forEach(r => r.addEventListener('change', actualizarResumen));
 
-    function enviarPedido() {
-      const nombre = document.getElementById('nombre').value.trim();
-      const direccion = document.getElementById('direccion').value.trim();
-      const envio = document.querySelector('input[name=envio]:checked').value;
-      if (!nombre) return alert("Por favor, ingresá tu nombre.");
-      if (envio === 'envio' && !direccion) return alert("Por favor, ingresá tu dirección.");
-
-      let mensaje = Hola, soy ${nombre}. Quiero hacer un pedido:\n;
-      let algoSeleccionado = false;
-
-      for (let id in cantidades) {
-        const cantidad = cantidades[id];
-        if (cantidad > 0) {
-          const span = document.getElementById(cantidad-${id});
-          if (!span) continue;
-          const div = span.closest('.producto');
-          const nombreProd = div?.dataset?.nombre || '';
-          const precio = parseInt(div?.dataset?.precio || '0', 10);
-          mensaje += - ${nombreProd} x${cantidad} - $${precio * cantidad}\n;
-          algoSeleccionado = true;
-        }
-      }
-
-      if (!algoSeleccionado) return alert("Seleccioná al menos un producto.");
-      mensaje += envio === 'envio'
-        ? Envío a domicilio a: ${direccion} (+$1000)\n
-        : Retiro en el local\n;
-      mensaje += Total: $${totalSpan.textContent};
-
-      const url = https://wa.me/3415923882?text=${encodeURIComponent(mensaje)};
-      window.open(url, '_blank');
-    }
+    // click en contador: llevar al resumen
+    floatEl.addEventListener('click', () => {
+      document.getElementById('resumen').scrollIntoView({ behavior: 'smooth' });
+    });
 
     /* ---------- Tabs ---------- */
     function mostrar(seccion) {
@@ -315,6 +300,41 @@
       document.getElementById('menu-almacen').style.display = seccion === 'almacen' ? 'block' : 'none';
       document.getElementById('btn-rotiseria').classList.toggle('active', seccion === 'rotiseria');
       document.getElementById('btn-almacen').classList.toggle('active', seccion === 'almacen');
+    }
+
+    /* ---------- WhatsApp ---------- */
+    function enviarPedido() {
+      const nombre = document.getElementById('nombre').value.trim();
+      const direccion = document.getElementById('direccion').value.trim();
+      const envio = document.querySelector('input[name=envio]:checked').value;
+
+      if (!nombre) return alert("Por favor, ingresá tu nombre.");
+      if (envio === 'envio' && !direccion) return alert("Por favor, ingresá tu dirección.");
+
+      let mensaje = `Hola, soy ${nombre}. Quiero hacer un pedido:\n`;
+      let algoSeleccionado = false;
+
+      for (let id in cantidades) {
+        const cantidad = cantidades[id];
+        if (cantidad > 0) {
+          const span = document.getElementById(`cantidad-${id}`);
+          if (!span) continue;
+          const div = span.closest('.producto');
+          const nombreProd = div?.dataset?.nombre || '';
+          const precio = parseInt(div?.dataset?.precio || '0', 10);
+          mensaje += `- ${nombreProd} x${cantidad} - $${precio * cantidad}\n`;
+          algoSeleccionado = true;
+        }
+      }
+
+      if (!algoSeleccionado) return alert("Seleccioná al menos un producto.");
+      mensaje += envio === 'envio'
+        ? `Envío a domicilio a: ${direccion} (+$1000)\n`
+        : `Retiro en el local\n`;
+      mensaje += `Total: $${totalSpan.textContent}`;
+
+      const url = `https://wa.me/3415923882?text=${encodeURIComponent(mensaje)}`;
+      window.open(url, '_blank');
     }
   </script>
 
