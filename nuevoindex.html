@@ -35,16 +35,25 @@
       gap: 1rem;
     }
     .tabs button {
-      padding: 0.6rem 1.2rem;
+      padding: 0.8rem 1.8rem;
+      font-size: 1.1rem;
       border: none;
-      background: #003366;
+      background: #004080;
       color: #ffcc00;
       font-weight: bold;
-      border-radius: 5px;
+      border-radius: 30px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
       cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+    .tabs button:hover {
+      background: #0055aa;
     }
     .tabs button.active {
       background: #001122;
+      border-color: #ffcc00;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
     details {
       border: 1px solid #ccc;
