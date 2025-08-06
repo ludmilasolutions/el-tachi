@@ -148,11 +148,8 @@
     }
     @keyframes bump { 0%,100%{ transform: translateY(0) scale(1);} 50%{ transform: translateY(0) scale(1.08);} }
     .cart-fab.bump{ animation: bump .3s ease; }
-
-    /* Levantar más cuando hay contenido de promo/footer visible */
     .cart-fab.raise{ transform: translateY(-112px); }
 
-    /* En móvil, mantener pastilla (no volver a círculo) */
     @media (max-width:520px){
       .cart-fab{ width:auto; height:auto; padding:.55rem .8rem; gap:.5rem; }
       .cart-icon{ display:inline; }
@@ -202,13 +199,6 @@
     .btn:hover{ transform:translateY(-1px); }
     .btn-primary{ background: var(--amarillo); color: var(--azul-2); border-color: var(--amarillo); }
     .promo-note{ font-size:.9rem; opacity:.9; }
-
-    /* Footer base */
-    .site-footer{ margin: 1rem auto 2rem; max-width: 900px; text-align:center; font-size:.95rem; }
-    .site-footer .cta-mail{
-      background:#003366; color:#ffcc00; padding:.6rem 1rem; border-radius:6px;
-      text-decoration:none; display:inline-block; margin-top:.4rem;
-    }
   </style>
 </head>
 <body>
@@ -227,7 +217,7 @@
     <div id="menu-rotiseria"></div>
     <div id="menu-almacen" style="display:none"></div>
 
-    <!-- BLOQUE DE CHECKOUT: desde opciones de envío hasta botones del carrito -->
+    <!-- BLOQUE DE CHECKOUT -->
     <section id="checkout">
       <label><input type="radio" name="envio" value="retiro" checked> Retiro en el local</label>
       <label><input type="radio" name="envio" value="envio"> Envío a domicilio (+$1000)</label>
@@ -278,13 +268,6 @@
       <p class="promo-note">Creado por <strong>Ludmila Mercado</strong> — <span id="promoSite"></span></p>
     </div>
   </section>
-
-  <!-- Footer -->
-  <footer id="siteFooter" class="site-footer">
-    <p>¿Preferís escribir por correo?</p>
-    <a class="cta-mail" href="mailto:ludmilasolutions2.0@gmail.com">ludmilasolutions2.0@gmail.com</a>
-    <p style="margin-top:0.6rem;">© <span id="yNow"></span> Ludmila Mercado</p>
-  </footer>
 
   <!-- Toast container -->
   <div id="toastWrap" class="toast-wrap"></div>
@@ -477,7 +460,7 @@
     fab.addEventListener('click', () => {
       const section = document.getElementById('checkout');
       if (!section) return;
-      const top = section.getBoundingClientRect().top + window.scrollY - 8; // leve margen
+      const top = section.getBoundingClientRect().top + window.scrollY - 8;
       window.scrollTo({ top, behavior:'smooth' });
     });
 
@@ -529,17 +512,13 @@
       showToast('Abriendo WhatsApp...', 'ok');
     }
 
-    /* ===== Promo CTA: solo email y elevar FAB cuando aparece promo/footer ===== */
+    /* ===== Promo CTA: solo email y levantar FAB cuando aparece promo ===== */
     (function promoInit(){
       const site = location.hostname || 'tu-negocio';
       const page = location.href;
-      const yNow = new Date().getFullYear();
       const promoSiteEl = document.getElementById('promoSite');
       if (promoSiteEl) promoSiteEl.textContent = site;
-      const yNowEl = document.getElementById('yNow');
-      if (yNowEl) yNowEl.textContent = yNow;
 
-      // Email con asunto/cuerpo pre-llenados
       const subj = encodeURIComponent(`Quiero una web para mi negocio (${site})`);
       const body = encodeURIComponent(
 `Hola Ludmila,
@@ -554,16 +533,13 @@ Gracias!`
       const mailEl = document.getElementById('promoMail');
       if (mailEl) mailEl.href = `mailto:ludmilasolutions2.0@gmail.com?subject=${subj}&body=${body}`;
 
-      // Elevar FAB cuando el bloque promo o el footer están visibles
+      // Elevar FAB cuando la promo está visible (para no taparla)
       const promoEl = document.getElementById('promoWeb');
-      const footerEl = document.getElementById('siteFooter');
-      if ('IntersectionObserver' in window && fab && (promoEl || footerEl)) {
-        const io = new IntersectionObserver((entries)=>{
-          const visible = entries.some(e => e.isIntersecting);
-          fab.classList.toggle('raise', visible);
+      if ('IntersectionObserver' in window && promoEl && fab) {
+        const io = new IntersectionObserver(([entry])=>{
+          fab.classList.toggle('raise', entry.isIntersecting);
         }, { rootMargin: '0px 0px -25% 0px', threshold: 0.01 });
-        if (promoEl) io.observe(promoEl);
-        if (footerEl) io.observe(footerEl);
+        io.observe(promoEl);
       }
     })();
   </script>
