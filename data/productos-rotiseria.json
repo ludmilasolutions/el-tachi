@@ -1,0 +1,215 @@
+{
+  "🍕 Pizzas": [
+    {
+      "nombre": "Pizza Muzzarella",
+      "precio": 6500,
+      "desc": "Salsa de tomate, queso muzzarella y aceitunas"
+    },
+    {
+      "nombre": "Pizza Doble Muzza",
+      "precio": 7000,
+      "desc": "Salsa de tomate, queso muzzarella doble y aceitunas"
+    },
+    {
+      "nombre": "Pizza Muzza con Jamón",
+      "precio": 7000,
+      "desc": "Salsa de tomate y queso muzarella con jamón"
+    },
+    {
+      "nombre": "Pizza Especial",
+      "precio": 7500,
+      "desc": "Salsa de tomate, jamon, queso muzarella, huevo, morron y aceitunas"
+    },
+    {
+      "nombre": "Pizza Viena",
+      "precio": 7900,
+      "desc": "Salsa de tomate, queso muzzarella, salchicha y huevo revuelto"
+    },
+    {
+      "nombre": "Pizza Napolitana",
+      "precio": 7500,
+      "desc": "Salsa de tomate, queso muzzarella, tomate, ajo y aceitunas"
+    },
+    {
+      "nombre": "Pizza Dante",
+      "precio": 8500,
+      "desc": "Salsa de tomate, queso muzzarella, salchichas y papas fritas"
+    },
+    {
+      "nombre": "Pizza Va Como Piña",
+      "precio": 8500,
+      "desc": "Salsa de tomate, queso muzzarella, huevo frito y papas fritas"
+    },
+    {
+      "nombre": "Pizza Roquefort",
+      "precio": 8500,
+      "desc": "Salsa de tomate, queso muzzarella, roquefort y aceitunas"
+    },
+    {
+      "nombre": "Pizza Salame",
+      "precio": 8000,
+      "desc": "Salsa de tomate, queso muzzarella, salame y aceitunas"
+    },
+    {
+      "nombre": "Pizza 1/2 MUZZA",
+      "precio": 3500,
+      "desc": "Salsa de tomate, queso muzzarella y aceitunas"
+    }
+  ],
+  "🥪 Hamburguesas o Bifes con Papas": [
+    {
+      "nombre": "Hamburguesa Común",
+      "precio": 6000,
+      "desc": "Pan, carne, lechuga, tomate y aderezo"
+    },
+    {
+      "nombre": "Hamburguesa Especial",
+      "precio": 6900,
+      "desc": "Pan, carne, jamon, queso, huevo, lechuga, tomate y aderezo"
+    }
+  ],
+  "🥪 Torpedos con Papas": [
+    {
+      "nombre": "Torpedo Especial de 2 hamburguesas",
+      "precio": 8900,
+      "desc": "Pan, carne, lechuga, tomate, adereso y doble hamburguesa"
+    },
+    {
+      "nombre": "Torpedo Especial de 3 hamburguesas",
+      "precio": 9900,
+      "desc": "Pan, carne, jamon, queso, huevo, lechuga, tomate, aderezo y triple hamburguesa"
+    },
+    {
+      "nombre": "Torpedo Primavera",
+      "precio": 7000,
+      "desc": "Pan, jamón, queso, lechuga, tomate, huevo y aderezo"
+    },
+    {
+      "nombre": "Torpedo Vegetariano",
+      "precio": 7000,
+      "desc": "Pan, doble queso, lechuga, tomate, huevo y aderezo"
+    },
+    {
+      "nombre": "Torpedo Especial de Suprema",
+      "precio": 10500,
+      "desc": "Pan, Suprema, lechuga, tomate, huevo, jamón, queso y aderezo"
+    },
+    {
+      "nombre": "Torpedo Especial de Milanesa",
+      "precio": 11000,
+      "desc": "Pan, Milanesa, lechuga, tomate, huevo, jamón, queso y aderezo"
+    }
+  ],
+  "🥪 Familiares con Papas": [
+    {
+      "nombre": "Familiar Especial de Suprema",
+      "precio": 6000,
+      "desc": "Pan, suprema, lechuga, tomate, jamón, queso, huevo y aderezo"
+    },
+    {
+      "nombre": "Familiar Especial de Milanesa",
+      "precio": 6900,
+      "desc": "Pan, milanesa, queso, huevo, lechuga, tomate, jamón y aderezo"
+    },
+    {
+      "nombre": "Familiar Suprema Común",
+      "precio": 5500,
+      "desc": "Pan, suprema, lechuga, tomate y aderezo"
+    },
+    {
+      "nombre": "Familiar Milanesa Común",
+      "precio": 6000,
+      "desc": "Pan, milanesa, lechuga, tomate y aderezo"
+    }
+  ],
+  "🥟 Empanadas": [
+    { "nombre": "Empanada de Carne salada", "precio": 1000 },
+    { "nombre": "Empanada de Jamon y queso", "precio": 1000 },
+    { "nombre": "Empanada de Pollo", "precio": 1000 },
+    { "nombre": "Empanada de Verdura", "precio": 1000 }
+  ],
+  "🍟 Papas Fritas": [
+    { "nombre": "Papas Medianas", "precio": 3500 },
+    { "nombre": "Papas Grandes", "precio": 5000 },
+    { "nombre": "Aderezo Adicional", "precio": 1000 }
+  ],
+  "🥪 Carlitos": [
+    {
+      "nombre": "Carlito Común",
+      "precio": 6000,
+      "desc": "Jamón, queso y ketchup"
+    },
+    {
+      "nombre": "Carlito Especial",
+      "precio": 7000,
+      "desc": "Jamón, queso, ketchup, pan con mayonesa, huevo rayado y morrón"
+    },
+    {
+      "nombre": "Adicional Papas fritas",
+      "precio": 1500,
+      "desc": "Carlitos + Papas Fritas"
+    }
+  ],
+  "🍽️ Pizzanesas con colchón de papas fritas": [
+    {
+      "nombre": "Pizzanesa Carne para 3 personas",
+      "precio": 22500,
+      "desc": "Especial"
+    },
+    {
+      "nombre": "Pizzanesa Carne para 3 personas",
+      "precio": 22500,
+      "desc": "Napolitana"
+    },
+    {
+      "nombre": "Pizzanesa Carne para 3 personas",
+      "precio": 22500,
+      "desc": "Salame"
+    },
+    {
+      "nombre": "Pizzanesa Carne para 3 personas",
+      "precio": 21000,
+      "desc": "Muzzarella"
+    },
+    {
+      "nombre": "Pizzanesa Carne para 3 personas",
+      "precio": 23500,
+      "desc": "Roquefort"
+    },
+    {
+      "nombre": "Pizzanesa Carne para 3 personas",
+      "precio": 23500,
+      "desc": "Bomba"
+    },
+    {
+      "nombre": "Pizzanesa Pollo para 3 personas",
+      "precio": 21500,
+      "desc": "Especial"
+    },
+    {
+      "nombre": "Pizzanesa Pollo para 3 personas",
+      "precio": 21500,
+      "desc": "Napolitana"
+    },
+    {
+      "nombre": "Pizzanesa Pollo para 3 personas",
+      "precio": 21500,
+      "desc": "Salame"
+    },
+    {
+      "nombre": "Pizzanesa Pollo para 3 personas",
+      "precio": 20000,
+      "desc": "Muzzarella"
+    },
+    {
+      "nombre": "Pizzanesa Pollo para 3 personas",
+      "precio": 22500,
+      "desc": "Roquefort"
+    },
+    {
+      "nombre": "Pizzanesa Pollo para 3 personas",
+      "precio": 22500,
+      "desc": "Bomba"
+    }
+  ]
+}
