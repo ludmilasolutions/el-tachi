@@ -1,35 +1,55 @@
 {
-  "🥫 Alimentos no perecederos": [
-    { "nombre": "Arroz 1kg", "precio": 1200 },
-    { "nombre": "Fideos Spaghetti 500g", "precio": 1000 },
-    { "nombre": "Lentejas 500g", "precio": 1300 },
-    { "nombre": "Puré de tomate 520g", "precio": 900 }
-  ],
-  "🧂 Condimentos y salsas": [
-    { "nombre": "Aceite de girasol 900ml", "precio": 2800 },
-    { "nombre": "Vinagre blanco 1L", "precio": 900 },
-    { "nombre": "Sal fina 500g", "precio": 500 },
-    { "nombre": "Mayonesa 250g", "precio": 950 }
-  ],
-  "🍪 Galletitas y snacks": [
-    { "nombre": "Galletitas dulces 300g", "precio": 1100 },
-    { "nombre": "Galletitas saladas 300g", "precio": 950 },
-    { "nombre": "Papas fritas bolsa grande", "precio": 1500 }
-  ],
-  "🥤 Bebidas": [
-    { "nombre": "Gaseosa Cola 2.25L", "precio": 2200 },
-    { "nombre": "Agua sin gas 2L", "precio": 1000 },
-    { "nombre": "Jugo en polvo x25g", "precio": 200 }
-  ],
-  "☕ Infusiones": [
-    { "nombre": "Yerba mate 1kg", "precio": 3500 },
-    { "nombre": "Café instantáneo 170g", "precio": 2500 },
-    { "nombre": "Té en saquitos x25", "precio": 1200 }
-  ],
-  "🧻 Higiene y limpieza": [
-    { "nombre": "Papel higiénico x4", "precio": 1700 },
-    { "nombre": "Jabón en pan x3", "precio": 900 },
-    { "nombre": "Lavandina 1L", "precio": 700 },
-    { "nombre": "Detergente 500ml", "precio": 950 }
+  "categorias": [
+    {
+      "categoria": "🥫 Alimentos no perecederos",
+      "productos": [
+        { "nombre": "Arroz 1kg", "precio": 1200 },
+        { "nombre": "Fideos Spaghetti 500g", "precio": 1000 },
+        { "nombre": "Lentejas 500g", "precio": 1300 },
+        { "nombre": "Puré de tomate 520g", "precio": 900 }
+      ]
+    },
+    {
+      "categoria": "🧂 Condimentos y salsas",
+      "productos": [
+        { "nombre": "Aceite de girasol 900ml", "precio": 2800 },
+        { "nombre": "Vinagre blanco 1L", "precio": 900 },
+        { "nombre": "Sal fina 500g", "precio": 500 },
+        { "nombre": "Mayonesa 250g", "precio": 950 }
+      ]
+    },
+    {
+      "categoria": "🍪 Galletitas y snacks",
+      "productos": [
+        { "nombre": "Galletitas dulces 300g", "precio": 1100 },
+        { "nombre": "Galletitas saladas 300g", "precio": 950 },
+        { "nombre": "Papas fritas bolsa grande", "precio": 1500 }
+      ]
+    },
+    {
+      "categoria": "🥤 Bebidas",
+      "productos": [
+        { "nombre": "Gaseosa Cola 2.25L", "precio": 2200 },
+        { "nombre": "Agua sin gas 2L", "precio": 1000 },
+        { "nombre": "Jugo en polvo x25g", "precio": 200 }
+      ]
+    },
+    {
+      "categoria": "☕ Infusiones",
+      "productos": [
+        { "nombre": "Yerba mate 1kg", "precio": 3500 },
+        { "nombre": "Café instantáneo 170g", "precio": 2500 },
+        { "nombre": "Té en saquitos x25", "precio": 1200 }
+      ]
+    },
+    {
+      "categoria": "🧻 Higiene y limpieza",
+      "productos": [
+        { "nombre": "Papel higiénico x4", "precio": 1700 },
+        { "nombre": "Jabón en pan x3", "precio": 900 },
+        { "nombre": "Lavandina 1L", "precio": 700 },
+        { "nombre": "Detergente 500ml", "precio": 950 }
+      ]
+    }
   ]
 }
