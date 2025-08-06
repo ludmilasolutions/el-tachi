@@ -116,18 +116,38 @@
 
     label { display: block; margin-top: 1rem; }
 
-    /* Contador flotante */
-    .floating-counter{
-      position: fixed; right: 16px; bottom: 16px; z-index: 99;
-      background: var(--azul); color: var(--amarillo);
+    /* FAB Carrito (pastilla) */
+    .cart-fab{
+      position: fixed;
+      right: 16px;
+      bottom: calc(16px + env(safe-area-inset-bottom));
+      z-index: 99;
+      background: var(--azul);
+      color: var(--amarillo);
       border: 2px solid var(--amarillo);
-      width: 56px; height: 56px; border-radius: 999px;
-      display: flex; align-items:center; justify-content:center;
-      font-weight: 800; cursor: pointer; box-shadow: 0 8px 18px rgba(0,0,0,.25);
+      display: flex; align-items: center; gap: .6rem;
+      padding: .6rem .9rem;
+      border-radius: 9999px;
+      box-shadow: 0 8px 18px rgba(0,0,0,.25);
+      cursor: pointer;
       transition: transform .15s ease;
     }
-    .floating-counter:hover{ transform: translateY(-2px); }
-    .floating-counter[hidden]{ display:none; }
+    .cart-fab:hover{ transform: translateY(-2px); }
+    .cart-fab[hidden]{ display:none; }
+    .cart-icon{ font-size: 1.1rem; }
+    .cart-total{ font-weight: 700; }
+    .cart-count{
+      background: var(--amarillo); color: var(--azul-2);
+      min-width: 26px; height: 26px; border-radius: 999px;
+      display: grid; place-items: center; font-weight: 800;
+    }
+    @keyframes bump { 0%,100%{ transform: translateY(0) scale(1);} 50%{ transform: translateY(0) scale(1.08);} }
+    .cart-fab.bump{ animation: bump .3s ease; }
+    .cart-fab.raise{ transform: translateY(-64px); }
+    @media (max-width:520px){
+      .cart-fab{ width:56px; height:56px; justify-content:center; padding:0; }
+      .cart-icon, .cart-total{ display:none; }
+    }
 
     /* Toasts */
     .toast-wrap{
@@ -178,8 +198,12 @@
     </div>
   </main>
 
-  <!-- Contador flotante -->
-  <div id="floatingCounter" class="floating-counter" hidden>0</div>
+  <!-- FAB Carrito -->
+  <div id="cartFab" class="cart-fab" hidden title="Ver pedido" aria-live="polite" aria-label="Ver pedido">
+    <span class="cart-icon">🛒</span>
+    <span class="cart-total" id="fabTotal">$ 0</span>
+    <span class="cart-count" id="fabCount">0</span>
+  </div>
 
   <!-- Toast container -->
   <div id="toastWrap" class="toast-wrap"></div>
@@ -195,7 +219,7 @@
         const parts = location.pathname.split('/').filter(Boolean);
         const repo = parts[0] || '';
         return `/${repo}/${path}`;
-      }
+        }
       return `/${path}`;
     }
     function normalizar(data) {
@@ -220,12 +244,14 @@
     const cantidades = {};
     const listaEl = document.getElementById('lista');
     const totalEl = document.getElementById('total');
-    const floatEl = document.getElementById('floatingCounter');
     const btnWA = document.getElementById('btn-whatsapp');
 
-    function saveCart(){
-      localStorage.setItem(CART_KEY, JSON.stringify(cantidades));
-    }
+    // FAB elements
+    const fab = document.getElementById('cartFab');
+    const fabCount = document.getElementById('fabCount');
+    const fabTotal = document.getElementById('fabTotal');
+
+    function saveCart(){ localStorage.setItem(CART_KEY, JSON.stringify(cantidades)); }
     function loadCart(){
       try { return JSON.parse(localStorage.getItem(CART_KEY) || '{}'); }
       catch { return {}; }
@@ -282,7 +308,6 @@
         .then(data => renderProductos('menu-almacen', data))
         .catch(() => showToast('Error cargando Almacén', 'error'));
 
-      // Luego de renderizar ambos, hidratar carrito persistido
       Promise.allSettled([p1, p2]).then(hydrateFromStorage);
     }
     cargarProductos();
@@ -312,6 +337,10 @@
         const row = btn.closest('.producto');
         row.classList.add('row-flash');
         row.addEventListener('animationend', () => row.classList.remove('row-flash'), { once: true });
+
+        // bump en FAB
+        fab.classList.add('bump');
+        fab.addEventListener('animationend', ()=> fab.classList.remove('bump'), { once:true });
       }
 
       saveCart();
@@ -349,10 +378,13 @@
       if (envio === 'envio') total += 1000;
 
       totalEl.textContent = formatARS(total);
-      floatEl.textContent = count;
-      floatEl.hidden = count === 0;
 
-      // habilitar/deshabilitar botón WhatsApp según condiciones
+      // FAB
+      fabCount.textContent = count;
+      fabTotal.textContent = formatARS(total);
+      fab.hidden = count === 0;
+
+      // habilitar/deshabilitar botón WhatsApp
       const nombreOk = document.getElementById('nombre').value.trim().length > 0;
       btnWA.disabled = !(count > 0 && nombreOk);
     }
@@ -360,14 +392,13 @@
     document.getElementById('nombre').addEventListener('input', actualizarResumen);
     document.querySelectorAll('input[name=envio]').forEach(r => r.addEventListener('change', actualizarResumen));
 
-    // click en contador: llevar al resumen
-    floatEl.addEventListener('click', () => {
+    // click en FAB: ir al resumen
+    fab.addEventListener('click', () => {
       document.getElementById('resumen').scrollIntoView({ behavior: 'smooth' });
     });
 
     function vaciarCarrito(){
       Object.keys(cantidades).forEach(k => cantidades[k]=0);
-      // reset UI contadores visibles
       document.querySelectorAll('[id^="cantidad-"]').forEach(span => span.textContent='0');
       saveCart();
       actualizarResumen();
@@ -389,9 +420,7 @@
       const envio = document.querySelector('input[name=envio]:checked').value;
 
       if (!name) { showToast('Ingresá tu nombre', 'error'); return; }
-
       if (countItems() === 0) { showToast('Seleccioná al menos un producto', 'error'); return; }
-
       if (envio === 'envio' && !addr) { showToast('Ingresá tu dirección para el envío', 'error'); return; }
 
       let msg = `Hola, soy ${name}. Quiero hacer un pedido:\n`;
@@ -415,9 +444,18 @@
       window.open(url, '_blank');
       showToast('Abriendo WhatsApp...', 'ok');
     }
+
+    // Elevar FAB si el footer aparece (para no taparlo)
+    const footerEl = document.getElementById('siteFooter');
+    if ('IntersectionObserver' in window && footerEl) {
+      const io = new IntersectionObserver(([entry])=>{
+        fab.classList.toggle('raise', entry.isIntersecting);
+      }, { rootMargin: '0px 0px -10% 0px', threshold: 0.01 });
+      io.observe(footerEl);
+    }
   </script>
 
-  <div style="margin-top:2rem; text-align:center; font-size:0.9rem;">
+  <div id="siteFooter" style="margin-top:2rem; text-align:center; font-size:0.9rem;">
     <p>¿Querés una web como esta para tu negocio?</p>
     <a href="mailto:ludmilasolutions2.0@gmail.com" style="background:#003366; color:#ffcc00; padding:0.6rem 1rem; border-radius:6px; text-decoration:none;">
       Escribime: ludmilasolutions2.0@gmail.com
