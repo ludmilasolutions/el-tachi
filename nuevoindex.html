@@ -158,29 +158,20 @@
     .toast.ok{ border-left-color: var(--ok); } .toast.err{ border-left-color: var(--error); }
     @keyframes fadeIn{ from{opacity:0; transform:translate(-50%,10px)} to{opacity:1; transform:translate(-50%,0)} }
 
-    /* ===== División antes de la promo ===== */
+    /* ===== División antes de la promo (sin texto, más marcada) ===== */
     .section-divider{
       margin: 2rem auto 0;
       max-width: 900px;
       padding: 0 1rem;
-      display:flex; align-items:center; gap:.75rem;
-      color:#0b376d;
-    }
-    .section-divider::before,
-    .section-divider::after{
-      content:""; flex:1; height:1px;
-      background: linear-gradient(to right, transparent, #cbd5e1, transparent);
-    }
-    .section-divider .label{
-      background: var(--bg);
-      border:1px solid #e2e8f0;
-      border-radius:999px;
-      padding:.25rem .65rem;
-      font-weight:800;
-      font-size:.85rem;
-      letter-spacing:.02em;
-      color:#0b376d;
-      white-space:nowrap;
+      height: 12px;
+      border-radius: 999px;
+      background: linear-gradient(to right,
+        rgba(0,0,0,0) 0%,
+        #cbd5e1 18%,
+        #94a3b8 50%,
+        #cbd5e1 82%,
+        rgba(0,0,0,0) 100%);
+      box-shadow: inset 0 2px 6px rgba(0,0,0,.08), 0 8px 18px rgba(0,0,0,.06);
     }
 
     /* ===== Promo (solo email) ===== */
@@ -241,10 +232,8 @@
     <span class="cart-count" id="fabCount">0</span>
   </button>
 
-  <!-- División antes de la promo -->
-  <div class="section-divider" aria-hidden="true">
-    <span class="label">Creación de webs</span>
-  </div>
+  <!-- División sin texto, más marcada -->
+  <div class="section-divider" aria-hidden="true"></div>
 
   <!-- Promo: creación de webs (solo email) -->
   <section id="promoWeb" class="promo-web" aria-labelledby="promo-web-title">
