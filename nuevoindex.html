@@ -38,12 +38,11 @@
     }
     header img { max-height: 180px; margin: 0 auto 1rem; }
 
-    /* Aire extra para que el FAB no tape el contenido final */
     main {
       padding: 1rem;
       max-width: 900px;
       margin: auto;
-      padding-bottom: 112px;
+      padding-bottom: 112px; /* aire por si el FAB tapa algo al navegar */
     }
 
     /* Tabs */
@@ -61,7 +60,7 @@
       background: var(--azul-2); border-color: var(--amarillo); box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
 
-    /* Acordeón */
+    /* Acordeón productos */
     details {
       border: 1px solid var(--gris-borde);
       border-radius: 8px;
@@ -97,22 +96,17 @@
       cursor: pointer; border-radius: 5px; transform-origin:center;
     }
 
-    /* Animaciones */
+    /* Animaciones sumar */
     @keyframes pop { 0%{transform:scale(1)} 50%{transform:scale(1.2)} 100%{transform:scale(1)} }
     .btn-pop{ animation: pop .22s ease-out; }
     @keyframes flash { 0%{box-shadow:0 0 0 rgba(255,204,0,0)} 50%{box-shadow:0 0 0 4px rgba(255,204,0,.35)} 100%{box-shadow:0 0 0 rgba(255,204,0,0)} }
     .row-flash{ animation: flash .35s ease-out; }
 
-    /* ===== Resumen (mejorado) ===== */
-    #resumen {
-      margin-top: 2rem; padding: 1rem; background: var(--resumen-bg);
-      border: 1px solid var(--resumen-borde); border-radius: 8px;
-    }
+    /* ===== Resumen (para usar dentro del sheet) ===== */
+    #resumen { background: var(--resumen-bg); border: 1px solid var(--resumen-borde); border-radius: 8px; padding: 1rem; }
     #resumen h3{ margin-top:0 }
     .resumen-empty{ margin:.25rem 0 .5rem; opacity:.8 }
-    .resumen-list{
-      list-style:none; padding:0; margin:.5rem 0 1rem; display:grid; gap:.35rem;
-    }
+    .resumen-list{ list-style:none; padding:0; margin:.5rem 0 1rem; display:grid; gap:.35rem; }
     .resumen-item{
       display:grid; grid-template-columns: 1fr auto auto; align-items:center; gap:.6rem;
       background:#fff; border:1px solid var(--gris-borde); border-radius:8px; padding:.5rem .6rem;
@@ -120,18 +114,10 @@
     .resumen-name{ font-weight:700; color:#0b376d; }
     .resumen-qty{ opacity:.85; min-width:42px; text-align:right; }
     .resumen-line{ font-weight:700; min-width:88px; text-align:right; }
-    .totales{
-      display:grid; gap:.25rem; margin-top:.5rem;
-    }
-    .tot-line{
-      display:flex; justify-content:space-between; align-items:center;
-      padding:.35rem .2rem;
-    }
+    .totales{ display:grid; gap:.25rem; margin-top:.5rem; }
+    .tot-line{ display:flex; justify-content:space-between; align-items:center; padding:.35rem .2rem; }
     .tot-line.total{ font-size:1.1rem; font-weight:800; border-top:1px dashed #d6d6d6; margin-top:.25rem; padding-top:.5rem; }
-
-    #resumen .acciones {
-      display:flex; gap:.75rem; flex-wrap:wrap;
-    }
+    #resumen .acciones { display:flex; gap:.75rem; flex-wrap:wrap; }
     #resumen button {
       background: var(--azul); color: var(--amarillo);
       border: none; padding: 0.8rem 1.2rem; margin-top: .5rem; cursor: pointer;
@@ -139,27 +125,16 @@
     }
     #btn-vaciar { background:#fff; color:#333; border:1px solid var(--gris-borde); }
     #btn-whatsapp:disabled{ opacity:.6; cursor:not-allowed; }
-
     label { display: block; margin-top: 1rem; }
 
-    /* ===== FAB Carrito (button) + transición suave al ocultar ===== */
+    /* ===== FAB Carrito (button) + transición suave ===== */
     .cart-fab{
-      position: fixed;
-      right: 16px;
-      bottom: calc(16px + env(safe-area-inset-bottom));
-      z-index: 99;
-      background: var(--azul);
-      color: var(--amarillo);
-      border: 2px solid var(--amarillo);
-      display: flex; align-items: center; gap: .6rem;
-      padding: .6rem .9rem;
-      border-radius: 9999px;
-      box-shadow: 0 8px 18px rgba(0,0,0,.25);
-      cursor: pointer;
-      -webkit-user-select: none; user-select: none;
-      -webkit-touch-callout: none; touch-action: manipulation;
-      -webkit-tap-highlight-color: transparent;
-      appearance: none; -webkit-appearance: none;
+      position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 99;
+      background: var(--azul); color: var(--amarillo); border: 2px solid var(--amarillo);
+      display: flex; align-items: center; gap: .6rem; padding: .6rem .9rem;
+      border-radius: 9999px; box-shadow: 0 8px 18px rgba(0,0,0,.25); cursor: pointer;
+      -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent; appearance: none; -webkit-appearance: none;
       transition: transform .15s ease, opacity .18s ease, filter .18s ease;
     }
     .cart-fab * { pointer-events: none; }
@@ -168,95 +143,48 @@
     .cart-fab[hidden]{ display:none; }
     .cart-icon{ font-size: 1.1rem; }
     .cart-total{ font-weight: 700; }
-    .cart-count{
-      background: var(--amarillo); color: var(--azul-2);
-      min-width: 26px; height: 26px; border-radius: 999px;
-      display: grid; place-items: center; font-weight: 800;
-    }
+    .cart-count{ background: var(--amarillo); color: var(--azul-2); min-width: 26px; height: 26px; border-radius: 999px; display: grid; place-items: center; font-weight: 800; }
     @keyframes bump { 0%,100%{ transform: translateY(0) scale(1);} 50%{ transform: translateY(0) scale(1.08);} }
     .cart-fab.bump{ animation: bump .3s ease; }
-
     @media (max-width:520px){
       .cart-fab{ width:auto; height:auto; padding:.55rem .8rem; gap:.5rem; }
-      .cart-icon{ display:inline; }
-      .cart-total{ display:inline; font-size:.95rem; }
+      .cart-total{ font-size:.95rem; }
       .cart-count{ min-width:22px; height:22px; font-size:.85rem; }
     }
 
     /* Toasts */
-    .toast-wrap{
-      position:fixed; left:50%; bottom:84px; transform:translateX(-50%);
-      z-index:100; display:flex; flex-direction:column; gap:.5rem; pointer-events:none;
-    }
-    .toast{
-      pointer-events:auto;
-      background:#0b1f3a; color:#fff; border-left:4px solid var(--azul-3);
-      padding:.7rem 1rem; border-radius:8px; box-shadow:0 10px 24px rgba(0,0,0,.25);
-      animation:fadeIn .18s ease-out;
-      max-width: calc(100vw - 40px);
-    }
-    .toast.ok{ border-left-color: var(--ok); }
-    .toast.err{ border-left-color: var(--error); }
+    .toast-wrap{ position:fixed; left:50%; bottom:84px; transform:translateX(-50%); z-index:100; display:flex; flex-direction:column; gap:.5rem; pointer-events:none; }
+    .toast{ pointer-events:auto; background:#0b1f3a; color:#fff; border-left:4px solid var(--azul-3); padding:.7rem 1rem; border-radius:8px; box-shadow:0 10px 24px rgba(0,0,0,.25); animation:fadeIn .18s ease-out; max-width: calc(100vw - 40px); }
+    .toast.ok{ border-left-color: var(--ok); } .toast.err{ border-left-color: var(--error); }
     @keyframes fadeIn{ from{opacity:0; transform:translate(-50%,10px)} to{opacity:1; transform:translate(-50%,0)} }
 
-    /* ===== Promo de creación de webs (solo email) ===== */
+    /* ===== Promo (solo email) ===== */
     .promo-web{ margin: 2rem auto 0; max-width: 900px; padding: 1.2rem; }
-    .promo-card{
-      background: linear-gradient(135deg, var(--azul) 0%, #062247 100%);
-      color:#fff; border-radius: 16px; padding: 1.2rem;
-      box-shadow: 0 18px 36px rgba(0,0,0,.25); display:grid; gap:1rem;
-    }
+    .promo-card{ background: linear-gradient(135deg, var(--azul) 0%, #062247 100%); color:#fff; border-radius: 16px; padding: 1.2rem; box-shadow: 0 18px 36px rgba(0,0,0,.25); display:grid; gap:1rem; }
     .promo-card h3{ margin:.2rem 0 .2rem; font-size:1.4rem; }
     .promo-sub{ margin:0; opacity:.9; }
     .promo-badges{ display:flex; flex-wrap:wrap; gap:.5rem; }
-    .badge{
-      background: rgba(255,255,255,.12);
-      border:1px solid rgba(255,255,255,.25);
-      color:#fff; padding:.35rem .6rem; border-radius:999px; font-size:.9rem;
-      display:flex; align-items:center; gap:.35rem;
-    }
+    .badge{ background: rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25); color:#fff; padding:.35rem .6rem; border-radius:999px; font-size:.9rem; display:flex; align-items:center; gap:.35rem; }
     .promo-actions{ display:flex; flex-wrap:wrap; gap:.6rem; }
-    .btn{
-      display:inline-flex; align-items:center; gap:.5rem;
-      padding:.7rem 1rem; border-radius:10px; font-weight:700;
-      text-decoration:none; cursor:pointer; transition:transform .12s ease, opacity .12s ease;
-      border:2px solid transparent;
-    }
+    .btn{ display:inline-flex; align-items:center; gap:.5rem; padding:.7rem 1rem; border-radius:10px; font-weight:700; text-decoration:none; cursor:pointer; transition:transform .12s ease, opacity .12s ease; border:2px solid transparent; }
     .btn:hover{ transform:translateY(-1px); }
     .btn-primary{ background: var(--amarillo); color: var(--azul-2); border-color: var(--amarillo); }
     .promo-note{ font-size:.9rem; opacity:.9; }
 
     /* ===== Bottom Sheet ===== */
-    .sheet-backdrop{
-      position: fixed; inset: 0; background: rgba(0,0,0,.32);
-      opacity: 0; pointer-events: none; transition: opacity .22s ease;
-      z-index: 98;
-    }
+    .sheet-backdrop{ position: fixed; inset: 0; background: rgba(0,0,0,.32); opacity: 0; pointer-events: none; transition: opacity .22s ease; z-index: 98; }
     .sheet-backdrop.open{ opacity:1; pointer-events:auto; }
     .sheet{
-      position: fixed; left: 0; right: 0; bottom: 0;
-      transform: translateY(100%);
-      background: var(--card);
-      border-top-left-radius: 16px; border-top-right-radius: 16px;
-      box-shadow: var(--shadow);
-      z-index: 99;
-      transition: transform .28s ease-out;
+      position: fixed; left: 0; right: 0; bottom: 0; transform: translateY(100%);
+      background: var(--card); border-top-left-radius: 16px; border-top-right-radius: 16px;
+      box-shadow: var(--shadow); z-index: 99; transition: transform .28s ease-out;
       max-height: 92vh; display: grid; grid-template-rows: auto 1fr;
     }
     .sheet.open{ transform: translateY(0); }
-    .sheet-header{
-      padding: .6rem .8rem .4rem; display:flex; align-items:center; gap:.5rem;
-      position: sticky; top:0; background: var(--card); border-bottom:1px solid #e8e8e8;
-      border-top-left-radius:16px; border-top-right-radius:16px;
-    }
-    .sheet-handle{
-      width: 36px; height: 4px; border-radius: 999px; background:#d7d7d7; margin: .2rem auto;
-      position:absolute; left:50%; transform:translateX(-50%); top:6px;
-    }
+    .sheet-header{ padding: .6rem .8rem .4rem; display:flex; align-items:center; gap:.5rem; position: sticky; top:0; background: var(--card); border-bottom:1px solid #e8e8e8; border-top-left-radius:16px; border-top-right-radius:16px; }
+    .sheet-handle{ width: 36px; height: 4px; border-radius: 999px; background:#d7d7d7; margin: .2rem auto; position:absolute; left:50%; transform:translateX(-50%); top:6px; }
     .sheet-title{ margin:0 auto 0 .4rem; font-size:1.05rem; font-weight:800; color:#0b376d; }
-    .sheet-close{
-      margin-left:auto; background:#fff; border:1px solid #dcdcdc; border-radius:8px; padding:.35rem .6rem; cursor:pointer;
-    }
+    .sheet-close{ margin-left:auto; background:#fff; border:1px solid #dcdcdc; border-radius:8px; padding:.35rem .6rem; cursor:pointer; }
     .sheet-body{ overflow:auto; padding:.8rem .9rem 1rem; }
     @media (min-width:800px){
       .sheet{ left:50%; right:auto; transform: translate(-50%,100%); width: 720px; border-radius: 16px; }
@@ -279,34 +207,6 @@
 
     <div id="menu-rotiseria"></div>
     <div id="menu-almacen" style="display:none"></div>
-
-    <!-- ANCLA: aquí vive el checkout cuando el sheet está cerrado -->
-    <div id="checkoutAnchor">
-      <!-- BLOQUE DE CHECKOUT (se reubica dentro del sheet al abrir) -->
-      <section id="checkout">
-        <label><input type="radio" name="envio" value="retiro" checked> Retiro en el local</label>
-        <label><input type="radio" name="envio" value="envio"> Envío a domicilio (+$1000)</label>
-        <label>Nombre: <input type="text" id="nombre" /></label>
-        <label>Dirección: <input type="text" id="direccion" /></label>
-
-        <div id="resumen">
-          <h3>Resumen del pedido</h3>
-          <p id="emptyMsg" class="resumen-empty">Aún no agregaste productos.</p>
-          <ul id="lista" class="resumen-list"></ul>
-
-          <div class="totales" aria-live="polite">
-            <div class="tot-line"><span>Subtotal</span><span id="subtotal">$ 0</span></div>
-            <div class="tot-line" id="envioLine" hidden><span>Envío</span><span id="envioCosto">$ 0</span></div>
-            <div class="tot-line total"><span>Total</span><span id="total">$ 0</span></div>
-          </div>
-
-          <div class="acciones">
-            <button id="btn-whatsapp" onclick="enviarPedido()">Hacer pedido por WhatsApp</button>
-            <button id="btn-vaciar" type="button" onclick="vaciarCarrito()">Vaciar carrito</button>
-          </div>
-        </div>
-      </section>
-    </div>
   </main>
 
   <!-- FAB Carrito -->
@@ -342,7 +242,7 @@
     </div>
   </section>
 
-  <!-- Toast container -->
+  <!-- Toasts -->
   <div id="toastWrap" class="toast-wrap"></div>
 
   <!-- ===== Bottom Sheet (dialog accesible) ===== -->
@@ -353,14 +253,39 @@
       <h3 id="sheetTitle" class="sheet-title">Tu pedido</h3>
       <button type="button" id="sheetClose" class="sheet-close" aria-label="Cerrar">✕</button>
     </div>
-    <div id="sheetBody" class="sheet-body" tabindex="0"></div>
+    <div id="sheetBody" class="sheet-body" tabindex="0">
+      <!-- Checkout vive PERMANENTEMENTE dentro del sheet -->
+      <section id="checkout">
+        <label><input type="radio" name="envio" value="retiro" checked> Retiro en el local</label>
+        <label><input type="radio" name="envio" value="envio"> Envío a domicilio (+$1000)</label>
+        <label>Nombre: <input type="text" id="nombre" /></label>
+        <label>Dirección: <input type="text" id="direccion" /></label>
+
+        <div id="resumen">
+          <h3>Resumen del pedido</h3>
+          <p id="emptyMsg" class="resumen-empty">Aún no agregaste productos.</p>
+          <ul id="lista" class="resumen-list"></ul>
+
+          <div class="totales" aria-live="polite">
+            <div class="tot-line"><span>Subtotal</span><span id="subtotal">$ 0</span></div>
+            <div class="tot-line" id="envioLine" hidden><span>Envío</span><span id="envioCosto">$ 0</span></div>
+            <div class="tot-line total"><span>Total</span><span id="total">$ 0</span></div>
+          </div>
+
+          <div class="acciones">
+            <button id="btn-whatsapp" onclick="enviarPedido()">Hacer pedido por WhatsApp</button>
+            <button id="btn-vaciar" type="button" onclick="vaciarCarrito()">Vaciar carrito</button>
+          </div>
+        </div>
+      </section>
+    </div>
   </div>
 
   <script>
     /* ---------- Utilidades ---------- */
     const CART_KEY = 'tachi_cart_v1';
-    const formatARS = new Intl.NumberFormat('es-AR',{ style:'currency', currency:'ARS', maximumFractionDigits:0 }).format;
     const SHIPPING = 1000;
+    const formatARS = new Intl.NumberFormat('es-AR',{ style:'currency', currency:'ARS', maximumFractionDigits:0 }).format;
 
     function asset(path) {
       const host = location.hostname;
@@ -390,14 +315,14 @@
     }
 
     /* ---------- Estado ---------- */
-    const cantidades = {};
-    const listaEl   = document.getElementById('lista');
-    const subtotalEl= document.getElementById('subtotal');
-    const totalEl   = document.getElementById('total');
-    const envioLineEl = document.getElementById('envioLine');
-    const envioCostoEl= document.getElementById('envioCosto');
-    const emptyMsg  = document.getElementById('emptyMsg');
-    const btnWA     = document.getElementById('btn-whatsapp');
+    const cantidades   = {};
+    const listaEl      = document.getElementById('lista');
+    const subtotalEl   = document.getElementById('subtotal');
+    const totalEl      = document.getElementById('total');
+    const envioLineEl  = document.getElementById('envioLine');
+    const envioCostoEl = document.getElementById('envioCosto');
+    const emptyMsg     = document.getElementById('emptyMsg');
+    const btnWA        = document.getElementById('btn-whatsapp');
 
     // FAB
     const fab      = document.getElementById('cartFab');
@@ -405,16 +330,10 @@
     const fabTotal = document.getElementById('fabTotal');
 
     // Bottom sheet
-    const sheet       = document.getElementById('cartSheet');
-    const sheetBody   = document.getElementById('sheetBody');
-    const sheetClose  = document.getElementById('sheetClose');
-    const backdrop    = document.getElementById('sheetBackdrop');
-    const checkout    = document.getElementById('checkout');
-    const anchor      = document.getElementById('checkoutAnchor');
+    const sheet      = document.getElementById('cartSheet');
+    const sheetClose = document.getElementById('sheetClose');
+    const backdrop   = document.getElementById('sheetBackdrop');
     let sheetOpen = false;
-
-    // Promo (para ocultar FAB al verla)
-    let promoVisible = false;
 
     /* ---------- Persistencia ---------- */
     function saveCart(){ localStorage.setItem(CART_KEY, JSON.stringify(cantidades)); }
@@ -480,15 +399,14 @@
 
     function hydrateFromStorage(){
       const persisted = loadCart();
-      let hadItems = false;
       Object.entries(persisted).forEach(([id, qty])=>{
         if (qty > 0) {
           cantidades[id] = qty;
           const el = document.getElementById(`cantidad-${id}`);
-          if (el) { el.textContent = qty; hadItems = true; }
+          if (el) el.textContent = qty;
         }
       });
-      if (hadItems) actualizarResumen();
+      actualizarResumen(); // asegura FAB correcto al recargar
     }
 
     /* ---------- Carrito + Animaciones ---------- */
@@ -504,7 +422,6 @@
         row.classList.add('row-flash');
         row.addEventListener('animationend', () => row.classList.remove('row-flash'), { once: true });
 
-        // bump en FAB
         fab.classList.add('bump');
         fab.addEventListener('animationend', ()=> fab.classList.remove('bump'), { once:true });
       }
@@ -522,13 +439,11 @@
       if (visible){
         if (fab.hasAttribute('hidden')) {
           fab.removeAttribute('hidden');
-          // forzar reflow y quitar clase hide para animar entrada
           requestAnimationFrame(()=> fab.classList.remove('hide'));
         } else {
           fab.classList.remove('hide');
         }
       } else {
-        // animar salida y ocultar al final
         fab.classList.add('hide');
         setTimeout(()=> fab.setAttribute('hidden',''), 200);
       }
@@ -562,11 +477,9 @@
         }
       }
 
-      // Envío
       const envioSel = (document.querySelector('input[name=envio]:checked')||{}).value || 'retiro';
       const envioCosto = envioSel === 'envio' ? SHIPPING : 0;
 
-      // Totales
       subtotalEl.textContent = formatARS(subtotal);
       if (envioCosto > 0) {
         envioCostoEl.textContent = formatARS(envioCosto);
@@ -576,16 +489,13 @@
       }
       totalEl.textContent = formatARS(subtotal + envioCosto);
 
-      // Mensaje vacío
       emptyMsg.hidden = count > 0;
 
-      // FAB (oculto si no hay items o si la promo está visible o si el sheet está abierto)
+      // FAB visible si hay items y el sheet está cerrado (ya no depende de la promo)
       fabCount.textContent = count;
       fabTotal.textContent = formatARS(subtotal + envioCosto);
-      const fabShouldShow = (count > 0) && !promoVisible && !sheetOpen;
-      setFabVisible(fabShouldShow);
+      setFabVisible(count > 0 && !sheetOpen);
 
-      // habilitar/deshabilitar botón WhatsApp
       const nombreOk = document.getElementById('nombre').value.trim().length > 0;
       btnWA.disabled = !(count > 0 && nombreOk);
     }
@@ -641,33 +551,6 @@
       showToast('Abriendo WhatsApp...', 'ok');
     }
 
-    /* ===== Promo CTA: solo email + ocultar FAB cuando la promo es visible ===== */
-    (function promoInit(){
-      const subj = encodeURIComponent(`Quiero una web para mi negocio`);
-      const body = encodeURIComponent(
-`Hola Ludmila,
-Vi tu trabajo y quiero pedir un presupuesto para mi web.
-
-Tipo de sitio: (catálogo / pedidos / restaurante / otro)
-¿Panel para editar productos?: (sí/no)
-¿Plazo ideal?: (fecha)
-
-Gracias!`
-      );
-      const mailEl = document.getElementById('promoMail');
-      if (mailEl) mailEl.href = `mailto:ludmilasolutions2.0@gmail.com?subject=${subj}&body=${body}`;
-
-      // Ocultar FAB si la promo está visible
-      const promoEl = document.getElementById('promoWeb');
-      if ('IntersectionObserver' in window && promoEl && fab) {
-        const io = new IntersectionObserver(([entry])=>{
-          promoVisible = entry.isIntersecting;
-          actualizarResumen();
-        }, { rootMargin: '0px 0px -25% 0px', threshold: 0.01 });
-        io.observe(promoEl);
-      }
-    })();
-
     /* ===== Bottom Sheet: abrir/cerrar, accesibilidad, focus trap ===== */
     function trapFocus(e){
       if (!sheetOpen) return;
@@ -683,19 +566,13 @@ Gracias!`
     function openSheet(){
       if (sheetOpen) return;
       sheetOpen = true;
-      // mover checkout al sheet
-      sheetBody.appendChild(checkout);
-      // mostrar
-      backdrop.classList.add('open');
+      document.body.style.overflow = 'hidden';
       sheet.classList.add('open');
+      backdrop.classList.add('open');
       sheet.removeAttribute('aria-hidden');
       backdrop.removeAttribute('aria-hidden');
-      document.body.style.overflow = 'hidden';
-      // esconder FAB mientras está abierto
       setFabVisible(false);
-      // foco
-      setTimeout(()=> sheetClose.focus(), 10);
-      // eventos
+      setTimeout(()=> document.getElementById('sheetClose').focus(), 10);
       document.addEventListener('keydown', onSheetKeydown);
       document.addEventListener('keydown', trapFocus);
     }
@@ -703,60 +580,45 @@ Gracias!`
     function closeSheet(){
       if (!sheetOpen) return;
       sheetOpen = false;
-      // devolver checkout a su lugar
-      anchor.appendChild(checkout);
-      // ocultar con animación
+      document.body.style.overflow = '';
       sheet.classList.remove('open');
       backdrop.classList.remove('open');
       sheet.setAttribute('aria-hidden','true');
       backdrop.setAttribute('aria-hidden','true');
-      document.body.style.overflow = '';
-      // restaurar visibilidad FAB según reglas
-      actualizarResumen();
-      // quitar eventos
+      actualizarResumen(); // restablece FAB si corresponde
       document.removeEventListener('keydown', onSheetKeydown);
       document.removeEventListener('keydown', trapFocus);
     }
 
-    function onSheetKeydown(e){
-      if (e.key === 'Escape'){ closeSheet(); }
-    }
+    function onSheetKeydown(e){ if (e.key === 'Escape'){ closeSheet(); } }
 
-    // Clicks
-    fab.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      openSheet();
-    });
+    // FAB abre sheet
+    fab.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); openSheet(); });
     sheetClose.addEventListener('click', closeSheet);
     backdrop.addEventListener('click', closeSheet);
 
     // Deslizar hacia abajo (básico)
     let startY = 0, currentY = 0, dragging = false;
-    sheet.addEventListener('touchstart', (e)=>{
-      if (!sheetOpen) return;
-      startY = e.touches[0].clientY;
-      dragging = true;
-    }, {passive:true});
-    sheet.addEventListener('touchmove', (e)=>{
-      if (!dragging) return;
-      currentY = e.touches[0].clientY;
-      const diff = Math.max(0, currentY - startY);
-      sheet.style.transform = `translateY(${diff}px)`;
-    }, {passive:true});
-    sheet.addEventListener('touchend', ()=>{
-      if (!dragging) return;
-      const diff = Math.max(0, currentY - startY);
-      dragging = false; startY = 0; currentY = 0;
-      if (diff > 120) { // umbral para cerrar
-        sheet.style.transform = '';
-        closeSheet();
-      } else {
-        // volver a abrir
-        sheet.classList.add('open');
-        sheet.style.transform = '';
-      }
-    });
+    sheet.addEventListener('touchstart', (e)=>{ if (!sheetOpen) return; startY = e.touches[0].clientY; dragging = true; }, {passive:true});
+    sheet.addEventListener('touchmove', (e)=>{ if (!dragging) return; currentY = e.touches[0].clientY; const diff = Math.max(0, currentY - startY); sheet.style.transform = `translateY(${diff}px)`; }, {passive:true});
+    sheet.addEventListener('touchend', ()=>{ if (!dragging) return; const diff = Math.max(0, currentY - startY); dragging = false; startY = 0; currentY = 0; if (diff > 120) { sheet.style.transform = ''; closeSheet(); } else { sheet.classList.add('open'); sheet.style.transform = ''; } });
+
+    /* ===== Promo CTA (email) ===== */
+    (function promoInit(){
+      const subj = encodeURIComponent(`Quiero una web para mi negocio`);
+      const body = encodeURIComponent(
+`Hola Ludmila,
+Vi tu trabajo y quiero pedir un presupuesto para mi web.
+
+Tipo de sitio: (catálogo / pedidos / restaurante / otro)
+¿Panel para editar productos?: (sí/no)
+¿Plazo ideal?: (fecha)
+
+Gracias!`
+      );
+      const mailEl = document.getElementById('promoMail');
+      if (mailEl) mailEl.href = `mailto:ludmilasolutions2.0@gmail.com?subject=${subj}&body=${body}`;
+    })();
   </script>
 </body>
 </html>
