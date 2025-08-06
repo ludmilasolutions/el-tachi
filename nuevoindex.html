@@ -7,118 +7,132 @@
   <link rel="icon" href="logo.png">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
   <style>
-    :root {
-      --azul: #003366;
-      --azul-2: #001122;
-      --azul-3: #004080;
-      --amarillo: #ffcc00;
-      --gris-borde: #ccc;
-      --bg: #f8f9fa;
-      --text: #333;
-      --card: #fff;
-      --card-hover: #f1f1f1;
-      --resumen-bg: #fff3cd;
-      --resumen-borde: #ffeeba;
+    :root{
+      --azul:#003366;
+      --azul-2:#001122;
+      --azul-3:#004080;
+      --amarillo:#ffcc00;
+      --gris-borde:#ccc;
     }
-    * { box-sizing: border-box; }
     body {
-      margin: 0; padding: 0;
       font-family: 'Roboto', sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      background: #f8f9fa;
+      color: #333;
+      margin: 0;
+      padding: 0;
     }
     header {
       background: linear-gradient(90deg, var(--azul) 0%, var(--azul-2) 100%);
-      color: #fff; text-align: center;
-      padding: 2rem 1rem 1.2rem;
+      color: #fff;
+      padding: 2rem 1rem;
+      text-align: center;
     }
     header img {
-      max-height: 180px; margin-bottom: 1rem;
+      max-height: 180px;
+      margin: 0 auto 1rem;
     }
     main {
-      max-width: 900px; margin: auto; padding: 1rem;
+      padding: 1rem;
+      max-width: 900px;
+      margin: auto;
     }
+
+    /* Tabs */
     .tabs {
-      display: flex; justify-content: center;
-      gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1rem;
+      gap: 1rem;
+      flex-wrap: wrap;
     }
     .tabs button {
-      padding: 0.8rem 1.8rem; font-size: 1.1rem;
-      border: none; border-radius: 30px;
-      background: var(--azul-3); color: var(--amarillo);
-      font-weight: bold; cursor: pointer;
+      padding: 0.8rem 1.8rem;
+      font-size: 1.1rem;
+      border: none;
+      background: var(--azul-3);
+      color: var(--amarillo);
+      font-weight: bold;
+      border-radius: 30px;
       box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-      transition: all 0.3s ease; border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
     }
     .tabs button:hover { background: #0055aa; }
     .tabs button.active {
-      background: var(--azul-2); border-color: var(--amarillo);
+      background: var(--azul-2);
+      border-color: var(--amarillo);
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
+
+    /* Acordeón (ambas secciones) */
     details {
-      background: var(--card);
       border: 1px solid var(--gris-borde);
-      border-radius: 8px; margin-bottom: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
       overflow: hidden;
     }
     summary {
-      background: var(--azul); color: var(--amarillo);
-      padding: 1rem; font-weight: bold;
-      font-size: 1.1rem; cursor: pointer;
-      user-select: none; list-style: none;
+      background: var(--azul);
+      color: var(--amarillo);
+      padding: 1rem;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1.1rem;
+      user-select: none;
+      list-style: none;
     }
+
+    /* Listado de productos */
     .producto {
-      display: flex; justify-content: space-between;
-      align-items: center; gap: 0.75rem;
-      padding: 0.5rem 1rem; border-top: 1px solid var(--gris-borde);
-      background: var(--card);
-      transition: background 0.2s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: .75rem;
+      padding: 0.5rem 1rem;
+      border-top: 1px solid #ddd;
+      background: #fff;
     }
-    .producto:hover { background: var(--card-hover); }
+    .producto:hover { background: #f1f1f1; }
     .producto-info { max-width: 65%; }
     .producto h3 {
-      margin: 0.2rem 0; color: #79a7ff; font-size: 1rem;
+      margin: 0.2rem 0;
+      color: #004c99;
+      font-size: 1rem;
     }
-    .producto p { margin: 0.1rem 0; font-size: 0.9rem; color: var(--text); }
-    .contador {
-      display: flex; align-items: center; gap: 0.5rem;
-    }
+    .producto p { margin: 0.1rem 0; font-size: 0.9rem; }
+    .contador { display: flex; align-items: center; gap: 0.5rem; }
     .contador button {
-      background: var(--azul); color: var(--amarillo);
-      border: none; padding: 0.3rem 0.6rem;
-      font-weight: bold; font-size: 1.2rem;
-      cursor: pointer; border-radius: 5px;
-      transform-origin: center;
+      background: var(--azul);
+      color: var(--amarillo);
+      border: none;
+      padding: 0.3rem 0.6rem;
+      font-weight: bold;
+      font-size: 1.2rem;
+      cursor: pointer;
+      border-radius: 5px;
     }
-    @keyframes pop { 0%,100%{transform:scale(1)}50%{transform:scale(1.2)} }
-    .btn-pop { animation: pop 0.22s ease-out; }
-    @keyframes flash { 0%,100%{box-shadow:0 0 0 rgba(255,204,0,0)}50%{box-shadow:0 0 0 4px rgba(255,204,0,0.35)} }
-    .row-flash { animation: flash 0.35s ease-out; }
+
+    /* Bloque Resumen */
     #resumen {
-      margin-top: 2rem; padding: 1rem;
-      background: var(--resumen-bg);
-      border: 1px solid var(--resumen-borde);
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #fff3cd;
+      border: 1px solid #ffeeba;
       border-radius: 8px;
     }
     #resumen button {
-      background: var(--azul); color: var(--amarillo);
-      border: none; padding: 0.8rem 1.2rem;
-      margin-top: 1rem; font-weight: bold;
-      font-size: 1rem; border-radius: 5px;
+      background: var(--azul);
+      color: var(--amarillo);
+      border: none;
+      padding: 0.8rem 1.2rem;
+      margin-top: 1rem;
       cursor: pointer;
+      font-weight: bold;
+      font-size: 1rem;
+      border-radius: 5px;
     }
     label { display: block; margin-top: 1rem; }
-    .floating-counter {
-      position: fixed; bottom: 16px; right: 16px;
-      width: 56px; height: 56px; border-radius: 50%;
-      background: var(--azul); color: var(--amarillo);
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 800; cursor: pointer; z-index: 99;
-      box-shadow: 0 8px 18px rgba(0,0,0,0.25);
-      transition: transform 0.15s;
-    }
-    .floating-counter:hover { transform: translateY(-2px); }
-    .floating-counter[hidden] { display: none; }
   </style>
 </head>
 <body>
@@ -150,144 +164,166 @@
     </div>
   </main>
 
-  <div id="floatingCounter" class="floating-counter" hidden>0</div>
-
   <script>
-    const cantidades = {};
-    const listaEl = document.getElementById('lista');
-    const totalEl = document.getElementById('total');
-    const floatEl = document.getElementById('floatingCounter');
-
+    /* ---------- Utilidades ---------- */
     function asset(path) {
-      if (location.hostname.endsWith('github.io')) {
-        const repo = location.pathname.split('/').filter(Boolean)[0] || '';
-        return `/${repo}/${path}`;
+      const host = location.hostname;
+      if (host.endsWith('github.io')) {
+        const parts = location.pathname.split('/').filter(Boolean);
+        const repo = parts[0] || '';
+        return /${repo}/${path};
       }
-      return `/${path}`;
+      return /${path};
     }
-
-    function normalizar(data) {
+    function normalizarDatosDesdeCMS(data) {
       if (data && Array.isArray(data.categorias)) {
-        const o = {};
-        data.categorias.forEach(c => { o[c.categoria] = c.productos || []; });
-        return o;
+        const out = {};
+        data.categorias.forEach(c => { out[c.categoria] = c.productos || []; });
+        return out;
       }
       return data || {};
     }
 
-    function renderProductos(id, data) {
-      const cont = document.getElementById(id);
-      cont.innerHTML = '';
-      const obj = normalizar(data);
-      Object.keys(obj).forEach(cat => {
+    /* ---------- Estado ---------- */
+    const cantidades = {};
+    const lista = document.getElementById('lista');
+    const totalSpan = document.getElementById('total');
+
+    /* ---------- Render ---------- */
+    function renderProductos(contenedorId, productos) {
+      const contenedor = document.getElementById(contenedorId);
+      contenedor.innerHTML = '';
+      const data = normalizarDatosDesdeCMS(productos);
+
+      for (let categoria in data) {
+        const items = data[categoria] || [];
+
+        // Acordeón para todas las secciones
         const detail = document.createElement('details');
-        const sum = document.createElement('summary');
-        sum.textContent = cat;
-        detail.appendChild(sum);
-        obj[cat].forEach((prod, i) => {
-          const pid = `${id}-${cat}-${i}`;
-          if (!(pid in cantidades)) cantidades[pid] = 0;
-          const row = document.createElement('div');
-          row.className = 'producto';
-          row.innerHTML = `
+        const summary = document.createElement('summary');
+        summary.textContent = categoria;
+        detail.appendChild(summary);
+
+        items.forEach((prod, i) => {
+          const id = ${contenedorId}-${categoria}-${i};
+          if (!(id in cantidades)) cantidades[id] = 0;
+
+          const div = document.createElement('div');
+          div.className = 'producto';
+          div.innerHTML = 
             <div class="producto-info">
               <h3>${prod.nombre} - $${prod.precio}</h3>
-              ${prod.desc ? `<p>${prod.desc}</p>` : ''}
+              ${prod.desc ? <p>${prod.desc}</p> : ""}
             </div>
             <div class="contador">
-              <button class="btn-minus" onclick="cambiar('${pid}', -1, this)">−</button>
-              <span id="cantidad-${pid}">0</span>
-              <button class="btn-plus" onclick="cambiar('${pid}', 1, this)">+</button>
+              <button onclick="cambiarCantidad('${id}', -1)">−</button>
+              <span id="cantidad-${id}">0</span>
+              <button onclick="cambiarCantidad('${id}', 1)">+</button>
             </div>
-          `;
-          row.dataset.nombre = prod.nombre;
-          row.dataset.precio = prod.precio;
-          detail.appendChild(row);
+          ;
+          div.dataset.nombre = prod.nombre;
+          div.dataset.precio = prod.precio;
+          detail.appendChild(div);
         });
-        cont.appendChild(detail);
-      });
-    }
 
-    function cargar() {
-      fetch(asset('data/productos-rotiseria.json'))
-        .then(r => r.json()).then(d => renderProductos('menu-rotiseria', d));
-      fetch(asset('data/productos-almacen.json'))
-        .then(r => r.json()).then(d => renderProductos('menu-almacen', d));
-    }
-    cargar();
-
-    function cambiar(id, delta, btn) {
-      cantidades[id] = Math.max(0, (cantidades[id] || 0) + delta);
-      document.getElementById(`cantidad-${id}`).textContent = cantidades[id];
-      if (delta > 0) {
-        btn.classList.add('btn-pop');
-        btn.addEventListener('animationend', () => btn.classList.remove('btn-pop'), { once: true });
-        const row = btn.closest('.producto');
-        row.classList.add('row-flash');
-        row.addEventListener('animationend', () => row.classList.remove('row-flash'), { once: true });
+        contenedor.appendChild(detail);
       }
-      actualizar();
     }
 
-    function actualizar() {
-      listaEl.innerHTML = '';
-      let total = 0, count = 0;
-      Object.entries(cantidades).forEach(([id, qty]) => {
-        if (qty > 0) {
-          const span = document.getElementById(`cantidad-${id}`);
-          if (!span) return;
-          const row = span.closest('.producto');
-          const name = row.dataset.nombre;
-          const price = parseInt(row.dataset.precio, 10);
+    function cargarProductos() {
+      // Rotisería
+      fetch(asset('data/productos-rotiseria.json'))
+        .then(res => res.json())
+        .then(data => renderProductos('menu-rotiseria', data))
+        .catch(err => console.error('Rotisería JSON error:', err));
+
+      // Almacén (ahora también desplegable)
+      fetch(asset('data/productos-almacen.json'))
+        .then(res => res.json())
+        .then(data => renderProductos('menu-almacen', data))
+        .catch(err => console.error('Almacén JSON error:', err));
+    }
+    cargarProductos();
+
+    /* ---------- Carrito ---------- */
+    function cambiarCantidad(id, delta) {
+      cantidades[id] = Math.max(0, (cantidades[id] || 0) + delta);
+      const el = document.getElementById(cantidad-${id});
+      if (el) el.textContent = cantidades[id];
+      actualizarResumen();
+    }
+
+    function actualizarResumen() {
+      lista.innerHTML = '';
+      let total = 0;
+      for (let id in cantidades) {
+        const cantidad = cantidades[id];
+        if (cantidad > 0) {
+          const span = document.getElementById(cantidad-${id});
+          if (!span) continue;
+          const productoDiv = span.closest('.producto');
+          const nombre = productoDiv?.dataset?.nombre || '';
+          const precio = parseInt(productoDiv?.dataset?.precio || '0', 10);
           const li = document.createElement('li');
-          li.textContent = `${name} x${qty} - $${price * qty}`;
-          listaEl.appendChild(li);
-          total += price * qty;
-          count += qty;
+          li.textContent = ${nombre} x${cantidad} - $${precio * cantidad};
+          lista.appendChild(li);
+          total += precio * cantidad;
         }
-      });
+      }
       const envio = document.querySelector('input[name=envio]:checked').value;
       if (envio === 'envio') total += 1000;
-      totalEl.textContent = total;
-      floatEl.textContent = count;
-      floatEl.hidden = count === 0;
+      totalSpan.textContent = total;
     }
-
-    document.querySelectorAll('input[name=envio]').forEach(r => r.addEventListener('change', actualizar));
-    floatEl.onclick = () => document.getElementById('resumen').scrollIntoView({ behavior: 'smooth' });
+    document.querySelectorAll('input[name=envio]').forEach(r => r.addEventListener('change', actualizarResumen));
 
     function enviarPedido() {
-      const name = document.getElementById('nombre').value.trim();
-      const addr = document.getElementById('direccion').value.trim();
+      const nombre = document.getElementById('nombre').value.trim();
+      const direccion = document.getElementById('direccion').value.trim();
       const envio = document.querySelector('input[name=envio]:checked').value;
-      if (!name) return alert('Por favor, ingresá tu nombre.');
-      if (envio === 'envio' && !addr) return alert('Por favor, ingresá tu dirección.');
-      let msg = `Hola, soy ${name}. Quiero hacer un pedido:\n`;
-      let ok = false;
-      Object.entries(cantidades).forEach(([id, qty]) => {
-        if (qty > 0) {
-          const span = document.getElementById(`cantidad-${id}`);
-          const row = span.closest('.producto');
-          const namep = row.dataset.nombre;
-          const price = parseInt(row.dataset.precio, 10);
-          msg += `- ${namep} x${qty} - $${price * qty}\n`;
-          ok = true;
+      if (!nombre) return alert("Por favor, ingresá tu nombre.");
+      if (envio === 'envio' && !direccion) return alert("Por favor, ingresá tu dirección.");
+
+      let mensaje = Hola, soy ${nombre}. Quiero hacer un pedido:\n;
+      let algoSeleccionado = false;
+
+      for (let id in cantidades) {
+        const cantidad = cantidades[id];
+        if (cantidad > 0) {
+          const span = document.getElementById(cantidad-${id});
+          if (!span) continue;
+          const div = span.closest('.producto');
+          const nombreProd = div?.dataset?.nombre || '';
+          const precio = parseInt(div?.dataset?.precio || '0', 10);
+          mensaje += - ${nombreProd} x${cantidad} - $${precio * cantidad}\n;
+          algoSeleccionado = true;
         }
-      });
-      if (!ok) return alert('Seleccioná al menos un producto.');
-      msg += envio === 'envio'
-        ? `Envío a domicilio a: ${addr} (+$1000)\n`
-        : 'Retiro en el local\n';
-      msg += `Total: $${totalEl.textContent}`;
-      window.open(`https://wa.me/3415923882?text=${encodeURIComponent(msg)}`, '_blank');
+      }
+
+      if (!algoSeleccionado) return alert("Seleccioná al menos un producto.");
+      mensaje += envio === 'envio'
+        ? Envío a domicilio a: ${direccion} (+$1000)\n
+        : Retiro en el local\n;
+      mensaje += Total: $${totalSpan.textContent};
+
+      const url = https://wa.me/3415923882?text=${encodeURIComponent(mensaje)};
+      window.open(url, '_blank');
     }
 
-    function mostrar(sec) {
-      document.getElementById('menu-rotiseria').style.display = sec === 'rotiseria' ? 'block' : 'none';
-      document.getElementById('menu-almacen').style.display = sec === 'almacen' ? 'block' : 'none';
-      document.getElementById('btn-rotiseria').classList.toggle('active', sec === 'rotiseria');
-      document.getElementById('btn-almacen').classList.toggle('active', sec === 'almacen');
+    /* ---------- Tabs ---------- */
+    function mostrar(seccion) {
+      document.getElementById('menu-rotiseria').style.display = seccion === 'rotiseria' ? 'block' : 'none';
+      document.getElementById('menu-almacen').style.display = seccion === 'almacen' ? 'block' : 'none';
+      document.getElementById('btn-rotiseria').classList.toggle('active', seccion === 'rotiseria');
+      document.getElementById('btn-almacen').classList.toggle('active', seccion === 'almacen');
     }
   </script>
+
+  <div style="margin-top:2rem; text-align:center; font-size:0.9rem;">
+    <p>¿Querés una web como esta para tu negocio?</p>
+    <a href="mailto:ludmilasolutions2.0@gmail.com" style="background:#003366; color:#ffcc00; padding:0.6rem 1rem; border-radius:6px; text-decoration:none;">
+      Escribime: ludmilasolutions2.0@gmail.com
+    </a>
+    <p style="margin-top:0.5rem;">Creado por <strong>Ludmila Mercado</strong></p>
+  </div>
 </body>
 </html>
