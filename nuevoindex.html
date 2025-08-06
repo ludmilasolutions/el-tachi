@@ -65,7 +65,7 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
 
-    /* Acordeón (Rotisería) */
+    /* Acordeón (ambas secciones) */
     details {
       border: 1px solid var(--gris-borde);
       border-radius: 8px;
@@ -133,24 +133,6 @@
       border-radius: 5px;
     }
     label { display: block; margin-top: 1rem; }
-
-    /* Título de categoría (modo plano para Almacén) */
-    .categoria-titulo {
-      margin: 1rem 0 .5rem 0;
-      padding: .8rem 1rem;
-      background: var(--azul);
-      color: var(--amarillo);
-      border-radius: 8px;
-      font-weight: bold;
-      font-size: 1.05rem;
-    }
-    .grupo-categoria {
-      border: 1px solid var(--gris-borde);
-      border-radius: 8px;
-      overflow: hidden;
-      margin-bottom: 1rem;
-      background: #fff;
-    }
   </style>
 </head>
 <body>
@@ -184,7 +166,6 @@
 
   <script>
     /* ---------- Utilidades ---------- */
-    // Rutas que funcionan en Netlify (/) y GitHub Pages (/repo/)
     function asset(path) {
       const host = location.hostname;
       if (host.endsWith('github.io')) {
@@ -194,8 +175,6 @@
       }
       return `/${path}`;
     }
-
-    // Normaliza el formato del CMS ({categorias:[{categoria, productos}]})
     function normalizarDatosDesdeCMS(data) {
       if (data && Array.isArray(data.categorias)) {
         const out = {};
@@ -211,7 +190,7 @@
     const totalSpan = document.getElementById('total');
 
     /* ---------- Render ---------- */
-    function renderProductos(contenedorId, productos, modo = 'collapsible') {
+    function renderProductos(contenedorId, productos) {
       const contenedor = document.getElementById(contenedorId);
       contenedor.innerHTML = '';
       const data = normalizarDatosDesdeCMS(productos);
@@ -219,84 +198,49 @@
       for (let categoria in data) {
         const items = data[categoria] || [];
 
-        if (modo === 'collapsible') {
-          // Rotisería: acordeón
-          const detail = document.createElement('details');
-          const summary = document.createElement('summary');
-          summary.textContent = categoria;
-          detail.appendChild(summary);
+        // Acordeón para todas las secciones
+        const detail = document.createElement('details');
+        const summary = document.createElement('summary');
+        summary.textContent = categoria;
+        detail.appendChild(summary);
 
-          items.forEach((prod, i) => {
-            const id = `${contenedorId}-${categoria}-${i}`;
-            if (!(id in cantidades)) cantidades[id] = 0;
+        items.forEach((prod, i) => {
+          const id = `${contenedorId}-${categoria}-${i}`;
+          if (!(id in cantidades)) cantidades[id] = 0;
 
-            const div = document.createElement('div');
-            div.className = 'producto';
-            div.innerHTML = `
-              <div class="producto-info">
-                <h3>${prod.nombre} - $${prod.precio}</h3>
-                ${prod.desc ? `<p>${prod.desc}</p>` : ""}
-              </div>
-              <div class="contador">
-                <button onclick="cambiarCantidad('${id}', -1)">−</button>
-                <span id="cantidad-${id}">0</span>
-                <button onclick="cambiarCantidad('${id}', 1)">+</button>
-              </div>
-            `;
-            div.dataset.nombre = prod.nombre;
-            div.dataset.precio = prod.precio;
-            detail.appendChild(div);
-          });
+          const div = document.createElement('div');
+          div.className = 'producto';
+          div.innerHTML = `
+            <div class="producto-info">
+              <h3>${prod.nombre} - $${prod.precio}</h3>
+              ${prod.desc ? `<p>${prod.desc}</p>` : ""}
+            </div>
+            <div class="contador">
+              <button onclick="cambiarCantidad('${id}', -1)">−</button>
+              <span id="cantidad-${id}">0</span>
+              <button onclick="cambiarCantidad('${id}', 1)">+</button>
+            </div>
+          `;
+          div.dataset.nombre = prod.nombre;
+          div.dataset.precio = prod.precio;
+          detail.appendChild(div);
+        });
 
-          contenedor.appendChild(detail);
-        } else {
-          // Almacén: todas las categorías visibles (sin despliegue)
-          const bloque = document.createElement('div');
-          bloque.className = 'grupo-categoria';
-
-          const titulo = document.createElement('div');
-          titulo.className = 'categoria-titulo';
-          titulo.textContent = categoria;
-          bloque.appendChild(titulo);
-
-          items.forEach((prod, i) => {
-            const id = `${contenedorId}-${categoria}-${i}`;
-            if (!(id in cantidades)) cantidades[id] = 0;
-
-            const div = document.createElement('div');
-            div.className = 'producto';
-            div.innerHTML = `
-              <div class="producto-info">
-                <h3>${prod.nombre} - $${prod.precio}</h3>
-                ${prod.desc ? `<p>${prod.desc}</p>` : ""}
-              </div>
-              <div class="contador">
-                <button onclick="cambiarCantidad('${id}', -1)">−</button>
-                <span id="cantidad-${id}">0</span>
-                <button onclick="cambiarCantidad('${id}', 1)">+</button>
-              </div>
-            `;
-            div.dataset.nombre = prod.nombre;
-            div.dataset.precio = prod.precio;
-            bloque.appendChild(div);
-          });
-
-          contenedor.appendChild(bloque);
-        }
+        contenedor.appendChild(detail);
       }
     }
 
     function cargarProductos() {
-      // Rotisería (acordeón)
+      // Rotisería
       fetch(asset('data/productos-rotiseria.json'))
         .then(res => res.json())
-        .then(data => renderProductos('menu-rotiseria', data, 'collapsible'))
+        .then(data => renderProductos('menu-rotiseria', data))
         .catch(err => console.error('Rotisería JSON error:', err));
 
-      // Almacén (plano, todo visible)
+      // Almacén (ahora también desplegable)
       fetch(asset('data/productos-almacen.json'))
         .then(res => res.json())
-        .then(data => renderProductos('menu-almacen', data, 'flat'))
+        .then(data => renderProductos('menu-almacen', data))
         .catch(err => console.error('Almacén JSON error:', err));
     }
     cargarProductos();
