@@ -9,7 +9,7 @@ collections:
   - name: "rotiseria"
     label: "Productos Rotisería"
     files:
-      - file: "productos-rotiseria.json"
+      - file: "data/productos-rotiseria.json"
         label: "Lista de productos Rotisería"
         name: "productos_rotiseria"
         format: "json"
@@ -30,7 +30,7 @@ collections:
   - name: "almacen"
     label: "Productos Almacén"
     files:
-      - file: "productos-almacen.json"
+      - file: "data/productos-almacen.json"
         label: "Lista de productos Almacén"
         name: "productos_almacen"
         format: "json"
