@@ -20,15 +20,6 @@
       --resumen-bg: #fff3cd;
       --resumen-borde: #ffeeba;
     }
-    body.dark {
-      --bg: #0f172a;
-      --text: #e5e7eb;
-      --card: #0b1223;
-      --card-hover: #111a31;
-      --gris-borde: #1f2a44;
-      --resumen-bg: #17213b;
-      --resumen-borde: #223055;
-    }
     * { box-sizing: border-box; }
     body {
       margin: 0; padding: 0;
@@ -37,21 +28,12 @@
       color: var(--text);
     }
     header {
-      position: relative;
       background: linear-gradient(90deg, var(--azul) 0%, var(--azul-2) 100%);
       color: #fff; text-align: center;
       padding: 2rem 1rem 1.2rem;
     }
     header img {
       max-height: 180px; margin-bottom: 1rem;
-    }
-    .theme-toggle {
-      position: absolute; top: 12px; right: 12px;
-      background: rgba(255,255,255,0.2); color: #fff;
-      border: 1px solid rgba(255,255,255,0.5);
-      padding: 0.5rem 0.9rem; border-radius: 999px;
-      cursor: pointer; font-weight: 700;
-      backdrop-filter: blur(2px);
     }
     main {
       max-width: 900px; margin: auto; padding: 1rem;
@@ -97,7 +79,6 @@
     .producto h3 {
       margin: 0.2rem 0; color: #79a7ff; font-size: 1rem;
     }
-    body.dark .producto h3 { color: #9dc0ff; }
     .producto p { margin: 0.1rem 0; font-size: 0.9rem; color: var(--text); }
     .contador {
       display: flex; align-items: center; gap: 0.5rem;
@@ -145,7 +126,6 @@
     <img src="logo.png" alt="Rotisería El Tachi" />
     <h1>Rotisería El Tachi</h1>
     <p>¡Hacé tu pedido desde la web!</p>
-    <button id="themeToggle" class="theme-toggle">🌓</button>
   </header>
 
   <main>
@@ -170,21 +150,14 @@
     </div>
   </main>
 
-  <!-- Contador flotante -->
   <div id="floatingCounter" class="floating-counter" hidden>0</div>
 
   <script>
-    // Tema
-    const themeToggle = document.getElementById('themeToggle');
-    const current = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    if (current === 'dark') document.body.classList.add('dark');
-    themeToggle.onclick = () => {
-      document.body.classList.toggle('dark');
-      const t = document.body.classList.contains('dark') ? 'dark' : 'light';
-      localStorage.setItem('theme', t);
-    };
+    const cantidades = {};
+    const listaEl = document.getElementById('lista');
+    const totalEl = document.getElementById('total');
+    const floatEl = document.getElementById('floatingCounter');
 
-    // Asset helper (Netlify / GH Pages)
     function asset(path) {
       if (location.hostname.endsWith('github.io')) {
         const repo = location.pathname.split('/').filter(Boolean)[0] || '';
@@ -193,7 +166,6 @@
       return `/${path}`;
     }
 
-    // Normaliza CMS
     function normalizar(data) {
       if (data && Array.isArray(data.categorias)) {
         const o = {};
@@ -202,11 +174,6 @@
       }
       return data || {};
     }
-
-    const cantidades = {};
-    const listaEl = document.getElementById('lista');
-    const totalEl = document.getElementById('total');
-    const floatEl = document.getElementById('floatingCounter');
 
     function renderProductos(id, data) {
       const cont = document.getElementById(id);
@@ -243,24 +210,21 @@
 
     function cargar() {
       fetch(asset('data/productos-rotiseria.json'))
-        .then(r => r.json()).then(d => renderProductos('menu-rotiseria', d))
-        .catch(e => console.error(e));
+        .then(r => r.json()).then(d => renderProductos('menu-rotiseria', d));
       fetch(asset('data/productos-almacen.json'))
-        .then(r => r.json()).then(d => renderProductos('menu-almacen', d))
-        .catch(e => console.error(e));
+        .then(r => r.json()).then(d => renderProductos('menu-almacen', d));
     }
     cargar();
 
     function cambiar(id, delta, btn) {
       cantidades[id] = Math.max(0, (cantidades[id] || 0) + delta);
       document.getElementById(`cantidad-${id}`).textContent = cantidades[id];
-      // animaciones
       if (delta > 0) {
         btn.classList.add('btn-pop');
-        btn.addEventListener('animationend', ()=> btn.classList.remove('btn-pop'), { once: true });
+        btn.addEventListener('animationend', () => btn.classList.remove('btn-pop'), { once: true });
         const row = btn.closest('.producto');
         row.classList.add('row-flash');
-        row.addEventListener('animationend', ()=> row.classList.remove('row-flash'), { once: true });
+        row.addEventListener('animationend', () => row.classList.remove('row-flash'), { once: true });
       }
       actualizar();
     }
@@ -285,19 +249,12 @@
       const envio = document.querySelector('input[name=envio]:checked').value;
       if (envio === 'envio') total += 1000;
       totalEl.textContent = total;
-      // floating count
-      if (count > 0) {
-        floatEl.textContent = count;
-        floatEl.hidden = false;
-      } else {
-        floatEl.hidden = true;
-      }
+      floatEl.textContent = count;
+      floatEl.hidden = count === 0;
     }
-    document.querySelectorAll('input[name=envio]').forEach(r => r.addEventListener('change', actualizar));
 
-    floatEl.onclick = () => {
-      document.getElementById('resumen').scrollIntoView({ behavior: 'smooth' });
-    };
+    document.querySelectorAll('input[name=envio]').forEach(r => r.addEventListener('change', actualizar));
+    floatEl.onclick = () => document.getElementById('resumen').scrollIntoView({ behavior: 'smooth' });
 
     function enviarPedido() {
       const name = document.getElementById('nombre').value.trim();
