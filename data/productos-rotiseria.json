@@ -26,7 +26,7 @@
     {
       "categoria": "🥪 Torpedos con Papas",
       "productos": [
-        { "nombre": "Torpedo Especial de 2 hamburguesas", "precio": 8900, "desc": "Pan, carne, lechuga, tomate, adereso y doble hamburguesa" },
+        { "nombre": "Torpedo Especial de 2 hamburguesas", "precio": 8900, "desc": "Pan, carne, lechuga, tomate, aderezo y doble hamburguesa" },
         { "nombre": "Torpedo Especial de 3 hamburguesas", "precio": 9900, "desc": "Pan, carne, jamon, queso, huevo, lechuga, tomate, aderezo y triple hamburguesa" },
         { "nombre": "Torpedo Primavera", "precio": 7000, "desc": "Pan, jamón, queso, lechuga, tomate, huevo y aderezo" },
         { "nombre": "Torpedo Vegetariano", "precio": 7000, "desc": "Pan, doble queso, lechuga, tomate, huevo y aderezo" },
@@ -47,4 +47,43 @@
       "categoria": "🥟 Empanadas",
       "productos": [
         { "nombre": "Empanada de Carne salada", "precio": 1000 },
-        { "nombre": "Empanada de Jamon y queso", "prec
+        { "nombre": "Empanada de Jamon y queso", "precio": 1000 },
+        { "nombre": "Empanada de Pollo", "precio": 1000 },
+        { "nombre": "Empanada de Verdura", "precio": 1000 }
+      ]
+    },
+    {
+      "categoria": "🍟 Papas Fritas",
+      "productos": [
+        { "nombre": "Papas Medianas", "precio": 3500 },
+        { "nombre": "Papas Grandes", "precio": 5000 },
+        { "nombre": "Aderezo Adicional", "precio": 1000 }
+      ]
+    },
+    {
+      "categoria": "🥪 Carlitos",
+      "productos": [
+        { "nombre": "Carlito Común", "precio": 6000, "desc": "Jamón, queso y ketchup" },
+        { "nombre": "Carlito Especial", "precio": 7000, "desc": "Jamón, queso, ketchup, pan con mayonesa, huevo rayado y morrón" },
+        { "nombre": "Adicional Papas fritas", "precio": 1500, "desc": "Carlitos + Papas Fritas" }
+      ]
+    },
+    {
+      "categoria": "🍽️ Pizzanesas con colchón de papas fritas",
+      "productos": [
+        { "nombre": "Pizzanesa Carne para 3 personas", "precio": 22500, "desc": "Especial" },
+        { "nombre": "Pizzanesa Carne para 3 personas", "precio": 22500, "desc": "Napolitana" },
+        { "nombre": "Pizzanesa Carne para 3 personas", "precio": 22500, "desc": "Salame" },
+        { "nombre": "Pizzanesa Carne para 3 personas", "precio": 21000, "desc": "Muzzarella" },
+        { "nombre": "Pizzanesa Carne para 3 personas", "precio": 23500, "desc": "Roquefort" },
+        { "nombre": "Pizzanesa Carne para 3 personas", "precio": 23500, "desc": "Bomba" },
+        { "nombre": "Pizzanesa Pollo para 3 personas", "precio": 21500, "desc": "Especial" },
+        { "nombre": "Pizzanesa Pollo para 3 personas", "precio": 21500, "desc": "Napolitana" },
+        { "nombre": "Pizzanesa Pollo para 3 personas", "precio": 21500, "desc": "Salame" },
+        { "nombre": "Pizzanesa Pollo para 3 personas", "precio": 20000, "desc": "Muzzarella" },
+        { "nombre": "Pizzanesa Pollo para 3 personas", "precio": 22500, "desc": "Roquefort" },
+        { "nombre": "Pizzanesa Pollo para 3 personas", "precio": 22500, "desc": "Bomba" }
+      ]
+    }
+  ]
+}
