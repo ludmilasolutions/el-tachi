@@ -121,7 +121,7 @@
 
     label { display: block; margin-top: 1rem; }
 
-    /* FAB Carrito (pastilla) */
+    /* FAB Carrito (pastilla) — ahora es BUTTON con mejoras móviles */
     .cart-fab{
       position: fixed;
       right: 16px;
@@ -136,7 +136,15 @@
       box-shadow: 0 8px 18px rgba(0,0,0,.25);
       cursor: pointer;
       transition: transform .15s ease;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      appearance: none;
+      -webkit-appearance: none;
     }
+    .cart-fab * { pointer-events: none; }
     .cart-fab:hover{ transform: translateY(-2px); }
     .cart-fab[hidden]{ display:none; }
     .cart-icon{ font-size: 1.1rem; }
@@ -148,7 +156,6 @@
     }
     @keyframes bump { 0%,100%{ transform: translateY(0) scale(1);} 50%{ transform: translateY(0) scale(1.08);} }
     .cart-fab.bump{ animation: bump .3s ease; }
-    /* .cart-fab.raise{ transform: translateY(-112px); }  <-- ya no se usa al ocultar */
 
     @media (max-width:520px){
       .cart-fab{ width:auto; height:auto; padding:.55rem .8rem; gap:.5rem; }
@@ -236,12 +243,12 @@
     </section>
   </main>
 
-  <!-- FAB Carrito -->
-  <div id="cartFab" class="cart-fab" hidden title="Ver pedido" aria-live="polite" aria-label="Ver pedido">
+  <!-- FAB Carrito (button para evitar “buscar con Google”) -->
+  <button id="cartFab" type="button" class="cart-fab" hidden title="Ver pedido" aria-label="Ver pedido">
     <span class="cart-icon">🛒</span>
     <span class="cart-total" id="fabTotal">$ 0</span>
     <span class="cart-count" id="fabCount">0</span>
-  </div>
+  </button>
 
   <!-- Promo: creación de webs (solo email) -->
   <section id="promoWeb" class="promo-web" aria-labelledby="promo-web-title">
@@ -460,7 +467,9 @@
     document.querySelectorAll('input[name=envio]').forEach(r => r.addEventListener('change', actualizarResumen));
 
     // FAB: scroll al inicio del checkout (opciones de envío + resumen)
-    fab.addEventListener('click', () => {
+    fab.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       const section = document.getElementById('checkout');
       if (!section) return;
       const top = section.getBoundingClientRect().top + window.scrollY - 8;
