@@ -19,6 +19,8 @@
       --card-hover:#f1f1f1;
       --resumen-bg:#fff3cd;
       --resumen-borde:#ffeeba;
+      --ok:#16a34a;
+      --error:#dc2626;
     }
     *{box-sizing:border-box}
     body {
@@ -99,11 +101,19 @@
       margin-top: 2rem; padding: 1rem; background: var(--resumen-bg);
       border: 1px solid var(--resumen-borde); border-radius: 8px;
     }
+    #resumen .acciones {
+      display:flex; gap:.75rem; flex-wrap:wrap;
+    }
     #resumen button {
       background: var(--azul); color: var(--amarillo);
       border: none; padding: 0.8rem 1.2rem; margin-top: 1rem; cursor: pointer;
       font-weight: bold; font-size: 1rem; border-radius: 5px;
     }
+    #btn-vaciar {
+      background:#fff; color:#333; border:1px solid var(--gris-borde);
+    }
+    #btn-whatsapp:disabled{ opacity:.6; cursor:not-allowed; }
+
     label { display: block; margin-top: 1rem; }
 
     /* Contador flotante */
@@ -118,6 +128,22 @@
     }
     .floating-counter:hover{ transform: translateY(-2px); }
     .floating-counter[hidden]{ display:none; }
+
+    /* Toasts */
+    .toast-wrap{
+      position:fixed; left:50%; bottom:84px; transform:translateX(-50%);
+      z-index:100; display:flex; flex-direction:column; gap:.5rem; pointer-events:none;
+    }
+    .toast{
+      pointer-events:auto;
+      background:#0b1f3a; color:#fff; border-left:4px solid var(--azul-3);
+      padding:.7rem 1rem; border-radius:8px; box-shadow:0 10px 24px rgba(0,0,0,.25);
+      animation:fadeIn .18s ease-out;
+      max-width: calc(100vw - 40px);
+    }
+    .toast.ok{ border-left-color: var(--ok); }
+    .toast.err{ border-left-color: var(--error); }
+    @keyframes fadeIn{ from{opacity:0; transform:translate(-50%,10px)} to{opacity:1; transform:translate(-50%,0)} }
   </style>
 </head>
 <body>
@@ -144,16 +170,25 @@
     <div id="resumen">
       <h3>Resumen del pedido</h3>
       <ul id="lista"></ul>
-      <p><strong>Total: $<span id="total">0</span></strong></p>
-      <button onclick="enviarPedido()">Hacer pedido por WhatsApp</button>
+      <p><strong>Total: <span id="total">$ 0</span></strong></p>
+      <div class="acciones">
+        <button id="btn-whatsapp" onclick="enviarPedido()">Hacer pedido por WhatsApp</button>
+        <button id="btn-vaciar" type="button" onclick="vaciarCarrito()">Vaciar carrito</button>
+      </div>
     </div>
   </main>
 
   <!-- Contador flotante -->
   <div id="floatingCounter" class="floating-counter" hidden>0</div>
 
+  <!-- Toast container -->
+  <div id="toastWrap" class="toast-wrap"></div>
+
   <script>
     /* ---------- Utilidades ---------- */
+    const CART_KEY = 'tachi_cart_v1';
+    const formatARS = new Intl.NumberFormat('es-AR',{ style:'currency', currency:'ARS', maximumFractionDigits:0 }).format;
+
     function asset(path) {
       const host = location.hostname;
       if (host.endsWith('github.io')) {
@@ -163,31 +198,48 @@
       }
       return `/${path}`;
     }
-    function normalizarDatosDesdeCMS(data) {
+    function normalizar(data) {
       if (data && Array.isArray(data.categorias)) {
-        const out = {};
-        data.categorias.forEach(c => { out[c.categoria] = c.productos || []; });
-        return out;
+        const o = {};
+        data.categorias.forEach(c => { o[c.categoria] = c.productos || []; });
+        return o;
       }
       return data || {};
+    }
+    function showToast(msg, type='ok', timeout=2200){
+      const wrap = document.getElementById('toastWrap');
+      const el = document.createElement('div');
+      el.className = `toast ${type==='error'?'err':type==='ok'?'ok':''}`;
+      el.textContent = msg;
+      wrap.appendChild(el);
+      setTimeout(()=> { el.style.opacity='0'; el.style.transition='opacity .2s'; }, timeout);
+      setTimeout(()=> wrap.removeChild(el), timeout+220);
     }
 
     /* ---------- Estado ---------- */
     const cantidades = {};
-    const lista = document.getElementById('lista');
-    const totalSpan = document.getElementById('total');
+    const listaEl = document.getElementById('lista');
+    const totalEl = document.getElementById('total');
     const floatEl = document.getElementById('floatingCounter');
+    const btnWA = document.getElementById('btn-whatsapp');
+
+    function saveCart(){
+      localStorage.setItem(CART_KEY, JSON.stringify(cantidades));
+    }
+    function loadCart(){
+      try { return JSON.parse(localStorage.getItem(CART_KEY) || '{}'); }
+      catch { return {}; }
+    }
 
     /* ---------- Render ---------- */
     function renderProductos(contenedorId, productos) {
       const contenedor = document.getElementById(contenedorId);
       contenedor.innerHTML = '';
-      const data = normalizarDatosDesdeCMS(productos);
+      const data = normalizar(productos);
 
       for (let categoria in data) {
         const items = data[categoria] || [];
 
-        // Acordeón
         const detail = document.createElement('details');
         const summary = document.createElement('summary');
         summary.textContent = categoria;
@@ -201,7 +253,7 @@
           div.className = 'producto';
           div.innerHTML = `
             <div class="producto-info">
-              <h3>${prod.nombre} - $${prod.precio}</h3>
+              <h3>${prod.nombre} - ${formatARS(prod.precio)}</h3>
               ${prod.desc ? `<p>${prod.desc}</p>` : ""}
             </div>
             <div class="contador">
@@ -220,17 +272,33 @@
     }
 
     function cargarProductos() {
-      fetch(asset('data/productos-rotiseria.json'))
+      const p1 = fetch(asset('data/productos-rotiseria.json'))
         .then(res => res.json())
         .then(data => renderProductos('menu-rotiseria', data))
-        .catch(err => console.error('Rotisería JSON error:', err));
+        .catch(() => showToast('Error cargando Rotisería', 'error'));
 
-      fetch(asset('data/productos-almacen.json'))
+      const p2 = fetch(asset('data/productos-almacen.json'))
         .then(res => res.json())
         .then(data => renderProductos('menu-almacen', data))
-        .catch(err => console.error('Almacén JSON error:', err));
+        .catch(() => showToast('Error cargando Almacén', 'error'));
+
+      // Luego de renderizar ambos, hidratar carrito persistido
+      Promise.allSettled([p1, p2]).then(hydrateFromStorage);
     }
     cargarProductos();
+
+    function hydrateFromStorage(){
+      const persisted = loadCart();
+      let hadItems = false;
+      Object.entries(persisted).forEach(([id, qty])=>{
+        if (qty > 0) {
+          cantidades[id] = qty;
+          const el = document.getElementById(`cantidad-${id}`);
+          if (el) { el.textContent = qty; hadItems = true; }
+        }
+      });
+      if (hadItems) actualizarResumen();
+    }
 
     /* ---------- Carrito + Animaciones ---------- */
     function cambiarCantidad(id, delta, btn) {
@@ -239,20 +307,23 @@
       if (el) el.textContent = cantidades[id];
 
       if (delta > 0 && btn) {
-        // animación botón
         btn.classList.add('btn-pop');
         btn.addEventListener('animationend', () => btn.classList.remove('btn-pop'), { once: true });
-        // flash de fila
         const row = btn.closest('.producto');
         row.classList.add('row-flash');
         row.addEventListener('animationend', () => row.classList.remove('row-flash'), { once: true });
       }
 
+      saveCart();
       actualizarResumen();
     }
 
+    function countItems(){
+      return Object.values(cantidades).reduce((a,b)=> a+(b||0), 0);
+    }
+
     function actualizarResumen() {
-      lista.innerHTML = '';
+      listaEl.innerHTML = '';
       let total = 0;
       let count = 0;
 
@@ -266,8 +337,8 @@
           const precio = parseInt(productoDiv?.dataset?.precio || '0', 10);
 
           const li = document.createElement('li');
-          li.textContent = `${nombre} x${cantidad} - $${precio * cantidad}`;
-          lista.appendChild(li);
+          li.textContent = `${nombre} x${cantidad} - ${formatARS(precio * cantidad)}`;
+          listaEl.appendChild(li);
 
           total += precio * cantidad;
           count += cantidad;
@@ -276,23 +347,32 @@
 
       const envio = document.querySelector('input[name=envio]:checked').value;
       if (envio === 'envio') total += 1000;
-      totalSpan.textContent = total;
 
-      // contador flotante
-      if (count > 0) {
-        floatEl.textContent = count;
-        floatEl.hidden = false;
-      } else {
-        floatEl.hidden = true;
-      }
+      totalEl.textContent = formatARS(total);
+      floatEl.textContent = count;
+      floatEl.hidden = count === 0;
+
+      // habilitar/deshabilitar botón WhatsApp según condiciones
+      const nombreOk = document.getElementById('nombre').value.trim().length > 0;
+      btnWA.disabled = !(count > 0 && nombreOk);
     }
 
+    document.getElementById('nombre').addEventListener('input', actualizarResumen);
     document.querySelectorAll('input[name=envio]').forEach(r => r.addEventListener('change', actualizarResumen));
 
     // click en contador: llevar al resumen
     floatEl.addEventListener('click', () => {
       document.getElementById('resumen').scrollIntoView({ behavior: 'smooth' });
     });
+
+    function vaciarCarrito(){
+      Object.keys(cantidades).forEach(k => cantidades[k]=0);
+      // reset UI contadores visibles
+      document.querySelectorAll('[id^="cantidad-"]').forEach(span => span.textContent='0');
+      saveCart();
+      actualizarResumen();
+      showToast('Carrito vacío');
+    }
 
     /* ---------- Tabs ---------- */
     function mostrar(seccion) {
@@ -304,37 +384,36 @@
 
     /* ---------- WhatsApp ---------- */
     function enviarPedido() {
-      const nombre = document.getElementById('nombre').value.trim();
-      const direccion = document.getElementById('direccion').value.trim();
+      const name = document.getElementById('nombre').value.trim();
+      const addr = document.getElementById('direccion').value.trim();
       const envio = document.querySelector('input[name=envio]:checked').value;
 
-      if (!nombre) return alert("Por favor, ingresá tu nombre.");
-      if (envio === 'envio' && !direccion) return alert("Por favor, ingresá tu dirección.");
+      if (!name) { showToast('Ingresá tu nombre', 'error'); return; }
 
-      let mensaje = `Hola, soy ${nombre}. Quiero hacer un pedido:\n`;
-      let algoSeleccionado = false;
+      if (countItems() === 0) { showToast('Seleccioná al menos un producto', 'error'); return; }
 
-      for (let id in cantidades) {
-        const cantidad = cantidades[id];
-        if (cantidad > 0) {
+      if (envio === 'envio' && !addr) { showToast('Ingresá tu dirección para el envío', 'error'); return; }
+
+      let msg = `Hola, soy ${name}. Quiero hacer un pedido:\n`;
+      Object.entries(cantidades).forEach(([id, qty]) => {
+        if (qty > 0) {
           const span = document.getElementById(`cantidad-${id}`);
-          if (!span) continue;
-          const div = span.closest('.producto');
-          const nombreProd = div?.dataset?.nombre || '';
-          const precio = parseInt(div?.dataset?.precio || '0', 10);
-          mensaje += `- ${nombreProd} x${cantidad} - $${precio * cantidad}\n`;
-          algoSeleccionado = true;
+          if (!span) return;
+          const row = span.closest('.producto');
+          const namep = row.dataset.nombre;
+          const price = parseInt(row.dataset.precio, 10);
+          msg += `- ${namep} x${qty} - ${formatARS(price*qty)}\n`;
         }
-      }
+      });
 
-      if (!algoSeleccionado) return alert("Seleccioná al menos un producto.");
-      mensaje += envio === 'envio'
-        ? `Envío a domicilio a: ${direccion} (+$1000)\n`
-        : `Retiro en el local\n`;
-      mensaje += `Total: $${totalSpan.textContent}`;
+      msg += envio === 'envio'
+        ? `Envío a domicilio a: ${addr} (+${formatARS(1000)})\n`
+        : 'Retiro en el local\n';
 
-      const url = `https://wa.me/3415923882?text=${encodeURIComponent(mensaje)}`;
+      msg += `Total: ${totalEl.textContent}`;
+      const url = `https://wa.me/3415923882?text=${encodeURIComponent(msg)}`;
       window.open(url, '_blank');
+      showToast('Abriendo WhatsApp...', 'ok');
     }
   </script>
 
