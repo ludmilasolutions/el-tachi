@@ -125,7 +125,37 @@
     }
     #btn-vaciar { background:#fff; color:#333; border:1px solid var(--gris-borde); }
     #btn-whatsapp:disabled{ opacity:.6; cursor:not-allowed; }
-    label { display: block; margin-top: 1rem; }
+
+    /* === Inputs grandes (Nombre / Dirección) === */
+    label { display:block; margin-top: 1rem; font-weight: 700; }
+    label input[type="text"],
+    input[type="email"], input[type="tel"]{
+      width: 100%;
+      padding: 0.95rem 1rem;
+      font-size: 1.05rem;
+      border: 1px solid var(--gris-borde);
+      border-radius: 12px;
+      outline: none;
+      background: #fff;
+      transition: box-shadow .15s ease, border-color .15s ease;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    label input[type="text"]:focus{
+      border-color: #7aa2ff;
+      box-shadow: 0 0 0 3px rgba(122,162,255,.25);
+    }
+    /* En móvil: aún más grandes y 16px+ para evitar zoom en iOS */
+    @media (max-width:520px){
+      label{ font-size: 1.05rem; }
+      label input[type="text"],
+      input[type="email"], input[type="tel"]{
+        padding: 1.05rem 1rem;
+        font-size: 1.125rem; /* >= 18px aprox según base */
+        border-radius: 14px;
+      }
+      label input::placeholder{ font-size: 1.05rem; }
+    }
 
     /* ===== FAB Carrito (button) + transición suave ===== */
     .cart-fab{
@@ -277,8 +307,14 @@
       <section id="checkout">
         <label><input type="radio" name="envio" value="retiro" checked> Retiro en el local</label>
         <label><input type="radio" name="envio" value="envio"> Envío a domicilio (+$1000)</label>
-        <label>Nombre: <input type="text" id="nombre" /></label>
-        <label>Dirección: <input type="text" id="direccion" /></label>
+
+        <label>Nombre:
+          <input type="text" id="nombre" placeholder="Tu nombre" />
+        </label>
+
+        <label>Dirección:
+          <input type="text" id="direccion" placeholder="Calle, número, piso/depto" />
+        </label>
 
         <div id="resumen">
           <h3>Resumen del pedido</h3>
