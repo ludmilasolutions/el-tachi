@@ -4,8 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Rotisería El Tachi</title>
+  <link rel="icon" href="logo.png">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
   <style>
+    :root{
+      --azul:#003366;
+      --azul-2:#001122;
+      --azul-3:#004080;
+      --amarillo:#ffcc00;
+      --gris-borde:#ccc;
+    }
     body {
       font-family: 'Roboto', sans-serif;
       background: #f8f9fa;
@@ -14,7 +22,7 @@
       padding: 0;
     }
     header {
-      background: linear-gradient(90deg, #003366 0%, #001122 100%);
+      background: linear-gradient(90deg, var(--azul) 0%, var(--azul-2) 100%);
       color: #fff;
       padding: 2rem 1rem;
       text-align: center;
@@ -28,18 +36,21 @@
       max-width: 900px;
       margin: auto;
     }
+
+    /* Tabs */
     .tabs {
       display: flex;
       justify-content: center;
       margin-bottom: 1rem;
       gap: 1rem;
+      flex-wrap: wrap;
     }
     .tabs button {
       padding: 0.8rem 1.8rem;
       font-size: 1.1rem;
       border: none;
-      background: #004080;
-      color: #ffcc00;
+      background: var(--azul-3);
+      color: var(--amarillo);
       font-weight: bold;
       border-radius: 30px;
       box-shadow: 0 3px 8px rgba(0,0,0,0.2);
@@ -47,60 +58,53 @@
       transition: all 0.3s ease;
       border: 2px solid transparent;
     }
-    .tabs button:hover {
-      background: #0055aa;
-    }
+    .tabs button:hover { background: #0055aa; }
     .tabs button.active {
-      background: #001122;
-      border-color: #ffcc00;
+      background: var(--azul-2);
+      border-color: var(--amarillo);
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
+
+    /* Acordeón (Rotisería) */
     details {
-      border: 1px solid #ccc;
+      border: 1px solid var(--gris-borde);
       border-radius: 8px;
       margin-bottom: 1rem;
       overflow: hidden;
     }
     summary {
-      background: #003366;
-      color: #ffcc00;
+      background: var(--azul);
+      color: var(--amarillo);
       padding: 1rem;
       cursor: pointer;
       font-weight: bold;
       font-size: 1.1rem;
       user-select: none;
+      list-style: none;
     }
+
+    /* Listado de productos */
     .producto {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: .75rem;
       padding: 0.5rem 1rem;
       border-top: 1px solid #ddd;
       background: #fff;
     }
-    .producto:hover {
-      background: #f1f1f1;
-    }
-    .producto-info {
-      max-width: 65%;
-    }
+    .producto:hover { background: #f1f1f1; }
+    .producto-info { max-width: 65%; }
     .producto h3 {
       margin: 0.2rem 0;
       color: #004c99;
       font-size: 1rem;
     }
-    .producto p {
-      margin: 0.1rem 0;
-      font-size: 0.9rem;
-    }
-    .contador {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
+    .producto p { margin: 0.1rem 0; font-size: 0.9rem; }
+    .contador { display: flex; align-items: center; gap: 0.5rem; }
     .contador button {
-      background: #003366;
-      color: #ffcc00;
+      background: var(--azul);
+      color: var(--amarillo);
       border: none;
       padding: 0.3rem 0.6rem;
       font-weight: bold;
@@ -108,6 +112,8 @@
       cursor: pointer;
       border-radius: 5px;
     }
+
+    /* Bloque Resumen */
     #resumen {
       margin-top: 2rem;
       padding: 1rem;
@@ -116,8 +122,8 @@
       border-radius: 8px;
     }
     #resumen button {
-      background: #003366;
-      color: #ffcc00;
+      background: var(--azul);
+      color: var(--amarillo);
       border: none;
       padding: 0.8rem 1.2rem;
       margin-top: 1rem;
@@ -126,9 +132,24 @@
       font-size: 1rem;
       border-radius: 5px;
     }
-    label {
-      display: block;
-      margin-top: 1rem;
+    label { display: block; margin-top: 1rem; }
+
+    /* Título de categoría (modo plano para Almacén) */
+    .categoria-titulo {
+      margin: 1rem 0 .5rem 0;
+      padding: .8rem 1rem;
+      background: var(--azul);
+      color: var(--amarillo);
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1.05rem;
+    }
+    .grupo-categoria {
+      border: 1px solid var(--gris-borde);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+      background: #fff;
     }
   </style>
 </head>
@@ -162,60 +183,129 @@
   </main>
 
   <script>
+    /* ---------- Utilidades ---------- */
+    // Rutas que funcionan en Netlify (/) y GitHub Pages (/repo/)
+    function asset(path) {
+      const host = location.hostname;
+      if (host.endsWith('github.io')) {
+        const parts = location.pathname.split('/').filter(Boolean);
+        const repo = parts[0] || '';
+        return `/${repo}/${path}`;
+      }
+      return `/${path}`;
+    }
+
+    // Normaliza el formato del CMS ({categorias:[{categoria, productos}]})
+    function normalizarDatosDesdeCMS(data) {
+      if (data && Array.isArray(data.categorias)) {
+        const out = {};
+        data.categorias.forEach(c => { out[c.categoria] = c.productos || []; });
+        return out;
+      }
+      return data || {};
+    }
+
+    /* ---------- Estado ---------- */
     const cantidades = {};
     const lista = document.getElementById('lista');
     const totalSpan = document.getElementById('total');
 
-    function renderProductos(contenedorId, productos) {
+    /* ---------- Render ---------- */
+    function renderProductos(contenedorId, productos, modo = 'collapsible') {
       const contenedor = document.getElementById(contenedorId);
       contenedor.innerHTML = '';
-      for (let categoria in productos) {
-        const detail = document.createElement('details');
-        const summary = document.createElement('summary');
-        summary.textContent = categoria;
-        detail.appendChild(summary);
+      const data = normalizarDatosDesdeCMS(productos);
 
-        productos[categoria].forEach((prod, i) => {
-          const id = `${contenedorId}-${categoria}-${i}`;
-          cantidades[id] = 0;
+      for (let categoria in data) {
+        const items = data[categoria] || [];
 
-          const div = document.createElement('div');
-          div.className = 'producto';
-          div.innerHTML = `
-            <div class="producto-info">
-              <h3>${prod.nombre} - $${prod.precio}</h3>
-              ${prod.desc ? `<p>${prod.desc}</p>` : ""}
-            </div>
-            <div class="contador">
-              <button onclick="cambiarCantidad('${id}', -1)">−</button>
-              <span id="cantidad-${id}">0</span>
-              <button onclick="cambiarCantidad('${id}', 1)">+</button>
-            </div>
-          `;
-          div.dataset.nombre = prod.nombre;
-          div.dataset.precio = prod.precio;
-          detail.appendChild(div);
-        });
+        if (modo === 'collapsible') {
+          // Rotisería: acordeón
+          const detail = document.createElement('details');
+          const summary = document.createElement('summary');
+          summary.textContent = categoria;
+          detail.appendChild(summary);
 
-        contenedor.appendChild(detail);
+          items.forEach((prod, i) => {
+            const id = `${contenedorId}-${categoria}-${i}`;
+            if (!(id in cantidades)) cantidades[id] = 0;
+
+            const div = document.createElement('div');
+            div.className = 'producto';
+            div.innerHTML = `
+              <div class="producto-info">
+                <h3>${prod.nombre} - $${prod.precio}</h3>
+                ${prod.desc ? `<p>${prod.desc}</p>` : ""}
+              </div>
+              <div class="contador">
+                <button onclick="cambiarCantidad('${id}', -1)">−</button>
+                <span id="cantidad-${id}">0</span>
+                <button onclick="cambiarCantidad('${id}', 1)">+</button>
+              </div>
+            `;
+            div.dataset.nombre = prod.nombre;
+            div.dataset.precio = prod.precio;
+            detail.appendChild(div);
+          });
+
+          contenedor.appendChild(detail);
+        } else {
+          // Almacén: todas las categorías visibles (sin despliegue)
+          const bloque = document.createElement('div');
+          bloque.className = 'grupo-categoria';
+
+          const titulo = document.createElement('div');
+          titulo.className = 'categoria-titulo';
+          titulo.textContent = categoria;
+          bloque.appendChild(titulo);
+
+          items.forEach((prod, i) => {
+            const id = `${contenedorId}-${categoria}-${i}`;
+            if (!(id in cantidades)) cantidades[id] = 0;
+
+            const div = document.createElement('div');
+            div.className = 'producto';
+            div.innerHTML = `
+              <div class="producto-info">
+                <h3>${prod.nombre} - $${prod.precio}</h3>
+                ${prod.desc ? `<p>${prod.desc}</p>` : ""}
+              </div>
+              <div class="contador">
+                <button onclick="cambiarCantidad('${id}', -1)">−</button>
+                <span id="cantidad-${id}">0</span>
+                <button onclick="cambiarCantidad('${id}', 1)">+</button>
+              </div>
+            `;
+            div.dataset.nombre = prod.nombre;
+            div.dataset.precio = prod.precio;
+            bloque.appendChild(div);
+          });
+
+          contenedor.appendChild(bloque);
+        }
       }
     }
 
     function cargarProductos() {
-      fetch('productos-rotiseria.json')
+      // Rotisería (acordeón)
+      fetch(asset('data/productos-rotiseria.json'))
         .then(res => res.json())
-        .then(data => renderProductos('menu-rotiseria', data));
+        .then(data => renderProductos('menu-rotiseria', data, 'collapsible'))
+        .catch(err => console.error('Rotisería JSON error:', err));
 
-      fetch('productos-almacen.json')
+      // Almacén (plano, todo visible)
+      fetch(asset('data/productos-almacen.json'))
         .then(res => res.json())
-        .then(data => renderProductos('menu-almacen', data));
+        .then(data => renderProductos('menu-almacen', data, 'flat'))
+        .catch(err => console.error('Almacén JSON error:', err));
     }
-
     cargarProductos();
 
+    /* ---------- Carrito ---------- */
     function cambiarCantidad(id, delta) {
-      cantidades[id] = Math.max(0, cantidades[id] + delta);
-      document.getElementById(`cantidad-${id}`).textContent = cantidades[id];
+      cantidades[id] = Math.max(0, (cantidades[id] || 0) + delta);
+      const el = document.getElementById(`cantidad-${id}`);
+      if (el) el.textContent = cantidades[id];
       actualizarResumen();
     }
 
@@ -225,9 +315,11 @@
       for (let id in cantidades) {
         const cantidad = cantidades[id];
         if (cantidad > 0) {
-          const div = document.getElementById(`cantidad-${id}`).closest('.producto');
-          const nombre = div.dataset.nombre;
-          const precio = parseInt(div.dataset.precio);
+          const span = document.getElementById(`cantidad-${id}`);
+          if (!span) continue;
+          const productoDiv = span.closest('.producto');
+          const nombre = productoDiv?.dataset?.nombre || '';
+          const precio = parseInt(productoDiv?.dataset?.precio || '0', 10);
           const li = document.createElement('li');
           li.textContent = `${nombre} x${cantidad} - $${precio * cantidad}`;
           lista.appendChild(li);
@@ -238,7 +330,6 @@
       if (envio === 'envio') total += 1000;
       totalSpan.textContent = total;
     }
-
     document.querySelectorAll('input[name=envio]').forEach(r => r.addEventListener('change', actualizarResumen));
 
     function enviarPedido() {
@@ -254,9 +345,11 @@
       for (let id in cantidades) {
         const cantidad = cantidades[id];
         if (cantidad > 0) {
-          const div = document.getElementById(`cantidad-${id}`).closest('.producto');
-          const nombreProd = div.dataset.nombre;
-          const precio = parseInt(div.dataset.precio);
+          const span = document.getElementById(`cantidad-${id}`);
+          if (!span) continue;
+          const div = span.closest('.producto');
+          const nombreProd = div?.dataset?.nombre || '';
+          const precio = parseInt(div?.dataset?.precio || '0', 10);
           mensaje += `- ${nombreProd} x${cantidad} - $${precio * cantidad}\n`;
           algoSeleccionado = true;
         }
@@ -272,6 +365,7 @@
       window.open(url, '_blank');
     }
 
+    /* ---------- Tabs ---------- */
     function mostrar(seccion) {
       document.getElementById('menu-rotiseria').style.display = seccion === 'rotiseria' ? 'block' : 'none';
       document.getElementById('menu-almacen').style.display = seccion === 'almacen' ? 'block' : 'none';
