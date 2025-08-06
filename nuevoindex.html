@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rotisería El Tachi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f8f9fa;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: linear-gradient(90deg, #003366 0%, #001122 100%);
+      color: #fff;
+      padding: 2rem 1rem;
+      text-align: center;
+    }
+    header img {
+      max-height: 180px;
+      margin: 0 auto 1rem;
+    }
+    main {
+      padding: 1rem;
+      max-width: 900px;
+      margin: auto;
+    }
+    .tabs {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1rem;
+      gap: 1rem;
+    }
+    .tabs button {
+      padding: 0.6rem 1.2rem;
+      border: none;
+      background: #003366;
+      color: #ffcc00;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .tabs button.active {
+      background: #001122;
+    }
+    details {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+    }
+    summary {
+      background: #003366;
+      color: #ffcc00;
+      padding: 1rem;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1.1rem;
+      user-select: none;
+    }
+    .producto {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 1rem;
+      border-top: 1px solid #ddd;
+      background: #fff;
+    }
+    .producto:hover {
+      background: #f1f1f1;
+    }
+    .producto-info {
+      max-width: 65%;
+    }
+    .producto h3 {
+      margin: 0.2rem 0;
+      color: #004c99;
+      font-size: 1rem;
+    }
+    .producto p {
+      margin: 0.1rem 0;
+      font-size: 0.9rem;
+    }
+    .contador {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .contador button {
+      background: #003366;
+      color: #ffcc00;
+      border: none;
+      padding: 0.3rem 0.6rem;
+      font-weight: bold;
+      font-size: 1.2rem;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    #resumen {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #fff3cd;
+      border: 1px solid #ffeeba;
+      border-radius: 8px;
+    }
+    #resumen button {
+      background: #003366;
+      color: #ffcc00;
+      border: none;
+      padding: 0.8rem 1.2rem;
+      margin-top: 1rem;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1rem;
+      border-radius: 5px;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="logo.png" alt="Rotisería El Tachi" />
+    <h1>Rotisería El Tachi</h1>
+    <p>¡Hacé tu pedido desde la web!</p>
+  </header>
+
+  <main>
+    <div class="tabs">
+      <button id="btn-rotiseria" class="active" onclick="mostrar('rotiseria')">🍕 Rotisería</button>
+      <button id="btn-almacen" onclick="mostrar('almacen')">🛍️ Almacén</button>
+    </div>
+
+    <div id="menu-rotiseria"></div>
+    <div id="menu-almacen" style="display:none"></div>
+
+    <label><input type="radio" name="envio" value="retiro" checked> Retiro en el local</label>
+    <label><input type="radio" name="envio" value="envio"> Envío a domicilio (+$1000)</label>
+    <label>Nombre: <input type="text" id="nombre" /></label>
+    <label>Dirección: <input type="text" id="direccion" /></label>
+
+    <div id="resumen">
+      <h3>Resumen del pedido</h3>
+      <ul id="lista"></ul>
+      <p><strong>Total: $<span id="total">0</span></strong></p>
+      <button onclick="enviarPedido()">Hacer pedido por WhatsApp</button>
+    </div>
+  </main>
+
+  <script>
+    const cantidades = {};
+    const lista = document.getElementById('lista');
+    const totalSpan = document.getElementById('total');
+
+    function renderProductos(contenedorId, productos) {
+      const contenedor = document.getElementById(contenedorId);
+      contenedor.innerHTML = '';
+      for (let categoria in productos) {
+        const detail = document.createElement('details');
+        const summary = document.createElement('summary');
+        summary.textContent = categoria;
+        detail.appendChild(summary);
+
+        productos[categoria].forEach((prod, i) => {
+          const id = `${contenedorId}-${categoria}-${i}`;
+          cantidades[id] = 0;
+
+          const div = document.createElement('div');
+          div.className = 'producto';
+          div.innerHTML = `
+            <div class="producto-info">
+              <h3>${prod.nombre} - $${prod.precio}</h3>
+              ${prod.desc ? `<p>${prod.desc}</p>` : ""}
+            </div>
+            <div class="contador">
+              <button onclick="cambiarCantidad('${id}', -1)">−</button>
+              <span id="cantidad-${id}">0</span>
+              <button onclick="cambiarCantidad('${id}', 1)">+</button>
+            </div>
+          `;
+          div.dataset.nombre = prod.nombre;
+          div.dataset.precio = prod.precio;
+          detail.appendChild(div);
+        });
+
+        contenedor.appendChild(detail);
+      }
+    }
+
+    function cargarProductos() {
+      fetch('productos-rotiseria.json')
+        .then(res => res.json())
+        .then(data => renderProductos('menu-rotiseria', data));
+
+      fetch('productos-almacen.json')
+        .then(res => res.json())
+        .then(data => renderProductos('menu-almacen', data));
+    }
+
+    cargarProductos();
+
+    function cambiarCantidad(id, delta) {
+      cantidades[id] = Math.max(0, cantidades[id] + delta);
+      document.getElementById(`cantidad-${id}`).textContent = cantidades[id];
+      actualizarResumen();
+    }
+
+    function actualizarResumen() {
+      lista.innerHTML = '';
+      let total = 0;
+      for (let id in cantidades) {
+        const cantidad = cantidades[id];
+        if (cantidad > 0) {
+          const div = document.getElementById(`cantidad-${id}`).closest('.producto');
+          const nombre = div.dataset.nombre;
+          const precio = parseInt(div.dataset.precio);
+          const li = document.createElement('li');
+          li.textContent = `${nombre} x${cantidad} - $${precio * cantidad}`;
+          lista.appendChild(li);
+          total += precio * cantidad;
+        }
+      }
+      const envio = document.querySelector('input[name=envio]:checked').value;
+      if (envio === 'envio') total += 1000;
+      totalSpan.textContent = total;
+    }
+
+    document.querySelectorAll('input[name=envio]').forEach(r => r.addEventListener('change', actualizarResumen));
+
+    function enviarPedido() {
+      const nombre = document.getElementById('nombre').value.trim();
+      const direccion = document.getElementById('direccion').value.trim();
+      const envio = document.querySelector('input[name=envio]:checked').value;
+      if (!nombre) return alert("Por favor, ingresá tu nombre.");
+      if (envio === 'envio' && !direccion) return alert("Por favor, ingresá tu dirección.");
+
+      let mensaje = `Hola, soy ${nombre}. Quiero hacer un pedido:\n`;
+      let algoSeleccionado = false;
+
+      for (let id in cantidades) {
+        const cantidad = cantidades[id];
+        if (cantidad > 0) {
+          const div = document.getElementById(`cantidad-${id}`).closest('.producto');
+          const nombreProd = div.dataset.nombre;
+          const precio = parseInt(div.dataset.precio);
+          mensaje += `- ${nombreProd} x${cantidad} - $${precio * cantidad}\n`;
+          algoSeleccionado = true;
+        }
+      }
+
+      if (!algoSeleccionado) return alert("Seleccioná al menos un producto.");
+      mensaje += envio === 'envio'
+        ? `Envío a domicilio a: ${direccion} (+$1000)\n`
+        : `Retiro en el local\n`;
+      mensaje += `Total: $${totalSpan.textContent}`;
+
+      const url = `https://wa.me/3415923882?text=${encodeURIComponent(mensaje)}`;
+      window.open(url, '_blank');
+    }
+
+    function mostrar(seccion) {
+      document.getElementById('menu-rotiseria').style.display = seccion === 'rotiseria' ? 'block' : 'none';
+      document.getElementById('menu-almacen').style.display = seccion === 'almacen' ? 'block' : 'none';
+      document.getElementById('btn-rotiseria').classList.toggle('active', seccion === 'rotiseria');
+      document.getElementById('btn-almacen').classList.toggle('active', seccion === 'almacen');
+    }
+  </script>
+
+  <div style="margin-top:2rem; text-align:center; font-size:0.9rem;">
+    <p>¿Querés una web como esta para tu negocio?</p>
+    <a href="mailto:ludmilasolutions2.0@gmail.com" style="background:#003366; color:#ffcc00; padding:0.6rem 1rem; border-radius:6px; text-decoration:none;">
+      Escribime: ludmilasolutions2.0@gmail.com
+    </a>
+    <p style="margin-top:0.5rem;">Creado por <strong>Ludmila Mercado</strong></p>
+  </div>
+</body>
+</html>
