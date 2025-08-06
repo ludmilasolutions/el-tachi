@@ -265,7 +265,7 @@
         </a>
       </div>
 
-      <p class="promo-note">Creado por <strong>Ludmila Mercado</strong> — <span id="promoSite"></span></p>
+      <p class="promo-note">Creado por <strong>Ludmila Mercado</strong></p>
     </div>
   </section>
 
@@ -517,15 +517,10 @@
 
     /* ===== Promo CTA: solo email + ocultar FAB cuando la promo es visible ===== */
     (function promoInit(){
-      const site = location.hostname || 'tu-negocio';
-      const page = location.href;
-      const promoSiteEl = document.getElementById('promoSite');
-      if (promoSiteEl) promoSiteEl.textContent = site;
-
-      const subj = encodeURIComponent(`Quiero una web para mi negocio (${site})`);
+      const subj = encodeURIComponent(`Quiero una web para mi negocio`);
       const body = encodeURIComponent(
 `Hola Ludmila,
-Vi tu trabajo en ${page} y quiero pedir un presupuesto para mi web.
+Vi tu trabajo y quiero pedir un presupuesto para mi web.
 
 Tipo de sitio: (catálogo / pedidos / restaurante / otro)
 ¿Panel para editar productos?: (sí/no)
