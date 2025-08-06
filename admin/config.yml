@@ -8,40 +8,42 @@ public_folder: "/uploads"
 collections:
   - name: "rotiseria"
     label: "Productos Rotisería"
-    file: "productos-rotiseria.json"
-    format: "json"
-    fields:
-      - label: "Categorías"
-        name: "categorias"
-        widget: list
+    files:
+      - file: "productos-rotiseria.json"
+        label: "Lista de productos Rotisería"
+        name: "productos_rotiseria"
+        format: "json"
         fields:
-          - label: "Nombre"
-            name: "categoria"
-            widget: string
-          - label: "Productos"
-            name: "productos"
+          - label: "Categorías"
+            name: "categorias"
             widget: list
             fields:
-              - { label: "Nombre", name: "nombre", widget: "string" }
-              - { label: "Precio", name: "precio", widget: "number", value_type: "int" }
-              - { label: "Descripción", name: "desc", widget: "string", required: false }
+              - { label: "Nombre", name: "categoria", widget: "string" }
+              - label: "Productos"
+                name: "productos"
+                widget: list
+                fields:
+                  - { label: "Nombre", name: "nombre", widget: "string" }
+                  - { label: "Precio", name: "precio", widget: "number", value_type: "int" }
+                  - { label: "Descripción", name: "desc", widget: "string", required: false }
 
   - name: "almacen"
     label: "Productos Almacén"
-    file: "productos-almacen.json"
-    format: "json"
-    fields:
-      - label: "Categorías"
-        name: "categorias"
-        widget: list
+    files:
+      - file: "productos-almacen.json"
+        label: "Lista de productos Almacén"
+        name: "productos_almacen"
+        format: "json"
         fields:
-          - label: "Nombre"
-            name: "categoria"
-            widget: string
-          - label: "Productos"
-            name: "productos"
+          - label: "Categorías"
+            name: "categorias"
             widget: list
             fields:
-              - { label: "Nombre", name: "nombre", widget: "string" }
-              - { label: "Precio", name: "precio", widget: "number", value_type: "int" }
-              - { label: "Descripción", name: "desc", widget: "string", required: false }
+              - { label: "Nombre", name: "categoria", widget: "string" }
+              - label: "Productos"
+                name: "productos"
+                widget: list
+                fields:
+                  - { label: "Nombre", name: "nombre", widget: "string" }
+                  - { label: "Precio", name: "precio", widget: "number", value_type: "int" }
+                  - { label: "Descripción", name: "desc", widget: "string", required: false }
