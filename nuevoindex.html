@@ -37,7 +37,14 @@
       text-align: center;
     }
     header img { max-height: 180px; margin: 0 auto 1rem; }
-    main { padding: 1rem; max-width: 900px; margin: auto; }
+
+    /* Agregamos espacio para que nunca tape el FAB */
+    main {
+      padding: 1rem;
+      max-width: 900px;
+      margin: auto;
+      padding-bottom: 112px; /* deja aire detrás del FAB */
+    }
 
     /* Tabs */
     .tabs {
@@ -143,7 +150,10 @@
     }
     @keyframes bump { 0%,100%{ transform: translateY(0) scale(1);} 50%{ transform: translateY(0) scale(1.08);} }
     .cart-fab.bump{ animation: bump .3s ease; }
-    .cart-fab.raise{ transform: translateY(-64px); }
+
+    /* Levantamos MÁS cuando el footer aparece */
+    .cart-fab.raise{ transform: translateY(-112px); }
+
     /* En móvil, mantener pastilla (no volver al círculo) */
     @media (max-width:520px){
       .cart-fab{
@@ -456,7 +466,7 @@
     if ('IntersectionObserver' in window && footerEl) {
       const io = new IntersectionObserver(([entry])=>{
         fab.classList.toggle('raise', entry.isIntersecting);
-      }, { rootMargin: '0px 0px -10% 0px', threshold: 0.01 });
+      }, { rootMargin: '0px 0px -25% 0px', threshold: 0.01 }); // levantamos antes
       io.observe(footerEl);
     }
   </script>
