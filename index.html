@@ -568,16 +568,16 @@
     if(countItems()===0){showToast('Seleccioná al menos un producto','error');return}
     if(envio==='envio'&&!addr){showToast('Ingresá tu dirección para el envío','error');return}
 
-    let msg=`Hola, soy ${name}. Quiero hacer un pedido:\\n`;
+    let msg=`Hola, soy ${name}. Quiero hacer un pedido:\n`;
     Object.entries(cantidades).forEach(([id,qty])=>{
       if(qty>0){
         const span=document.getElementById(`cantidad-${id}`);if(!span)return;
         const row=span.closest('.producto');
         const n=row.dataset.nombre,p=parseInt(row.dataset.precio,10),line=p*qty;
-        msg+=`- ${n} x${qty} - ${formatARS(line)}\\n`;
+        msg+=`- ${n} x${qty} - ${formatARS(line)}\n`;
       }
     });
-    msg+=envio==='envio'?`Envío a domicilio a: ${addr} (+${formatARS(SHIPPING)})\\n`:'Retiro en el local\\n';
+    msg+=envio==='envio'?`Envío a domicilio a: ${addr} (+${formatARS(SHIPPING)})\n`:'Retiro en el local\n';
     msg+=`Total: ${totalEl.textContent}`;
     window.open(`https://wa.me/3415923882?text=${encodeURIComponent(msg)}`,'_blank');
     showToast('Abriendo WhatsApp...','ok');
