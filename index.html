@@ -106,13 +106,13 @@
       label input::placeholder{font-size:1.05rem}
     }
 
-    /* ---------- FAB (pequeño y suave) ---------- */
+    /* ---------- FAB ---------- */
     .cart-fab{
       position:fixed;right:16px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:99;
       background:var(--azul);color:var(--amarillo);border:2px solid var(--amarillo);
       display:flex;align-items:center;gap:.6rem;padding:.7rem 1.1rem;border-radius:9999px;
       font-size:1.05rem;box-shadow:0 8px 20px rgba(0,0,0,.25);cursor:pointer;
-      -webkit-user-select:none;user-select:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+      user-select:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
       transition:transform .15s,opacity .18s,filter .18s
     }
     .cart-fab *{pointer-events:none}
@@ -266,7 +266,7 @@
         <span class="badge">⚡ Entrega rápida</span>
         <span class="badge">📱 100% responsive</span>
         <span class="badge">🛒 Panel para productos</span>
-        <span class="badge">🔒 Hosting &amp; dominio opcional</span>
+        <span class="badge">🔒 Hosting & dominio opcional</span>
         <span class="badge">💬 Soporte por email</span>
       </div>
 
@@ -318,7 +318,7 @@
 
           <div class="totales" aria-live="polite">
             <div class="tot-line"><span>Subtotal</span><span id="subtotal">$ 0</span></div>
-            <div id="envioLine" class="tot-line" hidden><span>Envío</span><span id="envioCosto">$ 0</span></div>
+            <div id="envioLine" class="tot-line" hidden><span>Envío</span><span id="envioCosto"></span></div>
             <div class="tot-line total"><span>Total</span><span id="total">$ 0</span></div>
           </div>
 
@@ -353,11 +353,11 @@
 
   /* ======= CSV utilidades ======= */
   const SEP=Intl.NumberFormat().format(1.1).includes(',')?';':',';
-  const csvEscape=v=>v==null?'':(/["\n\r]/.test(v)||String(v).includes(SEP))?`"${String(v).replace(/"/g,'""')}"`:v;
+  const csvEscape=v=>v==null?'':(/[\"\\n\\r]/.test(v)||String(v).includes(SEP))?`\"${String(v).replace(/\"/g,'\"\"')}\"`:v;
 
   function downloadCSV(name,headers,rows){
     const lines=[headers.join(SEP),...rows.map(r=>headers.map(h=>csvEscape(r[h])).join(SEP))];
-    const blob=new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8;'});
+    const blob=new Blob(['\\uFEFF'+lines.join('\\r\\n')],{type:'text/csv;charset=utf-8;'});
     const url=URL.createObjectURL(blob);const a=document.createElement('a');
     a.href=url;a.download=name;document.body.appendChild(a);a.click();URL.revokeObjectURL(url);a.remove();
   }
@@ -443,9 +443,9 @@
       items.forEach((prod,i)=>{
         const id=`${contId}-${cat}-${i}`;if(!(id in cantidades))cantidades[id]=0;
         const div=document.createElement('div');div.className='producto';
-        div.innerHTML=`<div class="producto-info"><h3>${prod.nombre} - ${formatARS(prod.precio)}</h3>${prod.desc?`<p>${prod.desc}</p>`:''}</div>
-                       <div class="contador"><button onclick="cambiarCantidad('${id}',-1,this)">−</button>
-                       <span id="cantidad-${id}">0</span><button onclick="cambiarCantidad('${id}',1,this)">+</button></div>`;
+        div.innerHTML=`<div class=\"producto-info\"><h3>${prod.nombre} - ${formatARS(prod.precio)}</h3>${prod.desc?`<p>${prod.desc}</p>`:''}</div>
+                       <div class=\"contador\"><button onclick=\"cambiarCantidad('${id}',-1,this)\">−</button>
+                       <span id=\"cantidad-${id}\">0</span><button onclick=\"cambiarCantidad('${id}',1,this)\">+</button></div>`;
         div.dataset.nombre=prod.nombre;div.dataset.precio=prod.precio;det.appendChild(div);
       });
       cont.appendChild(det);
@@ -468,7 +468,6 @@
     const c=loadClient();
     if(c.name)nombreEl.value=c.name;
     if(c.address)document.getElementById('direccion').value=c.address;
-    /* Ya NO hidratamos radio envío/retiro para evitar persistencia */
   }
 
   /* ======= Carrito ======= */
@@ -502,14 +501,23 @@
       const span=document.getElementById(`cantidad-${id}`);if(!span)continue;
       const row=span.closest('.producto');const name=row.dataset.nombre;const price=parseInt(row.dataset.precio,10);
       const li=document.createElement('li');li.className='resumen-item';
-      li.innerHTML=`<span class="resumen-name">${name}</span><span class="resumen-qty">x${qty}</span><span class="resumen-line">${formatARS(price*qty)}</span>`;
+      li.innerHTML=`<span class=\"resumen-name\">${name}</span><span class=\"resumen-qty\">x${qty}</span><span class=\"resumen-line\">${formatARS(price*qty)}</span>`;
       listaEl.appendChild(li);subtotal+=price*qty;count+=qty;
     }
     const envioInput=document.querySelector('input[name=envio]:checked');
     const envioSel=envioInput?envioInput.value:null;
     const envioCosto=envioSel==='envio'?SHIPPING:0;
+
     subtotalEl.textContent=formatARS(subtotal);
-    if(envioCosto>0){envioCostoEl.textContent=formatARS(envioCosto);envioLineEl.hidden=false}else{envioLineEl.hidden=true}
+
+    if(envioCosto>0){
+      envioCostoEl.textContent=formatARS(envioCosto);
+      envioLineEl.hidden=false;
+    }else{
+      envioLineEl.hidden=true;
+      envioCostoEl.textContent='';          // <— línea nueva para limpiar importe
+    }
+
     totalEl.textContent=formatARS(subtotal+envioCosto);
     emptyMsg.hidden=count>0;fabCount.textContent=count;fabTotal.textContent=formatARS(subtotal+envioCosto);
     setFabVisible(count>0&&!sheetOpen);
@@ -517,7 +525,7 @@
     METRICS_TOTAL=subtotal+envioCosto;METRICS_COUNT=count;METRICS_ENVIO=envioSel||'';
   }
 
-  /* ======= Guardar inputs cliente (sin guardar envío/retiro) ======= */
+  /* ======= Guardar inputs cliente ======= */
   nombreEl.addEventListener('input',()=>{saveClient({...loadClient(),name:nombreEl.value.trim()});actualizarResumen()});
   document.getElementById('direccion').addEventListener('input',e=>{saveClient({...loadClient(),address:e.target.value.trim()})});
   document.querySelectorAll('input[name=envio]').forEach(r=>r.addEventListener('change',actualizarResumen));
@@ -533,7 +541,7 @@
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&dlgBackdrop.classList.contains('open'))cerrarDialogoVaciar()});
   dlgYes.addEventListener('click',()=>{
     Object.keys(cantidades).forEach(k=>cantidades[k]=0);
-    document.querySelectorAll('[id^="cantidad-"]').forEach(el=>el.textContent='0');
+    document.querySelectorAll('[id^=\"cantidad-\"]').forEach(el=>el.textContent='0');
     saveCart(cantidades);actualizarResumen();cerrarDialogoVaciar();showToast('Carrito vacío','warn');
   });
   const vaciarCarrito=abrirDialogoVaciar;
@@ -560,16 +568,16 @@
     if(countItems()===0){showToast('Seleccioná al menos un producto','error');return}
     if(envio==='envio'&&!addr){showToast('Ingresá tu dirección para el envío','error');return}
 
-    let msg=`Hola, soy ${name}. Quiero hacer un pedido:\n`;
+    let msg=`Hola, soy ${name}. Quiero hacer un pedido:\\n`;
     Object.entries(cantidades).forEach(([id,qty])=>{
       if(qty>0){
         const span=document.getElementById(`cantidad-${id}`);if(!span)return;
         const row=span.closest('.producto');
         const n=row.dataset.nombre,p=parseInt(row.dataset.precio,10),line=p*qty;
-        msg+=`- ${n} x${qty} - ${formatARS(line)}\n`;
+        msg+=`- ${n} x${qty} - ${formatARS(line)}\\n`;
       }
     });
-    msg+=envio==='envio'?`Envío a domicilio a: ${addr} (+${formatARS(SHIPPING)})\n`:'Retiro en el local\n';
+    msg+=envio==='envio'?`Envío a domicilio a: ${addr} (+${formatARS(SHIPPING)})\\n`:'Retiro en el local\\n';
     msg+=`Total: ${totalEl.textContent}`;
     window.open(`https://wa.me/3415923882?text=${encodeURIComponent(msg)}`,'_blank');
     showToast('Abriendo WhatsApp...','ok');
@@ -579,7 +587,7 @@
   /* ======= Sheet ======= */
   function trapFocus(e){
     if(!sheetOpen||e.key!=='Tab')return;
-    const f=sheet.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+    const f=sheet.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex=\"-1\"])');
     if(!f.length)return;const first=f[0],last=f[f.length-1];
     if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
     else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
@@ -620,14 +628,7 @@
   /* ======= Promo mail link ======= */
   (function promoInit(){
     const subj=encodeURIComponent('Quiero una web para mi negocio');
-    const body=encodeURIComponent(`Hola Ludmila,
-Vi tu trabajo y quiero pedir un presupuesto para mi web.
-
-Tipo de sitio: (catálogo / pedidos / restaurante / otro)
-¿Panel para editar productos?: (sí/no)
-¿Plazo ideal?: (fecha)
-
-¡Gracias!`);
+    const body=encodeURIComponent(`Hola Ludmila,\\nVi tu trabajo y quiero pedir un presupuesto para mi web.\\n\\nTipo de sitio: (catálogo / pedidos / restaurante / otro)\\n¿Panel para editar productos?: (sí/no)\\n¿Plazo ideal?: (fecha)\\n\\n¡Gracias!`);
     const mailEl=document.getElementById('promoMail');
     if(mailEl)mailEl.href=`mailto:ludmilasolutions2.0@gmail.com?subject=${subj}&body=${body}`;
   })();
@@ -641,7 +642,7 @@ Tipo de sitio: (catálogo / pedidos / restaurante / otro)
       document.getElementById('exportSummaryBtn').onclick=exportTopProductsCSV;
       document.getElementById('clearMetricsBtn').onclick=clearMetrics;
     }
-    function isAdminHash(){return/\badmin\b/i.test(location.hash)}
+    function isAdminHash(){return/\\badmin\\b/i.test(location.hash)}
     function setAdmin(on){document.body.classList.toggle('is-admin',!!on);if(on){bar.removeAttribute('hidden');bindOnce()}else{bar.setAttribute('hidden','')}}
     function update(){setAdmin(isAdminHash())}
     window.addEventListener('hashchange',update);
