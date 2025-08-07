@@ -201,6 +201,10 @@
       style="background:#fff;border:1px solid #ddd;padding:.45rem .6rem;border-radius:8px;box-shadow:0 6px 16px rgba(0,0,0,.18);font-size:.85rem;cursor:pointer;">
       📊 Exportar top productos (CSV)
     </button>
+    <button id="clearMetricsBtn"
+      style="background:#fff;border:1px solid #ddd;padding:.45rem .6rem;border-radius:8px;box-shadow:0 6px 16px rgba(0,0,0,.18);font-size:.85rem;cursor:pointer;">
+      🗑 Limpiar métricas
+    </button>
   </div>
 
   <!-- Toasts -->
@@ -314,6 +318,14 @@
       const headers = ['producto','unidades','ingreso','pedidos'];
       const name = `top-productos-wsp-${new Date().toISOString().slice(0,10)}.csv`;
       downloadCSV(name, headers, rows);
+    }
+
+    function clearMetrics(){
+      const has = getEvents().length > 0;
+      if (!has) { alert('No hay métricas guardadas.'); return; }
+      if (!confirm('¿Borrar todas las métricas locales? Esta acción no se puede deshacer.')) return;
+      localStorage.removeItem(ANALYTICS_KEY);
+      alert('Listo: métricas borradas.');
     }
 
     /* ---------- Utilidades ---------- */
@@ -600,6 +612,7 @@ Gracias!`);
         bar.hidden = false;
         document.getElementById('exportOrdersBtn').addEventListener('click', exportWspOrdersCSV);
         document.getElementById('exportSummaryBtn').addEventListener('click', exportTopProductsCSV);
+        document.getElementById('clearMetricsBtn').addEventListener('click', clearMetrics);
       }
     })();
   </script>
