@@ -137,6 +137,10 @@
       .sheet{ left:50%; right:auto; transform: translate(-50%,100%); width: 720px; border-radius: 16px; }
       .sheet.open{ transform: translate(-50%,0); }
     }
+
+    /* ===== Admin bar visible solo con body.is-admin ===== */
+    #adminBar{ display:none !important; }
+    body.is-admin #adminBar{ display:flex !important; }
   </style>
 </head>
 <body>
@@ -455,7 +459,7 @@
         if (cantidad > 0) {
           const span = document.getElementById(`cantidad-${id}`); if (!span) continue;
           const productoDiv = span.closest('.producto');
-          const nombre = productoDiv?.dataset?.nombre || '';
+        const nombre = productoDiv?.dataset?.nombre || '';
           const precio = parseInt(productoDiv?.dataset?.precio || '0', 10);
 
           const li = document.createElement('li');
@@ -604,27 +608,38 @@ Tipo de sitio: (catálogo / pedidos / restaurante / otro)
       if (mailEl) mailEl.href = `mailto:ludmilasolutions2.0@gmail.com?subject=${subj}&body=${body}`;
     })();
 
-    /* Barra admin (#admin) con hashchange */
+    /* ===== Barra admin robusta (#admin) ===== */
     (function adminInit(){
       const bar = document.getElementById('adminBar');
       let bound = false;
 
-      function bind() {
+      function bindOnce() {
         if (bound) return;
         bound = true;
         document.getElementById('exportOrdersBtn').onclick  = exportWspOrdersCSV;
         document.getElementById('exportSummaryBtn').onclick = exportTopProductsCSV;
         document.getElementById('clearMetricsBtn').onclick  = clearMetrics;
       }
-      function show() { bar.hidden = false; bind(); }
-      function hide() { bar.hidden = true; }
 
-      function update() {
-        if (location.hash.includes('admin')) show();
-        else hide();
+      function isAdminHash(){ return /\badmin\b/i.test(location.hash); }
+
+      function setAdmin(on){
+        document.body.classList.toggle('is-admin', !!on);
+        if (on){
+          bar.removeAttribute('hidden');
+          bindOnce();
+        } else {
+          bar.setAttribute('hidden','');
+        }
       }
 
+      function update(){ setAdmin(isAdminHash()); }
+
+      // Cambios de hash y restauración desde historial / pestaña
       window.addEventListener('hashchange', update);
+      window.addEventListener('pageshow', update);
+      document.addEventListener('visibilitychange', () => { if (!document.hidden) update(); });
+
       update(); // estado inicial
     })();
   </script>
