@@ -293,97 +293,50 @@
   <script>
     /* ========== Mini-analytics (localStorage) ========== */
     const ANALYTICS_KEY = 'tachi_events_v1';
-    function getEvents(){ try { return JSON.parse(localStorage.getItem(ANALYTICS_KEY) || '[]'); } catch { return []; } }
+    function getEvents(){ try{return JSON.parse(localStorage.getItem(ANALYTICS_KEY)||'[]');}catch{return[];} }
     function saveEvents(list){ localStorage.setItem(ANALYTICS_KEY, JSON.stringify(list)); }
-    function logEvent(type, data={}) {
-      const evt = { type, ts: new Date().toISOString(), path: location.pathname + location.search, ...data };
-      const list = getEvents(); list.push(evt); saveEvents(list);
+    function logEvent(type,data={}){
+      const evt={type,ts:new Date().toISOString(),path:location.pathname+location.search,...data};
+      const list=getEvents(); list.push(evt); saveEvents(list);
     }
 
-    // ==== Exportadores específicos (solo pedidos WSP) ====
-    const SEP = Intl.NumberFormat().format(1.1).includes(',') ? ';' : ',';
-    function csvEscape(v){ if(v==null) return ''; const s=String(v).replace(/"/g,'""'); return (s.includes('"')||s.includes('\n')||s.includes('\r')||s.includes(SEP))?`"${s}"`:s; }
-    function downloadCSV(filename, headers, rows){
-      const lines=[headers.join(SEP), ...rows.map(r=>headers.map(h=>csvEscape(r[h])).join(SEP))];
-      const csv = '\uFEFF' + lines.join('\r\n');
-      const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); URL.revokeObjectURL(url); a.remove();
-    }
+    /* ---------- Claves de persistencia ---------- */
+    const CART_KEY   = 'tachi_cart_v1';
+    const CLIENT_KEY = 'tachi_client_v1';
 
-    function exportWspOrdersCSV(){
-      const events = getEvents().filter(e=>e.type==='order_wsp');
-      if(!events.length){ alert('No hay pedidos por WhatsApp aún'); return; }
+    function loadCart(){ try{return JSON.parse(localStorage.getItem(CART_KEY)||'{}');}catch{return{};} }
+    function saveCart(){ localStorage.setItem(CART_KEY, JSON.stringify(cantidades)); }
 
-      const rows = [];
-      events.forEach(o=>{
-        (o.items||[]).forEach(it=>{
-          rows.push({
-            ts: o.ts,
-            order_id: o.order_id,
-            shipping: o.shipping,
-            producto: it.name,
-            cantidad: it.qty,
-            precio_unit: it.unit_price,
-            linea_total: it.line_total,
-            subtotal: o.subtotal,
-            envio: o.shipping_cost,
-            total: o.total
-          });
-        });
-      });
-      const headers = ['ts','order_id','shipping','producto','cantidad','precio_unit','linea_total','subtotal','envio','total'];
-      const name = `pedidos-wsp-${new Date().toISOString().slice(0,10)}.csv`;
-      downloadCSV(name, headers, rows);
-    }
-
-    function exportTopProductsCSV(){
-      const events = getEvents().filter(e=>e.type==='order_wsp');
-      if(!events.length){ alert('No hay pedidos por WhatsApp aún'); return; }
-      const map = new Map(); // name -> {unidades, ingreso, pedidos:Set}
-      events.forEach(o=>{
-        (o.items||[]).forEach(it=>{
-          if(!map.has(it.name)) map.set(it.name,{unidades:0,ingreso:0,pedidos:new Set()});
-          const m = map.get(it.name);
-          m.unidades += it.qty;
-          m.ingreso  += it.line_total;
-          m.pedidos.add(o.order_id);
-        });
-      });
-      const rows = [...map.entries()]
-        .map(([producto, m])=>({producto, unidades:m.unidades, ingreso:m.ingreso, pedidos:m.pedidos.size}))
-        .sort((a,b)=> b.unidades - a.unidades || b.ingreso - a.ingreso);
-      const headers = ['producto','unidades','ingreso','pedidos'];
-      const name = `top-productos-wsp-${new Date().toISOString().slice(0,10)}.csv`;
-      downloadCSV(name, headers, rows);
-    }
-
-    function clearMetrics(){
-      const has = getEvents().length > 0;
-      if (!has) { alert('No hay métricas guardadas.'); return; }
-      if (!confirm('¿Borrar todas las métricas locales? Esta acción no se puede deshacer.')) return;
-      localStorage.removeItem(ANALYTICS_KEY);
-      alert('Listo: métricas borradas.');
-    }
+    function loadClient(){ try{return JSON.parse(localStorage.getItem(CLIENT_KEY)||'{}');}catch{return{};} }
+    function saveClient(obj){ localStorage.setItem(CLIENT_KEY, JSON.stringify(obj)); }
 
     /* ---------- Utilidades ---------- */
-    const CART_KEY = 'tachi_cart_v1';
     const SHIPPING = 1000;
-    const formatARS = new Intl.NumberFormat('es-AR',{ style:'currency', currency:'ARS', maximumFractionDigits:0 }).format;
+    const formatARS = new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format;
+    function asset(path){const host=location.hostname;if(host.endsWith('github.io')){const parts=location.pathname.split('/').filter(Boolean);const repo=parts[0]||'';return`/${repo}/${path}`;}return`/${path}`;}
+    function normalizar(data){if(data&&Array.isArray(data.categorias)){const o={};data.categorias.forEach(c=>{o[c.categoria]=c.productos||[];});return o;}return data||{};}
+    function showToast(msg,type='ok',timeout=2200){
+      const w=document.getElementById('toastWrap');
+      const el=document.createElement('div');
+      el.className=`toast ${type==='error'?'err':type==='warn'?'warn':'ok'}`;
+      el.textContent=msg; w.appendChild(el);
+      setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .2s';},timeout);
+      setTimeout(()=>w.removeChild(el),timeout+220);
+    }
 
-    function asset(path){ const host=location.hostname; if(host.endsWith('github.io')){ const parts=location.pathname.split('/').filter(Boolean); const repo=parts[0]||''; return `/${repo}/${path}`;} return `/${path}`; }
-    function normalizar(data){ if(data && Array.isArray(data.categorias)){ const o={}; data.categorias.forEach(c=>{ o[c.categoria]=c.productos||[]; }); return o; } return data||{}; }
-    function showToast(msg,type='ok',timeout=2200){ const w=document.getElementById('toastWrap'); const el=document.createElement('div'); el.className=`toast ${type==='error'?'err':type==='warn'?'warn':type==='ok'?'ok':''}`; el.textContent=msg; w.appendChild(el); setTimeout(()=>{el.style.opacity='0'; el.style.transition='opacity .2s';},timeout); setTimeout(()=>w.removeChild(el),timeout+220); }
-
-    /* ---------- Estado ---------- */
-    const cantidades   = {};
-    const listaEl      = document.getElementById('lista');
-    const subtotalEl   = document.getElementById('subtotal');
-    const totalEl      = document.getElementById('total');
+    /* ---------- Variables de estado ---------- */
+    const cantidades = {};
+    const listaEl    = document.getElementById('lista');
+    const subtotalEl = document.getElementById('subtotal');
+    const totalEl    = document.getElementById('total');
     const envioLineEl  = document.getElementById('envioLine');
     const envioCostoEl = document.getElementById('envioCosto');
-    const emptyMsg     = document.getElementById('emptyMsg');
-    const btnWA        = document.getElementById('btn-whatsapp');
+    const emptyMsg   = document.getElementById('emptyMsg');
+    const btnWA      = document.getElementById('btn-whatsapp');
+
+    // Inputs cliente
+    const nombreEl    = document.getElementById('nombre');
+    const direccionEl = document.getElementById('direccion');
 
     // FAB
     const fab      = document.getElementById('cartFab');
@@ -404,257 +357,256 @@
     // Métricas sesión
     let METRICS_TOTAL = 0, METRICS_COUNT = 0, METRICS_ENVIO = 'retiro';
 
-    /* ---------- Persistencia ---------- */
-    function saveCart(){ localStorage.setItem(CART_KEY, JSON.stringify(cantidades)); }
-    function loadCart(){ try { return JSON.parse(localStorage.getItem(CART_KEY) || '{}'); } catch { return {}; } }
-
     /* ---------- Render productos ---------- */
-    function renderProductos(contenedorId, productos) {
-      const contenedor = document.getElementById(contenedorId);
-      contenedor.innerHTML = '';
-      const data = normalizar(productos);
-
-      for (let categoria in data) {
-        const items = data[categoria] || [];
-        const detail = document.createElement('details');
-        const summary = document.createElement('summary'); summary.textContent = categoria;
+    function renderProductos(contenedorId, productos){
+      const cont=document.getElementById(contenedorId); cont.innerHTML='';
+      const data=normalizar(productos);
+      for(const categoria in data){
+        const items=data[categoria]||[];
+        const detail=document.createElement('details');
+        const summary=document.createElement('summary'); summary.textContent=categoria;
         detail.appendChild(summary);
 
-        items.forEach((prod, i) => {
-          const id = `${contenedorId}-${categoria}-${i}`;
-          if (!(id in cantidades)) cantidades[id] = 0;
+        items.forEach((prod,i)=>{
+          const id=`${contenedorId}-${categoria}-${i}`;
+          if(!(id in cantidades)) cantidades[id]=0;
 
-          const div = document.createElement('div');
-          div.className = 'producto';
-          div.innerHTML = `
+          const div=document.createElement('div');
+          div.className='producto';
+          div.innerHTML=`
             <div class="producto-info">
               <h3>${prod.nombre} - ${formatARS(prod.precio)}</h3>
-              ${prod.desc ? `<p>${prod.desc}</p>` : ""}
+              ${prod.desc?`<p>${prod.desc}</p>`:''}
             </div>
             <div class="contador">
-              <button onclick="cambiarCantidad('${id}', -1, this)">−</button>
+              <button onclick="cambiarCantidad('${id}',-1,this)">−</button>
               <span id="cantidad-${id}">0</span>
-              <button onclick="cambiarCantidad('${id}', 1, this)">+</button>
+              <button onclick="cambiarCantidad('${id}',1,this)">+</button>
             </div>`;
-          div.dataset.nombre = prod.nombre; div.dataset.precio = prod.precio;
+          div.dataset.nombre=prod.nombre; div.dataset.precio=prod.precio;
           detail.appendChild(div);
         });
-
-        contenedor.appendChild(detail);
+        cont.appendChild(detail);
       }
     }
 
-    function cargarProductos() {
-      const p1 = fetch(asset('data/productos-rotiseria.json'))
-        .then(res => res.json()).then(data => renderProductos('menu-rotiseria', data))
-        .catch(() => showToast('Error cargando Rotisería', 'error'));
-
-      const p2 = fetch(asset('data/productos-almacen.json'))
-        .then(res => res.json()).then(data => renderProductos('menu-almacen', data))
-        .catch(() => showToast('Error cargando Almacén', 'error'));
-
-      Promise.allSettled([p1, p2]).then(hydrateFromStorage);
+    function cargarProductos(){
+      const p1=fetch(asset('data/productos-rotiseria.json'))
+          .then(r=>r.json()).then(d=>renderProductos('menu-rotiseria',d))
+          .catch(()=>showToast('Error cargando Rotisería','error'));
+      const p2=fetch(asset('data/productos-almacen.json'))
+          .then(r=>r.json()).then(d=>renderProductos('menu-almacen',d))
+          .catch(()=>showToast('Error cargando Almacén','error'));
+      Promise.allSettled([p1,p2]).then(()=>{
+        hydrateCart();
+        hydrateClient();
+        actualizarResumen();
+      });
     }
     cargarProductos();
 
-    function hydrateFromStorage(){
-      const persisted = loadCart();
-      Object.entries(persisted).forEach(([id, qty])=>{
-        if (qty > 0) { cantidades[id] = qty; const el = document.getElementById(`cantidad-${id}`); if (el) el.textContent = qty; }
+    /* ---------- Hydration ---------- */
+    function hydrateCart(){
+      const persisted=loadCart();
+      Object.entries(persisted).forEach(([id,qty])=>{
+        if(qty>0){ cantidades[id]=qty; const el=document.getElementById(`cantidad-${id}`); if(el) el.textContent=qty; }
       });
-      actualizarResumen();
+    }
+
+    function hydrateClient(){
+      const c=loadClient();
+      if(c.name)    nombreEl.value=c.name;
+      if(c.address) direccionEl.value=c.address;
+      if(c.shipping){
+        const opt=document.querySelector(`input[name=envio][value="${c.shipping}"]`);
+        if(opt) opt.checked=true;
+      }
     }
 
     /* ---------- Carrito ---------- */
-    function cambiarCantidad(id, delta, btn) {
-      cantidades[id] = Math.max(0, (cantidades[id] || 0) + delta);
-      const el = document.getElementById(`cantidad-${id}`); if (el) el.textContent = cantidades[id];
+    function cambiarCantidad(id,delta,btn){
+      cantidades[id]=Math.max(0,(cantidades[id]||0)+delta);
+      const el=document.getElementById(`cantidad-${id}`); if(el) el.textContent=cantidades[id];
 
-      if (delta > 0 && btn) {
-        btn.classList.add('btn-pop'); btn.addEventListener('animationend', () => btn.classList.remove('btn-pop'), { once: true });
-        const row = btn.closest('.producto'); row.classList.add('row-flash'); row.addEventListener('animationend', () => row.classList.remove('row-flash'), { once: true });
-        fab.classList.add('bump'); fab.addEventListener('animationend', ()=> fab.classList.remove('bump'), { once:true });
+      if(delta>0&&btn){
+        btn.classList.add('btn-pop'); btn.addEventListener('animationend',()=>btn.classList.remove('btn-pop'),{once:true});
+        const row=btn.closest('.producto'); row.classList.add('row-flash'); row.addEventListener('animationend',()=>row.classList.remove('row-flash'),{once:true});
+        fab.classList.add('bump'); fab.addEventListener('animationend',()=>fab.classList.remove('bump'),{once:true});
       }
       saveCart(); actualizarResumen();
     }
 
-    function countItems(){ return Object.values(cantidades).reduce((a,b)=> a+(b||0), 0); }
+    function countItems(){ return Object.values(cantidades).reduce((a,b)=>a+(b||0),0); }
 
-    function setFabVisible(visible){
-      if (!fab) return;
-      if (visible){
-        if (fab.hasAttribute('hidden')) { fab.removeAttribute('hidden'); requestAnimationFrame(()=> fab.classList.remove('hide')); }
-        else { fab.classList.remove('hide'); }
-      } else {
-        fab.classList.add('hide'); setTimeout(()=> fab.setAttribute('hidden',''), 200);
+    function setFabVisible(v){
+      if(!fab) return;
+      if(v){
+        fab.removeAttribute('hidden');
+        requestAnimationFrame(()=>fab.classList.remove('hide'));
+      }else{
+        fab.classList.add('hide'); setTimeout(()=>fab.setAttribute('hidden',''),200);
       }
     }
 
-    function actualizarResumen() {
-      listaEl.innerHTML = '';
-      let subtotal = 0, count = 0;
-
-      for (let id in cantidades) {
-        const cantidad = cantidades[id];
-        if (cantidad > 0) {
-          const span = document.getElementById(`cantidad-${id}`); if (!span) continue;
-          const productoDiv = span.closest('.producto');
-          const nombre = productoDiv?.dataset?.nombre || '';
-          const precio = parseInt(productoDiv?.dataset?.precio || '0', 10);
-
-          const li = document.createElement('li');
-          li.className = 'resumen-item';
-          li.innerHTML = `<span class="resumen-name">${nombre}</span><span class="resumen-qty">x${cantidad}</span><span class="resumen-line">${formatARS(precio * cantidad)}</span>`;
-          listaEl.appendChild(li);
-
-          subtotal += precio * cantidad; count += cantidad;
-        }
+    /* ---------- Resumen & totales ---------- */
+    function actualizarResumen(){
+      listaEl.innerHTML='';
+      let subtotal=0,count=0;
+      for(const id in cantidades){
+        const qty=cantidades[id]; if(qty<=0) continue;
+        const span=document.getElementById(`cantidad-${id}`); if(!span) continue;
+        const row=span.closest('.producto');
+        const name=row.dataset.nombre;
+        const price=parseInt(row.dataset.precio,10);
+        const li=document.createElement('li');
+        li.className='resumen-item';
+        li.innerHTML=`<span class="resumen-name">${name}</span><span class="resumen-qty">x${qty}</span><span class="resumen-line">${formatARS(price*qty)}</span>`;
+        listaEl.appendChild(li);
+        subtotal+=price*qty; count+=qty;
       }
 
-      const envioSel = (document.querySelector('input[name=envio]:checked')||{}).value || 'retiro';
-      const envioCosto = envioSel === 'envio' ? SHIPPING : 0;
+      const envioSel=(document.querySelector('input[name=envio]:checked')||{}).value||'retiro';
+      const envioCosto=envioSel==='envio'?SHIPPING:0;
 
-      subtotalEl.textContent = formatARS(subtotal);
-      if (envioCosto > 0) { envioCostoEl.textContent = formatARS(envioCosto); envioLineEl.hidden = false; }
-      else { envioLineEl.hidden = true; }
-      totalEl.textContent = formatARS(subtotal + envioCosto);
+      subtotalEl.textContent=formatARS(subtotal);
+      if(envioCosto>0){ envioCostoEl.textContent=formatARS(envioCosto); envioLineEl.hidden=false; }
+      else{ envioLineEl.hidden=true; }
+      totalEl.textContent=formatARS(subtotal+envioCosto);
 
-      emptyMsg.hidden = count > 0;
+      emptyMsg.hidden=count>0;
+      fabCount.textContent=count;
+      fabTotal.textContent=formatARS(subtotal+envioCosto);
+      setFabVisible(count>0&&!sheetOpen);
 
-      fabCount.textContent = count;
-      fabTotal.textContent = formatARS(subtotal + envioCosto);
-      setFabVisible(count > 0 && !sheetOpen);
+      btnWA.disabled=!(count>0&&nombreEl.value.trim().length>0);
 
-      const nombreOk = document.getElementById('nombre').value.trim().length > 0;
-      btnWA.disabled = !(count > 0 && nombreOk);
-
-      METRICS_TOTAL = subtotal + envioCosto;
-      METRICS_COUNT = count;
-      METRICS_ENVIO = envioSel;
+      METRICS_TOTAL=subtotal+envioCosto;
+      METRICS_COUNT=count;
+      METRICS_ENVIO=envioSel;
     }
 
-    document.getElementById('nombre').addEventListener('input', actualizarResumen);
-    document.querySelectorAll('input[name=envio]').forEach(r => r.addEventListener('change', actualizarResumen));
+    /* ---------- Listeners de inputs (con guardado) ---------- */
+    nombreEl.addEventListener('input', ()=>{
+      saveClient({...loadClient(),name:nombreEl.value.trim()});
+      actualizarResumen();
+    });
 
-    /* ---------- VACIAR CARRITO (con confirmación) ---------- */
-    function abrirDialogoVaciar(){
-      dlgBackdrop.classList.add('open');
-      dlgYes.focus();
-    }
+    direccionEl.addEventListener('input', ()=>{
+      saveClient({...loadClient(),address:direccionEl.value.trim()});
+    });
+
+    document.querySelectorAll('input[name=envio]').forEach(radio=>{
+      radio.addEventListener('change',e=>{
+        saveClient({...loadClient(),shipping:e.target.value});
+        actualizarResumen();
+      });
+    });
+
+    /* ---------- VACIAR CARRITO ---------- */
+    function abrirDialogoVaciar(){ dlgBackdrop.classList.add('open'); dlgYes.focus(); }
     function cerrarDialogoVaciar(){ dlgBackdrop.classList.remove('open'); }
 
-    dlgNo.addEventListener('click', cerrarDialogoVaciar);
-    dlgBackdrop.addEventListener('click', e=>{
-      if(e.target===dlgBackdrop) cerrarDialogoVaciar();
-    });
-    document.addEventListener('keydown', e=>{
-      if(e.key==='Escape' && dlgBackdrop.classList.contains('open')) cerrarDialogoVaciar();
-    });
+    dlgNo.addEventListener('click',cerrarDialogoVaciar);
+    dlgBackdrop.addEventListener('click',e=>{ if(e.target===dlgBackdrop) cerrarDialogoVaciar(); });
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&dlgBackdrop.classList.contains('open')) cerrarDialogoVaciar(); });
 
-    dlgYes.addEventListener('click', ()=>{
+    dlgYes.addEventListener('click',()=>{
       Object.keys(cantidades).forEach(k=>cantidades[k]=0);
       document.querySelectorAll('[id^="cantidad-"]').forEach(el=>el.textContent='0');
       saveCart(); actualizarResumen();
       cerrarDialogoVaciar();
-      showToast('Carrito vacío', 'warn');
+      showToast('Carrito vacío','warn');
     });
 
     function vaciarCarrito(){ abrirDialogoVaciar(); }
 
-    /* Tabs */
-    function mostrar(seccion) {
-      document.getElementById('menu-rotiseria').style.display = seccion === 'rotiseria' ? 'block' : 'none';
-      document.getElementById('menu-almacen').style.display = seccion === 'almacen' ? 'block' : 'none';
-      document.getElementById('btn-rotiseria').classList.toggle('active', seccion === 'rotiseria');
-      document.getElementById('btn-almacen').classList.toggle('active', seccion === 'almacen');
+    /* ---------- Tabs ---------- */
+    function mostrar(sec){
+      document.getElementById('menu-rotiseria').style.display=sec==='rotiseria'?'block':'none';
+      document.getElementById('menu-almacen').style.display=sec==='almacen'?'block':'none';
+      document.getElementById('btn-rotiseria').classList.toggle('active',sec==='rotiseria');
+      document.getElementById('btn-almacen').classList.toggle('active',sec==='almacen');
     }
 
-    /* WhatsApp + registro de pedido */
-    function enviarPedido() {
-      const name = document.getElementById('nombre').value.trim();
-      const addr = document.getElementById('direccion').value.trim();
-      const envio = document.querySelector('input[name=envio]:checked').value;
+    /* ---------- WhatsApp + registro ---------- */
+    function enviarPedido(){
+      const name=nombreEl.value.trim();
+      const addr=direccionEl.value.trim();
+      const envio=document.querySelector('input[name=envio]:checked').value;
 
-      if (!name) { showToast('Ingresá tu nombre', 'error'); return; }
-      if (countItems() === 0) { showToast('Seleccioná al menos un producto', 'error'); return; }
-      if (envio === 'envio' && !addr) { showToast('Ingresá tu dirección para el envío', 'error'); return; }
+      if(!name){ showToast('Ingresá tu nombre','error'); return; }
+      if(countItems()===0){ showToast('Seleccioná al menos un producto','error'); return; }
+      if(envio==='envio'&&!addr){ showToast('Ingresá tu dirección para el envío','error'); return; }
 
-      let msg = `Hola, soy ${name}. Quiero hacer un pedido:\n`;
-      const items = [];
-      Object.entries(cantidades).forEach(([id, qty]) => {
-        if (qty > 0) {
-          const span = document.getElementById(`cantidad-${id}`); if (!span) return;
-          const row = span.closest('.producto');
-          const namep = row.dataset.nombre;
-          const price = parseInt(row.dataset.precio, 10);
-          const line = price*qty;
-          msg += `- ${namep} x${qty} - ${formatARS(line)}\n`;
-          items.push({ name: namep, qty, unit_price: price, line_total: line });
+      let msg=`Hola, soy ${name}. Quiero hacer un pedido:\n`;
+      const items=[];
+      Object.entries(cantidades).forEach(([id,qty])=>{
+        if(qty>0){
+          const span=document.getElementById(`cantidad-${id}`); if(!span) return;
+          const row=span.closest('.producto');
+          const n=row.dataset.nombre;
+          const p=parseInt(row.dataset.precio,10);
+          const line=p*qty;
+          msg+=`- ${n} x${qty} - ${formatARS(line)}\n`;
+          items.push({name:n,qty,unit_price:p,line_total:line});
         }
       });
 
-      const shipping_cost = (envio === 'envio') ? SHIPPING : 0;
-      const subtotalNum = METRICS_TOTAL - shipping_cost;
+      const shipping_cost=envio==='envio'?SHIPPING:0;
+      const subtotalNum=METRICS_TOTAL-shipping_cost;
 
-      msg += envio === 'envio'
-        ? `Envío a domicilio a: ${addr} (+${formatARS(SHIPPING)})\n`
-        : 'Retiro en el local\n';
-      msg += `Total: ${totalEl.textContent}`;
+      msg+=envio==='envio'
+        ?`Envío a domicilio a: ${addr} (+${formatARS(SHIPPING)})\n`
+        :'Retiro en el local\n';
+      msg+=`Total: ${totalEl.textContent}`;
 
-      // Registrar pedido WSP
-      const order_id = Date.now().toString(36) + Math.random().toString(36).slice(2,6);
-      logEvent('order_wsp', {
-        order_id,
-        shipping: envio,
-        shipping_cost,
-        subtotal: subtotalNum,
-        total: METRICS_TOTAL,
-        total_items: METRICS_COUNT,
-        items
-      });
+      const order_id=Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+      logEvent('order_wsp',{order_id,shipping:envio,shipping_cost,subtotal:subtotalNum,total:METRICS_TOTAL,total_items:METRICS_COUNT,items});
 
-      const url = `https://wa.me/3415923882?text=${encodeURIComponent(msg)}`;
-      window.open(url, '_blank'); showToast('Abriendo WhatsApp...', 'ok');
+      const url=`https://wa.me/3415923882?text=${encodeURIComponent(msg)}`;
+      window.open(url,'_blank'); showToast('Abriendo WhatsApp...','ok');
     }
 
-    /* Bottom Sheet */
+    /* ---------- Bottom Sheet ---------- */
     function trapFocus(e){
-      if (!sheetOpen || e.key !== 'Tab') return;
-      const f = sheet.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
-      if (!f.length) return;
+      if(!sheetOpen||e.key!=='Tab') return;
+      const f=sheet.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+      if(!f.length) return;
       const first=f[0], last=f[f.length-1];
-      if (e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
-      else if (!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+      if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+      else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
     }
     function openSheet(){
-      if (sheetOpen) return; sheetOpen = true; document.body.style.overflow='hidden';
+      if(sheetOpen) return; sheetOpen=true; document.body.style.overflow='hidden';
       sheet.classList.add('open'); backdrop.classList.add('open');
       sheet.removeAttribute('aria-hidden'); backdrop.removeAttribute('aria-hidden');
       setFabVisible(false);
-      setTimeout(()=> document.getElementById('sheetClose').focus(), 10);
-      document.addEventListener('keydown', onSheetKeydown); document.addEventListener('keydown', trapFocus);
-      logEvent('cart_open', { total: METRICS_TOTAL, items: METRICS_COUNT });
+      setTimeout(()=>sheetClose.focus(),10);
+      document.addEventListener('keydown',onSheetKeydown); document.addEventListener('keydown',trapFocus);
+      logEvent('cart_open',{total:METRICS_TOTAL,items:METRICS_COUNT});
     }
     function closeSheet(){
-      if (!sheetOpen) return; sheetOpen = false; document.body.style.overflow='';
+      if(!sheetOpen) return; sheetOpen=false; document.body.style.overflow='';
       sheet.classList.remove('open'); backdrop.classList.remove('open');
       sheet.setAttribute('aria-hidden','true'); backdrop.setAttribute('aria-hidden','true');
       actualizarResumen();
-      document.removeEventListener('keydown', onSheetKeydown); document.removeEventListener('keydown', trapFocus);
+      document.removeEventListener('keydown',onSheetKeydown); document.removeEventListener('keydown',trapFocus);
     }
-    function onSheetKeydown(e){ if (e.key === 'Escape'){ closeSheet(); } }
-    fab.addEventListener('click', (e)=>{ e.preventDefault(); e.stopPropagation(); openSheet(); });
-    sheetClose.addEventListener('click', closeSheet);
-    backdrop.addEventListener('click', closeSheet);
+    function onSheetKeydown(e){ if(e.key==='Escape') closeSheet(); }
+    fab.addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation(); openSheet(); });
+    sheetClose.addEventListener('click',closeSheet);
+    backdrop.addEventListener('click',closeSheet);
+
+    /* Drag para móviles */
     let startY=0,currentY=0,dragging=false;
-    sheet.addEventListener('touchstart',(e)=>{ if(!sheetOpen) return; startY=e.touches[0].clientY; dragging=true; },{passive:true});
-    sheet.addEventListener('touchmove',(e)=>{ if(!dragging) return; currentY=e.touches[0].clientY; const diff=Math.max(0,currentY-startY); sheet.style.transform=`translateY(${diff}px)`; },{passive:true});
+    sheet.addEventListener('touchstart',e=>{ if(!sheetOpen) return; startY=e.touches[0].clientY; dragging=true; },{passive:true});
+    sheet.addEventListener('touchmove',e=>{ if(!dragging) return; currentY=e.touches[0].clientY; const diff=Math.max(0,currentY-startY); sheet.style.transform=`translateY(${diff}px)`; },{passive:true});
     sheet.addEventListener('touchend',()=>{ if(!dragging) return; const diff=Math.max(0,currentY-startY); dragging=false; startY=0; currentY=0; if(diff>120){ sheet.style.transform=''; closeSheet(); } else { sheet.classList.add('open'); sheet.style.transform=''; } });
 
     /* Promo CTA (email) */
     (function promoInit(){
-      const subj = encodeURIComponent(`Quiero una web para mi negocio`);
-      const body = encodeURIComponent(
+      const subj=encodeURIComponent('Quiero una web para mi negocio');
+      const body=encodeURIComponent(
 `Hola Ludmila,
 Vi tu trabajo y quiero pedir un presupuesto para mi web.
 
@@ -663,43 +615,29 @@ Tipo de sitio: (catálogo / pedidos / restaurante / otro)
 ¿Plazo ideal?: (fecha)
 
 ¡Gracias!`);
-      const mailEl = document.getElementById('promoMail');
-      if (mailEl) mailEl.href = `mailto:ludmilasolutions2.0@gmail.com?subject=${subj}&body=${body}`;
+      const mailEl=document.getElementById('promoMail');
+      if(mailEl) mailEl.href=`mailto:ludmilasolutions2.0@gmail.com?subject=${subj}&body=${body}`;
     })();
 
-    /* ===== Barra admin robusta (#admin) ===== */
+    /* ===== Barra admin (#admin) ===== */
     (function adminInit(){
-      const bar = document.getElementById('adminBar');
-      let bound = false;
-
-      function bindOnce() {
-        if (bound) return;
-        bound = true;
-        document.getElementById('exportOrdersBtn').onclick  = exportWspOrdersCSV;
-        document.getElementById('exportSummaryBtn').onclick = exportTopProductsCSV;
-        document.getElementById('clearMetricsBtn').onclick  = clearMetrics;
+      const bar=document.getElementById('adminBar'); let bound=false;
+      function bindOnce(){
+        if(bound) return; bound=true;
+        document.getElementById('exportOrdersBtn').onclick = exportWspOrdersCSV;
+        document.getElementById('exportSummaryBtn').onclick= exportTopProductsCSV;
+        document.getElementById('clearMetricsBtn').onclick = clearMetrics;
       }
-
-      function isAdminHash(){ return /\badmin\b/i.test(location.hash); }
-
+      function isAdminHash(){ return/\badmin\b/i.test(location.hash); }
       function setAdmin(on){
-        document.body.classList.toggle('is-admin', !!on);
-        if (on){
-          bar.removeAttribute('hidden');
-          bindOnce();
-        } else {
-          bar.setAttribute('hidden','');
-        }
+        document.body.classList.toggle('is-admin',!!on);
+        if(on){ bar.removeAttribute('hidden'); bindOnce(); } else { bar.setAttribute('hidden',''); }
       }
-
       function update(){ setAdmin(isAdminHash()); }
-
-      // Cambios de hash y restauración desde historial / pestaña
-      window.addEventListener('hashchange', update);
-      window.addEventListener('pageshow', update);
-      document.addEventListener('visibilitychange', () => { if (!document.hidden) update(); });
-
-      update(); // estado inicial
+      window.addEventListener('hashchange',update);
+      window.addEventListener('pageshow',update);
+      document.addEventListener('visibilitychange',()=>{ if(!document.hidden) update(); });
+      update();
     })();
   </script>
 </body>
