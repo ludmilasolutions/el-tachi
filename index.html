@@ -357,7 +357,8 @@
 
   function downloadCSV(name,headers,rows){
     const lines=[headers.join(SEP),...rows.map(r=>headers.map(h=>csvEscape(r[h])).join(SEP))];
-    const blob=new Blob(['\\uFEFF'+lines.join('\\r\\n')],{type:'text/csv;charset=utf-8;'});
+    // BOM y saltos REALES (arregla \uFEFF en Excel)
+    const blob=new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8;'});
     const url=URL.createObjectURL(blob);const a=document.createElement('a');
     a.href=url;a.download=name;document.body.appendChild(a);a.click();URL.revokeObjectURL(url);a.remove();
   }
@@ -443,9 +444,9 @@
       items.forEach((prod,i)=>{
         const id=`${contId}-${cat}-${i}`;if(!(id in cantidades))cantidades[id]=0;
         const div=document.createElement('div');div.className='producto';
-        div.innerHTML=`<div class=\"producto-info\"><h3>${prod.nombre} - ${formatARS(prod.precio)}</h3>${prod.desc?`<p>${prod.desc}</p>`:''}</div>
-                       <div class=\"contador\"><button onclick=\"cambiarCantidad('${id}',-1,this)\">−</button>
-                       <span id=\"cantidad-${id}\">0</span><button onclick=\"cambiarCantidad('${id}',1,this)\">+</button></div>`;
+        div.innerHTML=`<div class="producto-info"><h3>${prod.nombre} - ${formatARS(prod.precio)}</h3>${prod.desc?`<p>${prod.desc}</p>`:''}</div>
+                       <div class="contador"><button onclick="cambiarCantidad('${id}',-1,this)">−</button>
+                       <span id="cantidad-${id}">0</span><button onclick="cambiarCantidad('${id}',1,this)">+</button></div>`;
         div.dataset.nombre=prod.nombre;div.dataset.precio=prod.precio;det.appendChild(div);
       });
       cont.appendChild(det);
@@ -501,7 +502,7 @@
       const span=document.getElementById(`cantidad-${id}`);if(!span)continue;
       const row=span.closest('.producto');const name=row.dataset.nombre;const price=parseInt(row.dataset.precio,10);
       const li=document.createElement('li');li.className='resumen-item';
-      li.innerHTML=`<span class=\"resumen-name\">${name}</span><span class=\"resumen-qty\">x${qty}</span><span class=\"resumen-line\">${formatARS(price*qty)}</span>`;
+      li.innerHTML=`<span class="resumen-name">${name}</span><span class="resumen-qty">x${qty}</span><span class="resumen-line">${formatARS(price*qty)}</span>`;
       listaEl.appendChild(li);subtotal+=price*qty;count+=qty;
     }
     const envioInput=document.querySelector('input[name=envio]:checked');
@@ -515,7 +516,7 @@
       envioLineEl.hidden=false;
     }else{
       envioLineEl.hidden=true;
-      envioCostoEl.textContent='';          // <— línea nueva para limpiar importe
+      envioCostoEl.textContent='';
     }
 
     totalEl.textContent=formatARS(subtotal+envioCosto);
@@ -541,7 +542,7 @@
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&dlgBackdrop.classList.contains('open'))cerrarDialogoVaciar()});
   dlgYes.addEventListener('click',()=>{
     Object.keys(cantidades).forEach(k=>cantidades[k]=0);
-    document.querySelectorAll('[id^=\"cantidad-\"]').forEach(el=>el.textContent='0');
+    document.querySelectorAll('[id^="cantidad-"]').forEach(el=>el.textContent='0');
     saveCart(cantidades);actualizarResumen();cerrarDialogoVaciar();showToast('Carrito vacío','warn');
   });
   const vaciarCarrito=abrirDialogoVaciar;
@@ -568,26 +569,45 @@
     if(countItems()===0){showToast('Seleccioná al menos un producto','error');return}
     if(envio==='envio'&&!addr){showToast('Ingresá tu dirección para el envío','error');return}
 
+    // Construir mensaje para WhatsApp
     let msg=`Hola, soy ${name}. Quiero hacer un pedido:\n`;
+    const items=[];
     Object.entries(cantidades).forEach(([id,qty])=>{
       if(qty>0){
-        const span=document.getElementById(`cantidad-${id}`);if(!span)return;
+        const span=document.getElementById(`cantidad-${id}`); if(!span) return;
         const row=span.closest('.producto');
-        const n=row.dataset.nombre,p=parseInt(row.dataset.precio,10),line=p*qty;
+        const n=row.dataset.nombre, p=parseInt(row.dataset.precio,10), line=p*qty;
         msg+=`- ${n} x${qty} - ${formatARS(line)}\n`;
+        items.push({ name:n, qty, unit_price:p, line_total:line });
       }
     });
+
+    const subtotal = items.reduce((a,i)=>a+i.line_total,0);
+    const shipping_cost = envio==='envio'?SHIPPING:0;
+    const total = subtotal + shipping_cost;
+    const order_id = 'W'+new Date().toISOString().replace(/[-:.TZ]/g,'').slice(0,14);
+
     msg+=envio==='envio'?`Envío a domicilio a: ${addr} (+${formatARS(SHIPPING)})\n`:'Retiro en el local\n';
-    msg+=`Total: ${totalEl.textContent}`;
+    msg+=`Total: ${formatARS(total)}`;
+
+    // Registrar evento completo (para exportadores)
+    logEvent('order_wsp',{
+      order_id,
+      shipping:envio,
+      shipping_cost,
+      subtotal,
+      total,
+      items
+    });
+
     window.open(`https://wa.me/3415923882?text=${encodeURIComponent(msg)}`,'_blank');
     showToast('Abriendo WhatsApp...','ok');
-    logEvent('order_wsp',{shipping:envio,total:METRICS_TOTAL});
   }
 
   /* ======= Sheet ======= */
   function trapFocus(e){
     if(!sheetOpen||e.key!=='Tab')return;
-    const f=sheet.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex=\"-1\"])');
+    const f=sheet.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
     if(!f.length)return;const first=f[0],last=f[f.length-1];
     if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
     else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
@@ -628,7 +648,7 @@
   /* ======= Promo mail link ======= */
   (function promoInit(){
     const subj=encodeURIComponent('Quiero una web para mi negocio');
-    const body=encodeURIComponent(`Hola Ludmila,\\nVi tu trabajo y quiero pedir un presupuesto para mi web.\\n\\nTipo de sitio: (catálogo / pedidos / restaurante / otro)\\n¿Panel para editar productos?: (sí/no)\\n¿Plazo ideal?: (fecha)\\n\\n¡Gracias!`);
+    const body=encodeURIComponent(`Hola Ludmila,\nVi tu trabajo y quiero pedir un presupuesto para mi web.\n\nTipo de sitio: (catálogo / pedidos / restaurante / otro)\n¿Panel para editar productos?: (sí/no)\n¿Plazo ideal?: (fecha)\n\n¡Gracias!`);
     const mailEl=document.getElementById('promoMail');
     if(mailEl)mailEl.href=`mailto:ludmilasolutions2.0@gmail.com?subject=${subj}&body=${body}`;
   })();
