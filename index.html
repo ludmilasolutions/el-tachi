@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -27,9 +26,9 @@
       --shadow:0 10px 24px rgba(0,0,0,.18);
     }
     *{box-sizing:border-box;margin:0;padding:0}
-
     body{font-family:'Roboto',sans-serif;background:var(--bg);color:var(--text)}
 
+    /* ---------- Header ---------- */
     header{
       background:linear-gradient(90deg,var(--azul) 0%,var(--azul-2) 100%);
       color:#fff;text-align:center;padding:2rem 1rem
@@ -66,7 +65,6 @@
       background:var(--azul);color:var(--amarillo);border:none;padding:.3rem .6rem;
       font-weight:bold;font-size:1.2rem;cursor:pointer;border-radius:5px;transform-origin:center
     }
-
     @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
     .btn-pop{animation:pop .22s ease-out}
     @keyframes flash{0%{box-shadow:0 0 0 rgba(255,204,0,0)}50%{box-shadow:0 0 0 4px rgba(255,204,0,.35)}100%{box-shadow:0 0 0 rgba(255,204,0,0)}}
@@ -110,29 +108,29 @@
       label input::placeholder{font-size:1.05rem}
     }
 
-    /* ---------- FAB ---------- */
+    /* ---------- FAB AGRANDADO ---------- */
     .cart-fab{
-      position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:99;
-      background:var(--azul);color:var(--amarillo);border:2px solid var(--amarillo);
-      display:flex;align-items:center;gap:.6rem;padding:.6rem .9rem;border-radius:9999px;
-      box-shadow:0 8px 18px rgba(0,0,0,.25);cursor:pointer;-webkit-user-select:none;user-select:none;
-      touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .15s,opacity .18s,filter .18s
+      position:fixed;right:16px;bottom:calc(20px + env(safe-area-inset-bottom));z-index:99;
+      background:var(--azul);color:var(--amarillo);border:3px solid var(--amarillo);
+      display:flex;align-items:center;gap:.8rem;padding:1rem 1.4rem;border-radius:9999px;
+      font-size:1.2rem;box-shadow:0 10px 24px rgba(0,0,0,.28);cursor:pointer;
+      -webkit-user-select:none;user-select:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+      transition:transform .15s,opacity .18s,filter .18s
     }
     .cart-fab *{pointer-events:none}
     .cart-fab:hover{transform:translateY(-2px)}
     .cart-fab.hide{opacity:0;transform:translateY(8px);filter:blur(2px);pointer-events:none}
     .cart-fab[hidden]{display:none}
-    .cart-total{font-weight:700}
+    .cart-total{font-weight:700;font-size:1.1rem}
     .cart-count{
-      background:var(--amarillo);color:var(--azul-2);min-width:26px;height:26px;border-radius:999px;
-      display:grid;place-items:center;font-weight:800
+      background:var(--amarillo);color:var(--azul-2);min-width:30px;height:30px;border-radius:999px;
+      display:grid;place-items:center;font-weight:800;font-size:1rem
     }
     @keyframes bump{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(0) scale(1.08)}}
     .cart-fab.bump{animation:bump .3s ease}
     @media(max-width:520px){
-      .cart-fab{padding:.55rem .8rem;gap:.5rem}
-      .cart-total{font-size:.95rem}
-      .cart-count{min-width:22px;height:22px;font-size:.85rem}
+      .cart-fab{padding:.8rem 1rem;gap:.6rem;font-size:1.05rem}
+      .cart-count{min-width:26px;height:26px;font-size:.9rem}
     }
 
     /* ---------- Toasts ---------- */
@@ -307,7 +305,8 @@
 
     <div id="sheetBody" class="sheet-body" tabindex="0">
       <section id="checkout">
-        <label><input type="radio" name="envio" value="retiro" checked> Retiro en el local</label>
+        <!-- radios SIN preselección -->
+        <label><input type="radio" name="envio" value="retiro"> Retiro en el local</label>
         <label><input type="radio" name="envio" value="envio"> Envío a domicilio (+$1000)</label>
 
         <label>Nombre:
@@ -410,31 +409,36 @@
 
   /* ======= Persistencia & helpers generales ======= */
   const CART_KEY='tachi_cart_v1',CLIENT_KEY='tachi_client_v1',SHIPPING=1000;
-  const formatARS=new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format;
-  function loadCart(){try{return JSON.parse(localStorage.getItem(CART_KEY)||'{}')}catch{return{}}}
+  const formatARS=n=>new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n);
+  function loadCart(){try{return JSON.parse(localStorage.getItem(CART_KEY)||'{}')}catch{return{} }}
   function saveCart(obj){localStorage.setItem(CART_KEY,JSON.stringify(obj))}
-  function loadClient(){try{return JSON.parse(localStorage.getItem(CLIENT_KEY)||'{}')}catch{return{}}}
+  function loadClient(){try{return JSON.parse(localStorage.getItem(CLIENT_KEY)||'{}')}catch{return{} }}
   function saveClient(obj){localStorage.setItem(CLIENT_KEY,JSON.stringify(obj))}
   function asset(p){const h=location.hostname;if(h.endsWith('github.io')){const parts=location.pathname.split('/').filter(Boolean);const repo=parts[0]||'';return`/${repo}/${p}`}return`/${p}`}
   function normalizar(d){if(d&&Array.isArray(d.categorias)){const o={};d.categorias.forEach(c=>o[c.categoria]=c.productos||[]);return o}return d||{}}
-  function showToast(msg,type='ok',t=2200){
+
+  /* ======= Toast ======= */
+  function showToast(msg,type='ok',t=2400){
     const wrap=document.getElementById('toastWrap');
-    const el=document.createElement('div');el.className=`toast ${type==='error'?'err':type==='warn'?'warn':'ok'}`;el.textContent=msg;
-    wrap.appendChild(el);setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .2s'},t);setTimeout(()=>wrap.removeChild(el),t+220);
+    const el=document.createElement('div');
+    el.className=`toast ${type==='error'?'err':type==='warn'?'warn':'ok'}`;
+    el.textContent=msg;
+    wrap.appendChild(el);
+    setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .2s'},t);
+    setTimeout(()=>wrap.removeChild(el),t+220);
   }
 
   /* ======= Estado DOM ======= */
-  const cantidades={}, listaEl=document.getElementById('lista');
-  const subtotalEl=document.getElementById('subtotal'), totalEl=document.getElementById('total');
-  const envioLineEl=document.getElementById('envioLine'), envioCostoEl=document.getElementById('envioCosto');
-  const emptyMsg=document.getElementById('emptyMsg'), btnWA=document.getElementById('btn-whatsapp');
+  const cantidades={}, listaEl=document.getElementById('lista'), subtotalEl=document.getElementById('subtotal'),
+        totalEl=document.getElementById('total'), envioLineEl=document.getElementById('envioLine'),
+        envioCostoEl=document.getElementById('envioCosto'), emptyMsg=document.getElementById('emptyMsg'),
+        btnWA=document.getElementById('btn-whatsapp'), nombreEl=document.getElementById('nombre');
 
-  const nombreEl=document.getElementById('nombre'), direccionEl=document.getElementById('direccion');
   const fab=document.getElementById('cartFab'), fabCount=document.getElementById('fabCount'), fabTotal=document.getElementById('fabTotal');
   const sheet=document.getElementById('cartSheet'), sheetClose=document.getElementById('sheetClose'), backdrop=document.getElementById('sheetBackdrop');
-  let sheetOpen=false, METRICS_TOTAL=0,METRICS_COUNT=0,METRICS_ENVIO='retiro';
+  let sheetOpen=false, METRICS_TOTAL=0,METRICS_COUNT=0,METRICS_ENVIO='';
 
-  /* ======= Render productos ======= */
+  /* ======= Render productos (JSON) ======= */
   function renderProductos(contId,data){
     const cont=document.getElementById(contId);cont.innerHTML='';
     const norm=normalizar(data);
@@ -465,7 +469,15 @@
 
   /* ======= Hydration ======= */
   function hydrateCart(){Object.entries(loadCart()).forEach(([id,q])=>{if(q>0){cantidades[id]=q;const el=document.getElementById(`cantidad-${id}`);if(el)el.textContent=q}})}
-  function hydrateClient(){const c=loadClient();if(c.name)nombreEl.value=c.name;if(c.address)direccionEl.value=c.address;if(c.shipping){const o=document.querySelector(`input[name=envio][value="${c.shipping}"]`);if(o)o.checked=true}}
+  function hydrateClient(){
+    const c=loadClient();
+    if(c.name)nombreEl.value=c.name;
+    if(c.address)document.getElementById('direccion').value=c.address;
+    if(c.shipping){
+      const o=document.querySelector(`input[name=envio][value="${c.shipping}"]`);
+      if(o)o.checked=true;
+    }
+  }
 
   /* ======= Carrito ======= */
   function cambiarCantidad(id,delta,btn){
@@ -485,25 +497,28 @@
   function actualizarResumen(){
     listaEl.innerHTML='';let subtotal=0,count=0;
     for(const id in cantidades){
-      const qty=cantidades[id];if(qty<=0)continue;const span=document.getElementById(`cantidad-${id}`);if(!span)continue;
+      const qty=cantidades[id];if(qty<=0)continue;
+      const span=document.getElementById(`cantidad-${id}`);if(!span)continue;
       const row=span.closest('.producto');const name=row.dataset.nombre;const price=parseInt(row.dataset.precio,10);
       const li=document.createElement('li');li.className='resumen-item';
       li.innerHTML=`<span class="resumen-name">${name}</span><span class="resumen-qty">x${qty}</span><span class="resumen-line">${formatARS(price*qty)}</span>`;
       listaEl.appendChild(li);subtotal+=price*qty;count+=qty;
     }
-    const envioSel=(document.querySelector('input[name=envio]:checked')||{}).value||'retiro';
+    const envioInput=document.querySelector('input[name=envio]:checked');
+    const envioSel=envioInput?envioInput.value:null;
     const envioCosto=envioSel==='envio'?SHIPPING:0;
     subtotalEl.textContent=formatARS(subtotal);
     if(envioCosto>0){envioCostoEl.textContent=formatARS(envioCosto);envioLineEl.hidden=false}else{envioLineEl.hidden=true}
     totalEl.textContent=formatARS(subtotal+envioCosto);
     emptyMsg.hidden=count>0;fabCount.textContent=count;fabTotal.textContent=formatARS(subtotal+envioCosto);
-    setFabVisible(count>0&&!sheetOpen);btnWA.disabled=!(count>0&&nombreEl.value.trim().length>0);
-    METRICS_TOTAL=subtotal+envioCosto;METRICS_COUNT=count;METRICS_ENVIO=envioSel;
+    setFabVisible(count>0&&!sheetOpen);
+    btnWA.disabled=!(count>0&&nombreEl.value.trim().length>0&&envioInput);
+    METRICS_TOTAL=subtotal+envioCosto;METRICS_COUNT=count;METRICS_ENVIO=envioSel||'';
   }
 
   /* ======= Guardar inputs cliente ======= */
   nombreEl.addEventListener('input',()=>{saveClient({...loadClient(),name:nombreEl.value.trim()});actualizarResumen()});
-  direccionEl.addEventListener('input',()=>{saveClient({...loadClient(),address:direccionEl.value.trim()})});
+  document.getElementById('direccion').addEventListener('input',e=>{saveClient({...loadClient(),address:e.target.value.trim()})});
   document.querySelectorAll('input[name=envio]').forEach(r=>r.addEventListener('change',e=>{saveClient({...loadClient(),shipping:e.target.value});actualizarResumen()}));
 
   /* ======= Vaciar carrito ======= */
@@ -517,38 +532,41 @@
   function vaciarCarrito(){abrirDialogoVaciar()}
 
   /* ======= Tabs ======= */
-function mostrar(sec){
-  if(sec === 'almacen'){
-    showToast('🛍️ La sección de Almacén estará disponible próximamente.', 'warn');
-    return; // ← esto evita que siga ejecutando el cambio de pestaña
+  function mostrar(sec){
+    if(sec==='almacen'){
+      showToast('🛍️ La sección de Almacén estará disponible próximamente.','warn');
+      return;
+    }
+    document.getElementById('menu-rotiseria').style.display='block';
+    document.getElementById('menu-almacen').style.display='none';
+    document.getElementById('btn-rotiseria').classList.add('active');
+    document.getElementById('btn-almacen').classList.remove('active');
   }
-
-  // Código real para cambiar de pestaña
-  document.getElementById('menu-rotiseria').style.display = 'block';
-  document.getElementById('menu-almacen').style.display = 'none';
-  document.getElementById('btn-rotiseria').classList.add('active');
-  document.getElementById('btn-almacen').classList.remove('active');
-}
-
 
   /* ======= WhatsApp ======= */
   function enviarPedido(){
-    const name=nombreEl.value.trim(),addr=direccionEl.value.trim(),envio=document.querySelector('input[name=envio]:checked').value;
+    const name=nombreEl.value.trim(),addr=document.getElementById('direccion').value.trim();
+    const envioInput=document.querySelector('input[name=envio]:checked');
+    if(!envioInput){showToast('Seleccioná si es envío o retiro','error');return}
+    const envio=envioInput.value;
     if(!name){showToast('Ingresá tu nombre','error');return}
     if(countItems()===0){showToast('Seleccioná al menos un producto','error');return}
     if(envio==='envio'&&!addr){showToast('Ingresá tu dirección para el envío','error');return}
-    let msg=`Hola, soy ${name}. Quiero hacer un pedido:\n`,items=[];
+
+    let msg=`Hola, soy ${name}. Quiero hacer un pedido:\n`;
     Object.entries(cantidades).forEach(([id,qty])=>{
-      if(qty>0){const span=document.getElementById(`cantidad-${id}`);if(!span)return;const row=span.closest('.producto');
+      if(qty>0){
+        const span=document.getElementById(`cantidad-${id}`);if(!span)return;
+        const row=span.closest('.producto');
         const n=row.dataset.nombre,p=parseInt(row.dataset.precio,10),line=p*qty;
-        msg+=`- ${n} x${qty} - ${formatARS(line)}\n`;items.push({name:n,qty,unit_price:p,line_total:line});}
+        msg+=`- ${n} x${qty} - ${formatARS(line)}\n`;
+      }
     });
-    const shipping_cost=envio==='envio'?SHIPPING:0,subtotalNum=METRICS_TOTAL-shipping_cost;
     msg+=envio==='envio'?`Envío a domicilio a: ${addr} (+${formatARS(SHIPPING)})\n`:'Retiro en el local\n';
     msg+=`Total: ${totalEl.textContent}`;
-    const order_id=Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-    logEvent('order_wsp',{order_id,shipping:envio,shipping_cost,subtotal:subtotalNum,total:METRICS_TOTAL,total_items:METRICS_COUNT,items});
-    window.open(`https://wa.me/3415923882?text=${encodeURIComponent(msg)}`,'_blank');showToast('Abriendo WhatsApp...','ok');
+    window.open(`https://wa.me/3415923882?text=${encodeURIComponent(msg)}`,'_blank');
+    showToast('Abriendo WhatsApp...','ok');
+    logEvent('order_wsp',{shipping:envio,total:METRICS_TOTAL});
   }
 
   /* ======= Sheet ======= */
@@ -561,27 +579,19 @@ function mostrar(sec){
   }
   function openSheet(){
     if(sheetOpen)return;sheetOpen=true;document.body.style.overflow='hidden';
-    sheet.classList.add('open');backdrop.classList.add('open');sheet.removeAttribute('aria-hidden');backdrop.removeAttribute('aria-hidden');
+    sheet.classList.add('open');backdrop.classList.add('open');
     setFabVisible(false);setTimeout(()=>sheetClose.focus(),10);
-    document.addEventListener('keydown',onSheetKeydown);document.addEventListener('keydown',trapFocus);
-    logEvent('cart_open',{total:METRICS_TOTAL,items:METRICS_COUNT});
+    document.addEventListener('keydown',trapFocus);
   }
   function closeSheet(){
     if(!sheetOpen)return;sheetOpen=false;document.body.style.overflow='';
-    sheet.classList.remove('open');backdrop.classList.remove('open');sheet.setAttribute('aria-hidden','true');backdrop.setAttribute('aria-hidden','true');
-    actualizarResumen();document.removeEventListener('keydown',onSheetKeydown);document.removeEventListener('keydown',trapFocus);
+    sheet.classList.remove('open');backdrop.classList.remove('open');
+    actualizarResumen();document.removeEventListener('keydown',trapFocus);
   }
-  const onSheetKeydown=e=>{if(e.key==='Escape')closeSheet()};
-  fab.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openSheet()});
+  fab.addEventListener('click',e=>{e.preventDefault();openSheet()});
   sheetClose.addEventListener('click',closeSheet);backdrop.addEventListener('click',closeSheet);
 
-  /* Drag para móviles */
-  let startY=0,currentY=0,dragging=false;
-  sheet.addEventListener('touchstart',e=>{if(!sheetOpen)return;startY=e.touches[0].clientY;dragging=true},{passive:true});
-  sheet.addEventListener('touchmove',e=>{if(!dragging)return;currentY=e.touches[0].clientY;const diff=Math.max(0,currentY-startY);sheet.style.transform=`translateY(${diff}px)`},{passive:true});
-  sheet.addEventListener('touchend',()=>{if(!dragging)return;const diff=Math.max(0,currentY-startY);dragging=false;startY=0;currentY=0;if(diff>120){sheet.style.transform='';closeSheet()}else{sheet.classList.add('open');sheet.style.transform='';}});
-
-  /* ======= Promo: mailto link ======= */
+  /* ======= Promo mail link ======= */
   (function promoInit(){
     const subj=encodeURIComponent('Quiero una web para mi negocio');
     const body=encodeURIComponent(`Hola Ludmila,
