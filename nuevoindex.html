@@ -6,6 +6,7 @@
   <title>Rotisería El Tachi</title>
   <link rel="icon" href="logo.png">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+
   <style>
     :root{
       --azul:#003366;
@@ -103,7 +104,9 @@
     /* Toasts */
     .toast-wrap{ position:fixed; left:50%; bottom:84px; transform:translateX(-50%); z-index:100; display:flex; flex-direction:column; gap:.5rem; pointer-events:none; }
     .toast{ pointer-events:auto; background:#0b1f3a; color:#fff; border-left:4px solid var(--azul-3); padding:.7rem 1rem; border-radius:8px; box-shadow:0 10px 24px rgba(0,0,0,.25); animation:fadeIn .18s ease-out; max-width: calc(100vw - 40px); }
-    .toast.ok{ border-left-color: var(--ok); } .toast.err{ border-left-color: var(--error); }
+    .toast.ok{   border-left-color: var(--ok); }
+    .toast.err{  border-left-color: var(--error); }
+    .toast.warn{ border-left-color: #ffb400; }
     @keyframes fadeIn{ from{opacity:0; transform:translate(-50%,10px)} to{opacity:1; transform:translate(-50%,0)} }
 
     .section-divider{
@@ -138,6 +141,26 @@
       .sheet.open{ transform: translate(-50%,0); }
     }
 
+    /* ===== Modal confirmar vaciado ===== */
+    .dialog-backdrop{
+      position:fixed; inset:0; background:rgba(0,0,0,.35);
+      display:none; place-items:center; z-index:101;
+    }
+    .dialog-backdrop.open{ display:grid; }
+
+    .dialog{
+      background:#fff; border-radius:14px; width:90%; max-width:340px;
+      box-shadow:0 16px 32px rgba(0,0,0,.28); padding:1.4rem 1.2rem;
+      text-align:center; animation:popin .24s ease-out;
+    }
+    .dialog h3{ margin:.2rem 0 1rem; font-size:1.25rem; color:#0b376d; }
+    .dialog p{ margin:0 0 1.2rem; }
+
+    .dialog-actions{ display:flex; gap:.8rem; justify-content:center; flex-wrap:wrap; }
+    .dialog-actions .btn{ flex:1 1 120px; }
+
+    @keyframes popin{ from{transform:scale(.8); opacity:.0;} to{transform:scale(1); opacity:1;} }
+
     /* ===== Admin bar visible solo con body.is-admin ===== */
     #adminBar{ display:none !important; }
     body.is-admin #adminBar{ display:flex !important; }
@@ -167,7 +190,7 @@
     <span class="cart-count" id="fabCount">0</span>
   </button>
 
-  <!-- División -->
+  <!-- División decorativa -->
   <div class="section-divider" aria-hidden="true"></div>
 
   <!-- Promo -->
@@ -255,6 +278,18 @@
     </div>
   </div>
 
+  <!-- Modal de confirmación -->
+  <div id="dlgClearBackdrop" class="dialog-backdrop" aria-hidden="true">
+    <div role="dialog" aria-modal="true" class="dialog">
+      <h3>¿Vaciar el carrito?</h3>
+      <p>Se eliminarán todos los productos.</p>
+      <div class="dialog-actions">
+        <button id="dlgClearYes" class="btn btn-primary">Sí, vaciar</button>
+        <button id="dlgClearNo"  class="btn">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     /* ========== Mini-analytics (localStorage) ========== */
     const ANALYTICS_KEY = 'tachi_events_v1';
@@ -338,7 +373,7 @@
 
     function asset(path){ const host=location.hostname; if(host.endsWith('github.io')){ const parts=location.pathname.split('/').filter(Boolean); const repo=parts[0]||''; return `/${repo}/${path}`;} return `/${path}`; }
     function normalizar(data){ if(data && Array.isArray(data.categorias)){ const o={}; data.categorias.forEach(c=>{ o[c.categoria]=c.productos||[]; }); return o; } return data||{}; }
-    function showToast(msg,type='ok',timeout=2200){ const w=document.getElementById('toastWrap'); const el=document.createElement('div'); el.className=`toast ${type==='error'?'err':type==='ok'?'ok':''}`; el.textContent=msg; w.appendChild(el); setTimeout(()=>{el.style.opacity='0'; el.style.transition='opacity .2s';},timeout); setTimeout(()=>w.removeChild(el),timeout+220); }
+    function showToast(msg,type='ok',timeout=2200){ const w=document.getElementById('toastWrap'); const el=document.createElement('div'); el.className=`toast ${type==='error'?'err':type==='warn'?'warn':type==='ok'?'ok':''}`; el.textContent=msg; w.appendChild(el); setTimeout(()=>{el.style.opacity='0'; el.style.transition='opacity .2s';},timeout); setTimeout(()=>w.removeChild(el),timeout+220); }
 
     /* ---------- Estado ---------- */
     const cantidades   = {};
@@ -360,6 +395,11 @@
     const sheetClose = document.getElementById('sheetClose');
     const backdrop   = document.getElementById('sheetBackdrop');
     let sheetOpen = false;
+
+    // Modal vaciado
+    const dlgBackdrop = document.getElementById('dlgClearBackdrop');
+    const dlgYes      = document.getElementById('dlgClearYes');
+    const dlgNo       = document.getElementById('dlgClearNo');
 
     // Métricas sesión
     let METRICS_TOTAL = 0, METRICS_COUNT = 0, METRICS_ENVIO = 'retiro';
@@ -459,7 +499,7 @@
         if (cantidad > 0) {
           const span = document.getElementById(`cantidad-${id}`); if (!span) continue;
           const productoDiv = span.closest('.producto');
-        const nombre = productoDiv?.dataset?.nombre || '';
+          const nombre = productoDiv?.dataset?.nombre || '';
           const precio = parseInt(productoDiv?.dataset?.precio || '0', 10);
 
           const li = document.createElement('li');
@@ -496,11 +536,30 @@
     document.getElementById('nombre').addEventListener('input', actualizarResumen);
     document.querySelectorAll('input[name=envio]').forEach(r => r.addEventListener('change', actualizarResumen));
 
-    function vaciarCarrito(){
-      Object.keys(cantidades).forEach(k => cantidades[k]=0);
-      document.querySelectorAll('[id^="cantidad-"]').forEach(span => span.textContent='0');
-      saveCart(); actualizarResumen(); showToast('Carrito vacío');
+    /* ---------- VACIAR CARRITO (con confirmación) ---------- */
+    function abrirDialogoVaciar(){
+      dlgBackdrop.classList.add('open');
+      dlgYes.focus();
     }
+    function cerrarDialogoVaciar(){ dlgBackdrop.classList.remove('open'); }
+
+    dlgNo.addEventListener('click', cerrarDialogoVaciar);
+    dlgBackdrop.addEventListener('click', e=>{
+      if(e.target===dlgBackdrop) cerrarDialogoVaciar();
+    });
+    document.addEventListener('keydown', e=>{
+      if(e.key==='Escape' && dlgBackdrop.classList.contains('open')) cerrarDialogoVaciar();
+    });
+
+    dlgYes.addEventListener('click', ()=>{
+      Object.keys(cantidades).forEach(k=>cantidades[k]=0);
+      document.querySelectorAll('[id^="cantidad-"]').forEach(el=>el.textContent='0');
+      saveCart(); actualizarResumen();
+      cerrarDialogoVaciar();
+      showToast('Carrito vacío', 'warn');
+    });
+
+    function vaciarCarrito(){ abrirDialogoVaciar(); }
 
     /* Tabs */
     function mostrar(seccion) {
