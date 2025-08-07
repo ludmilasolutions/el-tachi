@@ -145,13 +145,12 @@
       border-color: #7aa2ff;
       box-shadow: 0 0 0 3px rgba(122,162,255,.25);
     }
-    /* En móvil: aún más grandes y 16px+ para evitar zoom en iOS */
     @media (max-width:520px){
       label{ font-size: 1.05rem; }
       label input[type="text"],
       input[type="email"], input[type="tel"]{
         padding: 1.05rem 1rem;
-        font-size: 1.125rem; /* >= 18px aprox según base */
+        font-size: 1.125rem;
         border-radius: 14px;
       }
       label input::placeholder{ font-size: 1.05rem; }
@@ -291,6 +290,14 @@
     </div>
   </section>
 
+  <!-- Botón oculto: exportar métricas (aparece con #admin) -->
+  <button id="exportBtn" hidden
+    style="position:fixed; left:12px; bottom:16px; z-index:1000; background:#fff;
+           border:1px solid #ddd; padding:.45rem .6rem; border-radius:8px;
+           box-shadow:0 6px 16px rgba(0,0,0,.18); font-size:.85rem; cursor:pointer;">
+    ⬇️ Exportar métricas (CSV)
+  </button>
+
   <!-- Toasts -->
   <div id="toastWrap" class="toast-wrap"></div>
 
@@ -337,6 +344,38 @@
   </div>
 
   <script>
+    /* ========== Mini-analytics local (sin servicios externos) ========== */
+    const ANALYTICS_KEY = 'tachi_events_v1';
+    function getEvents() {
+      try { return JSON.parse(localStorage.getItem(ANALYTICS_KEY) || '[]'); }
+      catch { return []; }
+    }
+    function saveEvents(list) {
+      localStorage.setItem(ANALYTICS_KEY, JSON.stringify(list));
+    }
+    function logEvent(type, data = {}) {
+      const evt = {
+        type,
+        ts: new Date().toISOString(),
+        path: location.pathname + location.search,
+        ua: navigator.userAgent,
+        ...data
+      };
+      const list = getEvents();
+      list.push(evt);
+      saveEvents(list);
+    }
+    function exportEventsCSV() {
+      const rows = getEvents();
+      if (!rows.length) { alert('Sin eventos aún'); return; }
+      const headers = Array.from(rows.reduce((set, r) => { Object.keys(r).forEach(k => set.add(k)); return set; }, new Set()));
+      const csv = [ headers.join(','), ...rows.map(r => headers.map(h => JSON.stringify(r[h] ?? '')).join(',')) ].join('\\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = `eventos-${new Date().toISOString().slice(0,10)}.csv`;
+      document.body.appendChild(a); a.click(); URL.revokeObjectURL(url); a.remove();
+    }
+
     /* ---------- Utilidades ---------- */
     const CART_KEY = 'tachi_cart_v1';
     const SHIPPING = 1000;
@@ -389,6 +428,9 @@
     const sheetClose = document.getElementById('sheetClose');
     const backdrop   = document.getElementById('sheetBackdrop');
     let sheetOpen = false;
+
+    // Métricas de sesión (se actualizan en actualizarResumen)
+    let METRICS_TOTAL = 0, METRICS_COUNT = 0, METRICS_ENVIO = 'retiro';
 
     /* ---------- Persistencia ---------- */
     function saveCart(){ localStorage.setItem(CART_KEY, JSON.stringify(cantidades)); }
@@ -553,10 +595,22 @@
 
       const nombreOk = document.getElementById('nombre').value.trim().length > 0;
       btnWA.disabled = !(count > 0 && nombreOk);
+
+      // === actualizar métricas ===
+      METRICS_TOTAL = subtotal + envioCosto;
+      METRICS_COUNT = count;
+      METRICS_ENVIO = envioSel;
     }
 
     document.getElementById('nombre').addEventListener('input', actualizarResumen);
-    document.querySelectorAll('input[name=envio]').forEach(r => r.addEventListener('change', actualizarResumen));
+    // Cambios de envío: actualizar + logEvent
+    document.querySelectorAll('input[name=envio]').forEach(r => r.addEventListener('change', () => {
+      actualizarResumen();
+      logEvent('shipping_change', {
+        method: METRICS_ENVIO,
+        shipping_cost: METRICS_ENVIO === 'envio' ? SHIPPING : 0
+      });
+    }));
 
     function vaciarCarrito(){
       Object.keys(cantidades).forEach(k => cantidades[k]=0);
@@ -601,6 +655,14 @@
         : 'Retiro en el local\n';
 
       msg += `Total: ${totalEl.textContent}`;
+
+      // === log de conversión WhatsApp ===
+      logEvent('whatsapp_click', {
+        total: METRICS_TOTAL,
+        items: METRICS_COUNT,
+        shipping: METRICS_ENVIO
+      });
+
       const url = `https://wa.me/3415923882?text=${encodeURIComponent(msg)}`;
       window.open(url, '_blank');
       showToast('Abriendo WhatsApp...', 'ok');
@@ -630,6 +692,9 @@
       setTimeout(()=> document.getElementById('sheetClose').focus(), 10);
       document.addEventListener('keydown', onSheetKeydown);
       document.addEventListener('keydown', trapFocus);
+
+      // === log de apertura del carrito (sheet) ===
+      logEvent('cart_open', { total: METRICS_TOTAL, items: METRICS_COUNT });
     }
 
     function closeSheet(){
@@ -673,6 +738,15 @@ Gracias!`
       );
       const mailEl = document.getElementById('promoMail');
       if (mailEl) mailEl.href = `mailto:ludmilasolutions2.0@gmail.com?subject=${subj}&body=${body}`;
+    })();
+
+    /* ===== Botón de export (visible con #admin) ===== */
+    (function exportInit(){
+      const exportBtn = document.getElementById('exportBtn');
+      if (location.hash.includes('admin')) {
+        exportBtn.hidden = false;
+        exportBtn.addEventListener('click', exportEventsCSV);
+      }
     })();
   </script>
 </body>
