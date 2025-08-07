@@ -517,23 +517,11 @@
 
   /* ======= Tabs ======= */
   function mostrar(sec){
-    if(sec === 'almacen'){
-      showToast('🛍️ La sección de Almacén estará disponible próximamente.', 'warn');
-      return;
-    }
-    document.getElementById('menu-rotiseria').style.display = 'block';
-    document.getElementById('menu-almacen').style.display = 'none';
-    document.getElementById('btn-rotiseria').classList.add('active');
-    document.getElementById('btn-almacen').classList.remove('active');
+    document.getElementById('menu-rotiseria').style.display=sec==='rotiseria'?'block':'none';
+    document.getElementById('menu-almacen').style.display=sec==='almacen'?'block':'none';
+    document.getElementById('btn-rotiseria').classList.toggle('active',sec==='rotiseria');
+    document.getElementById('btn-almacen').classList.toggle('active',sec==='almacen');
   }
-
-
-  #function mostrar(sec){
-    #document.getElementById('menu-rotiseria').style.display=sec==='rotiseria'?'block':'none';
-    #document.getElementById('menu-almacen').style.display=sec==='almacen'?'block':'none';
-    #document.getElementById('btn-rotiseria').classList.toggle('active',sec==='rotiseria');
-    #document.getElementById('btn-almacen').classList.toggle('active',sec==='almacen');
-  #}
 
   /* ======= WhatsApp ======= */
   function enviarPedido(){
