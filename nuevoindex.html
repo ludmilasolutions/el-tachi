@@ -24,77 +24,30 @@
       --shadow:0 10px 24px rgba(0,0,0,.18);
     }
     *{box-sizing:border-box}
-    body {
-      font-family: 'Roboto', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      margin: 0;
-    }
-    header {
-      background: linear-gradient(90deg, var(--azul) 0%, var(--azul-2) 100%);
-      color: #fff;
-      padding: 2rem 1rem;
-      text-align: center;
-    }
+    body { font-family: 'Roboto', sans-serif; background: var(--bg); color: var(--text); margin: 0; }
+    header { background: linear-gradient(90deg, var(--azul) 0%, var(--azul-2) 100%); color: #fff; padding: 2rem 1rem; text-align: center; }
     header img { max-height: 180px; margin: 0 auto 1rem; }
 
-    main {
-      padding: 1rem;
-      max-width: 900px;
-      margin: auto;
-      padding-bottom: 112px; /* aire por si el FAB tapa algo al navegar */
-    }
+    main { padding: 1rem; max-width: 900px; margin: auto; padding-bottom: 112px; }
 
     /* Tabs */
-    .tabs {
-      display: flex; justify-content: center; margin-bottom: 1rem; gap: 1rem; flex-wrap: wrap;
-    }
-    .tabs button {
-      padding: 0.8rem 1.8rem; font-size: 1.1rem; border: none;
-      background: var(--azul-3); color: var(--amarillo); font-weight: bold;
-      border-radius: 30px; box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-      cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent;
-    }
+    .tabs { display: flex; justify-content: center; margin-bottom: 1rem; gap: 1rem; flex-wrap: wrap; }
+    .tabs button { padding: 0.8rem 1.8rem; font-size: 1.1rem; border: none; background: var(--azul-3); color: var(--amarillo); font-weight: bold; border-radius: 30px; box-shadow: 0 3px 8px rgba(0,0,0,0.2); cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent; }
     .tabs button:hover { background: #0055aa; }
-    .tabs button.active {
-      background: var(--azul-2); border-color: var(--amarillo); box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    }
+    .tabs button.active { background: var(--azul-2); border-color: var(--amarillo); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
 
     /* Acordeón productos */
-    details {
-      border: 1px solid var(--gris-borde);
-      border-radius: 8px;
-      margin-bottom: 1rem;
-      overflow: hidden;
-      background: var(--card);
-    }
-    summary {
-      background: var(--azul);
-      color: var(--amarillo);
-      padding: 1rem;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 1.1rem;
-      user-select: none;
-      list-style: none;
-    }
+    details { border: 1px solid var(--gris-borde); border-radius: 8px; margin-bottom: 1rem; overflow: hidden; background: var(--card); }
+    summary { background: var(--azul); color: var(--amarillo); padding: 1rem; cursor: pointer; font-weight: bold; font-size: 1.1rem; user-select: none; list-style: none; }
 
     /* Producto */
-    .producto {
-      display: flex; justify-content: space-between; align-items: center; gap: .75rem;
-      padding: 0.5rem 1rem; border-top: 1px solid #ddd; background: var(--card);
-      transition: background .2s ease;
-    }
+    .producto { display: flex; justify-content: space-between; align-items: center; gap: .75rem; padding: 0.5rem 1rem; border-top: 1px solid #ddd; background: var(--card); transition: background .2s ease; }
     .producto:hover { background: var(--card-hover); }
     .producto-info { max-width: 65%; }
     .producto h3 { margin: 0.2rem 0; color: #004c99; font-size: 1rem; }
     .producto p { margin: 0.1rem 0; font-size: 0.9rem; color: var(--text); }
     .contador { display: flex; align-items: center; gap: 0.5rem; }
-    .contador button {
-      background: var(--azul); color: var(--amarillo); border: none;
-      padding: 0.3rem 0.6rem; font-weight: bold; font-size: 1.2rem;
-      cursor: pointer; border-radius: 5px; transform-origin:center;
-    }
+    .contador button { background: var(--azul); color: var(--amarillo); border: none; padding: 0.3rem 0.6rem; font-weight: bold; font-size: 1.2rem; cursor: pointer; border-radius: 5px; transform-origin:center; }
 
     /* Animaciones sumar */
     @keyframes pop { 0%{transform:scale(1)} 50%{transform:scale(1.2)} 100%{transform:scale(1)} }
@@ -102,15 +55,12 @@
     @keyframes flash { 0%{box-shadow:0 0 0 rgba(255,204,0,0)} 50%{box-shadow:0 0 0 4px rgba(255,204,0,.35)} 100%{box-shadow:0 0 0 rgba(255,204,0,0)} }
     .row-flash{ animation: flash .35s ease-out; }
 
-    /* ===== Resumen (para usar dentro del sheet) ===== */
+    /* ===== Resumen (dentro del sheet) ===== */
     #resumen { background: var(--resumen-bg); border: 1px solid var(--resumen-borde); border-radius: 8px; padding: 1rem; }
     #resumen h3{ margin-top:0 }
     .resumen-empty{ margin:.25rem 0 .5rem; opacity:.8 }
     .resumen-list{ list-style:none; padding:0; margin:.5rem 0 1rem; display:grid; gap:.35rem; }
-    .resumen-item{
-      display:grid; grid-template-columns: 1fr auto auto; align-items:center; gap:.6rem;
-      background:#fff; border:1px solid var(--gris-borde); border-radius:8px; padding:.5rem .6rem;
-    }
+    .resumen-item{ display:grid; grid-template-columns: 1fr auto auto; align-items:center; gap:.6rem; background:#fff; border:1px solid var(--gris-borde); border-radius:8px; padding:.5rem .6rem; }
     .resumen-name{ font-weight:700; color:#0b376d; }
     .resumen-qty{ opacity:.85; min-width:42px; text-align:right; }
     .resumen-line{ font-weight:700; min-width:88px; text-align:right; }
@@ -118,53 +68,31 @@
     .tot-line{ display:flex; justify-content:space-between; align-items:center; padding:.35rem .2rem; }
     .tot-line.total{ font-size:1.1rem; font-weight:800; border-top:1px dashed #d6d6d6; margin-top:.25rem; padding-top:.5rem; }
     #resumen .acciones { display:flex; gap:.75rem; flex-wrap:wrap; }
-    #resumen button {
-      background: var(--azul); color: var(--amarillo);
-      border: none; padding: 0.8rem 1.2rem; margin-top: .5rem; cursor: pointer;
-      font-weight: bold; font-size: 1rem; border-radius: 5px;
-    }
+    #resumen button { background: var(--azul); color: var(--amarillo); border: none; padding: 0.8rem 1.2rem; margin-top: .5rem; cursor: pointer; font-weight: bold; font-size: 1rem; border-radius: 5px; }
     #btn-vaciar { background:#fff; color:#333; border:1px solid var(--gris-borde); }
     #btn-whatsapp:disabled{ opacity:.6; cursor:not-allowed; }
 
-    /* === Inputs grandes (Nombre / Dirección) === */
+    /* === Inputs grandes === */
     label { display:block; margin-top: 1rem; font-weight: 700; }
-    label input[type="text"],
-    input[type="email"], input[type="tel"]{
-      width: 100%;
-      padding: 0.95rem 1rem;
-      font-size: 1.05rem;
-      border: 1px solid var(--gris-borde);
-      border-radius: 12px;
-      outline: none;
-      background: #fff;
-      transition: box-shadow .15s ease, border-color .15s ease;
-      -webkit-appearance: none;
-      appearance: none;
+    label input[type="text"], input[type="email"], input[type="tel"]{
+      width: 100%; padding: 0.95rem 1rem; font-size: 1.05rem; border: 1px solid var(--gris-borde); border-radius: 12px;
+      outline: none; background: #fff; transition: box-shadow .15s ease, border-color .15s ease; -webkit-appearance: none; appearance: none;
     }
-    label input[type="text"]:focus{
-      border-color: #7aa2ff;
-      box-shadow: 0 0 0 3px rgba(122,162,255,.25);
-    }
+    label input[type="text"]:focus{ border-color: #7aa2ff; box-shadow: 0 0 0 3px rgba(122,162,255,.25); }
     @media (max-width:520px){
       label{ font-size: 1.05rem; }
-      label input[type="text"],
-      input[type="email"], input[type="tel"]{
-        padding: 1.05rem 1rem;
-        font-size: 1.125rem;
-        border-radius: 14px;
-      }
+      label input[type="text"], input[type="email"], input[type="tel"]{ padding: 1.05rem 1rem; font-size: 1.125rem; border-radius: 14px; }
       label input::placeholder{ font-size: 1.05rem; }
     }
 
-    /* ===== FAB Carrito (button) + transición suave ===== */
+    /* ===== FAB Carrito ===== */
     .cart-fab{
       position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 99;
       background: var(--azul); color: var(--amarillo); border: 2px solid var(--amarillo);
-      display: flex; align-items: center; gap: .6rem; padding: .6rem .9rem;
-      border-radius: 9999px; box-shadow: 0 8px 18px rgba(0,0,0,.25); cursor: pointer;
-      -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation;
-      -webkit-tap-highlight-color: transparent; appearance: none; -webkit-appearance: none;
-      transition: transform .15s ease, opacity .18s ease, filter .18s ease;
+      display: flex; align-items: center; gap: .6rem; padding: .6rem .9rem; border-radius: 9999px;
+      box-shadow: 0 8px 18px rgba(0,0,0,.25); cursor: pointer; -webkit-user-select: none; user-select: none;
+      -webkit-touch-callout: none; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+      appearance: none; -webkit-appearance: none; transition: transform .15s ease, opacity .18s ease, filter .18s ease;
     }
     .cart-fab * { pointer-events: none; }
     .cart-fab:hover{ transform: translateY(-2px); }
@@ -175,11 +103,7 @@
     .cart-count{ background: var(--amarillo); color: var(--azul-2); min-width: 26px; height: 26px; border-radius: 999px; display: grid; place-items: center; font-weight: 800; }
     @keyframes bump { 0%,100%{ transform: translateY(0) scale(1);} 50%{ transform: translateY(0) scale(1.08);} }
     .cart-fab.bump{ animation: bump .3s ease; }
-    @media (max-width:520px){
-      .cart-fab{ width:auto; height:auto; padding:.55rem .8rem; gap:.5rem; }
-      .cart-total{ font-size:.95rem; }
-      .cart-count{ min-width:22px; height:22px; font-size:.85rem; }
-    }
+    @media (max-width:520px){ .cart-fab{ width:auto; height:auto; padding:.55rem .8rem; gap:.5rem; } .cart-total{ font-size:.95rem; } .cart-count{ min-width:22px; height:22px; font-size:.85rem; } }
 
     /* Toasts */
     .toast-wrap{ position:fixed; left:50%; bottom:84px; transform:translateX(-50%); z-index:100; display:flex; flex-direction:column; gap:.5rem; pointer-events:none; }
@@ -187,23 +111,14 @@
     .toast.ok{ border-left-color: var(--ok); } .toast.err{ border-left-color: var(--error); }
     @keyframes fadeIn{ from{opacity:0; transform:translate(-50%,10px)} to{opacity:1; transform:translate(-50%,0)} }
 
-    /* ===== División antes de la promo (sin texto, más marcada) ===== */
+    /* División antes de la promo */
     .section-divider{
-      margin: 2rem auto 0;
-      max-width: 900px;
-      padding: 0 1rem;
-      height: 12px;
-      border-radius: 999px;
-      background: linear-gradient(to right,
-        rgba(0,0,0,0) 0%,
-        #cbd5e1 18%,
-        #94a3b8 50%,
-        #cbd5e1 82%,
-        rgba(0,0,0,0) 100%);
+      margin: 2rem auto 0; max-width: 900px; padding: 0 1rem; height: 12px; border-radius: 999px;
+      background: linear-gradient(to right, rgba(0,0,0,0) 0%, #cbd5e1 18%, #94a3b8 50%, #cbd5e1 82%, rgba(0,0,0,0) 100%);
       box-shadow: inset 0 2px 6px rgba(0,0,0,.08), 0 8px 18px rgba(0,0,0,.06);
     }
 
-    /* ===== Promo (solo email) ===== */
+    /* Promo */
     .promo-web{ margin: 1.2rem auto 0; max-width: 900px; padding: 1.2rem; }
     .promo-card{ background: linear-gradient(135deg, var(--azul) 0%, #062247 100%); color:#fff; border-radius: 16px; padding: 1.2rem; box-shadow: 0 18px 36px rgba(0,0,0,.25); display:grid; gap:1rem; }
     .promo-card h3{ margin:.2rem 0 .2rem; font-size:1.4rem; }
@@ -216,15 +131,10 @@
     .btn-primary{ background: var(--amarillo); color: var(--azul-2); border-color: var(--amarillo); }
     .promo-note{ font-size:.9rem; opacity:.9; }
 
-    /* ===== Bottom Sheet ===== */
+    /* Bottom Sheet */
     .sheet-backdrop{ position: fixed; inset: 0; background: rgba(0,0,0,.32); opacity: 0; pointer-events: none; transition: opacity .22s ease; z-index: 98; }
     .sheet-backdrop.open{ opacity:1; pointer-events:auto; }
-    .sheet{
-      position: fixed; left: 0; right: 0; bottom: 0; transform: translateY(100%);
-      background: var(--card); border-top-left-radius: 16px; border-top-right-radius: 16px;
-      box-shadow: var(--shadow); z-index: 99; transition: transform .28s ease-out;
-      max-height: 92vh; display: grid; grid-template-rows: auto 1fr;
-    }
+    .sheet{ position: fixed; left: 0; right: 0; bottom: 0; transform: translateY(100%); background: var(--card); border-top-left-radius: 16px; border-top-right-radius: 16px; box-shadow: var(--shadow); z-index: 99; transition: transform .28s ease-out; max-height: 92vh; display: grid; grid-template-rows: auto 1fr; }
     .sheet.open{ transform: translateY(0); }
     .sheet-header{ padding: .6rem .8rem .4rem; display:flex; align-items:center; gap:.5rem; position: sticky; top:0; background: var(--card); border-bottom:1px solid #e8e8e8; border-top-left-radius:16px; border-top-right-radius:16px; }
     .sheet-handle{ width: 36px; height: 4px; border-radius: 999px; background:#d7d7d7; margin: .2rem auto; position:absolute; left:50%; transform:translateX(-50%); top:6px; }
@@ -261,10 +171,10 @@
     <span class="cart-count" id="fabCount">0</span>
   </button>
 
-  <!-- División sin texto, más marcada -->
+  <!-- División sin texto -->
   <div class="section-divider" aria-hidden="true"></div>
 
-  <!-- Promo: creación de webs (solo email) -->
+  <!-- Promo -->
   <section id="promoWeb" class="promo-web" aria-labelledby="promo-web-title">
     <div class="promo-card">
       <div>
@@ -281,9 +191,7 @@
       </div>
 
       <div class="promo-actions">
-        <a id="promoMail" class="btn btn-primary" href="#">
-          ✉️ Pedí tu presupuesto
-        </a>
+        <a id="promoMail" class="btn btn-primary" href="#">✉️ Pedí tu presupuesto</a>
       </div>
 
       <p class="promo-note">Creado por <strong>Ludmila Mercado</strong></p>
@@ -301,7 +209,7 @@
   <!-- Toasts -->
   <div id="toastWrap" class="toast-wrap"></div>
 
-  <!-- ===== Bottom Sheet (dialog accesible) ===== -->
+  <!-- Bottom Sheet -->
   <div id="sheetBackdrop" class="sheet-backdrop" aria-hidden="true"></div>
   <div id="cartSheet" class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" aria-hidden="true">
     <div class="sheet-header">
@@ -310,7 +218,6 @@
       <button type="button" id="sheetClose" class="sheet-close" aria-label="Cerrar">✕</button>
     </div>
     <div id="sheetBody" class="sheet-body" tabindex="0">
-      <!-- Checkout vive PERMANENTEMENTE dentro del sheet -->
       <section id="checkout">
         <label><input type="radio" name="envio" value="retiro" checked> Retiro en el local</label>
         <label><input type="radio" name="envio" value="envio"> Envío a domicilio (+$1000)</label>
@@ -350,26 +257,38 @@
       try { return JSON.parse(localStorage.getItem(ANALYTICS_KEY) || '[]'); }
       catch { return []; }
     }
-    function saveEvents(list) {
-      localStorage.setItem(ANALYTICS_KEY, JSON.stringify(list));
-    }
+    function saveEvents(list) { localStorage.setItem(ANALYTICS_KEY, JSON.stringify(list)); }
     function logEvent(type, data = {}) {
-      const evt = {
-        type,
-        ts: new Date().toISOString(),
-        path: location.pathname + location.search,
-        ua: navigator.userAgent,
-        ...data
-      };
-      const list = getEvents();
-      list.push(evt);
-      saveEvents(list);
+      const evt = { type, ts: new Date().toISOString(), path: location.pathname + location.search, ua: navigator.userAgent, ...data };
+      const list = getEvents(); list.push(evt); saveEvents(list);
+    }
+
+    // --- Export CSV compatible con Excel ES (usa ; si hay coma decimal), sin 'ua'
+    function csvEscape(value, sep) {
+      if (value == null) return '';
+      const s = String(value);
+      const mustQuote = s.includes('"') || s.includes('\n') || s.includes('\r') || s.includes(sep);
+      const escaped = s.replace(/"/g, '""');
+      return mustQuote ? `"${escaped}"` : escaped;
     }
     function exportEventsCSV() {
       const rows = getEvents();
       if (!rows.length) { alert('Sin eventos aún'); return; }
-      const headers = Array.from(rows.reduce((set, r) => { Object.keys(r).forEach(k => set.add(k)); return set; }, new Set()));
-      const csv = [ headers.join(','), ...rows.map(r => headers.map(h => JSON.stringify(r[h] ?? '')).join(',')) ].join('\\n');
+
+      const sep = (Intl.NumberFormat().format(1.1).includes(',')) ? ';' : ',';
+
+      // Reunir headers (menos 'ua'), con un orden preferido primero
+      const prefer = ['type','ts','total','items','shipping','method','shipping_cost','path'];
+      const set = new Set();
+      rows.forEach(r => Object.keys(r).forEach(k => { if (k !== 'ua') set.add(k); }));
+      const headers = [...prefer.filter(h => set.has(h)), ...[...set].filter(h => !prefer.includes(h))];
+
+      const lines = [ headers.join(sep) ];
+      for (const r of rows) {
+        const line = headers.map(h => csvEscape(r[h], sep)).join(sep);
+        lines.push(line);
+      }
+      const csv = '\uFEFF' + lines.join('\r\n'); // BOM + CRLF
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a'); a.href = url; a.download = `eventos-${new Date().toISOString().slice(0,10)}.csv`;
@@ -392,9 +311,7 @@
     }
     function normalizar(data) {
       if (data && Array.isArray(data.categorias)) {
-        const o = {};
-        data.categorias.forEach(c => { o[c.categoria] = c.productos || []; });
-        return o;
+        const o = {}; data.categorias.forEach(c => { o[c.categoria] = c.productos || []; }); return o;
       }
       return data || {};
     }
@@ -402,8 +319,7 @@
       const wrap = document.getElementById('toastWrap');
       const el = document.createElement('div');
       el.className = `toast ${type==='error'?'err':type==='ok'?'ok':''}`;
-      el.textContent = msg;
-      wrap.appendChild(el);
+      el.textContent = msg; wrap.appendChild(el);
       setTimeout(()=> { el.style.opacity='0'; el.style.transition='opacity .2s'; }, timeout);
       setTimeout(()=> wrap.removeChild(el), timeout+220);
     }
@@ -429,15 +345,12 @@
     const backdrop   = document.getElementById('sheetBackdrop');
     let sheetOpen = false;
 
-    // Métricas de sesión (se actualizan en actualizarResumen)
+    // Métricas de sesión
     let METRICS_TOTAL = 0, METRICS_COUNT = 0, METRICS_ENVIO = 'retiro';
 
     /* ---------- Persistencia ---------- */
     function saveCart(){ localStorage.setItem(CART_KEY, JSON.stringify(cantidades)); }
-    function loadCart(){
-      try { return JSON.parse(localStorage.getItem(CART_KEY) || '{}'); }
-      catch { return {}; }
-    }
+    function loadCart(){ try { return JSON.parse(localStorage.getItem(CART_KEY) || '{}'); } catch { return {}; } }
 
     /* ---------- Render productos ---------- */
     function renderProductos(contenedorId, productos) {
@@ -447,10 +360,8 @@
 
       for (let categoria in data) {
         const items = data[categoria] || [];
-
         const detail = document.createElement('details');
-        const summary = document.createElement('summary');
-        summary.textContent = categoria;
+        const summary = document.createElement('summary'); summary.textContent = categoria;
         detail.appendChild(summary);
 
         items.forEach((prod, i) => {
@@ -468,10 +379,8 @@
               <button onclick="cambiarCantidad('${id}', -1, this)">−</button>
               <span id="cantidad-${id}">0</span>
               <button onclick="cambiarCantidad('${id}', 1, this)">+</button>
-            </div>
-          `;
-          div.dataset.nombre = prod.nombre;
-          div.dataset.precio = prod.precio;
+            </div>`;
+          div.dataset.nombre = prod.nombre; div.dataset.precio = prod.precio;
           detail.appendChild(div);
         });
 
@@ -481,13 +390,11 @@
 
     function cargarProductos() {
       const p1 = fetch(asset('data/productos-rotiseria.json'))
-        .then(res => res.json())
-        .then(data => renderProductos('menu-rotiseria', data))
+        .then(res => res.json()).then(data => renderProductos('menu-rotiseria', data))
         .catch(() => showToast('Error cargando Rotisería', 'error'));
 
       const p2 = fetch(asset('data/productos-almacen.json'))
-        .then(res => res.json())
-        .then(data => renderProductos('menu-almacen', data))
+        .then(res => res.json()).then(data => renderProductos('menu-almacen', data))
         .catch(() => showToast('Error cargando Almacén', 'error'));
 
       Promise.allSettled([p1, p2]).then(hydrateFromStorage);
@@ -497,80 +404,59 @@
     function hydrateFromStorage(){
       const persisted = loadCart();
       Object.entries(persisted).forEach(([id, qty])=>{
-        if (qty > 0) {
-          cantidades[id] = qty;
-          const el = document.getElementById(`cantidad-${id}`);
-          if (el) el.textContent = qty;
-        }
+        if (qty > 0) { cantidades[id] = qty; const el = document.getElementById(`cantidad-${id}`); if (el) el.textContent = qty; }
       });
       actualizarResumen(); // asegura FAB correcto al recargar
     }
 
-    /* ---------- Carrito + Animaciones ---------- */
+    /* ---------- Carrito ---------- */
     function cambiarCantidad(id, delta, btn) {
       cantidades[id] = Math.max(0, (cantidades[id] || 0) + delta);
-      const el = document.getElementById(`cantidad-${id}`);
-      if (el) el.textContent = cantidades[id];
+      const el = document.getElementById(`cantidad-${id}`); if (el) el.textContent = cantidades[id];
 
       if (delta > 0 && btn) {
         btn.classList.add('btn-pop');
         btn.addEventListener('animationend', () => btn.classList.remove('btn-pop'), { once: true });
-        const row = btn.closest('.producto');
-        row.classList.add('row-flash');
+        const row = btn.closest('.producto'); row.classList.add('row-flash');
         row.addEventListener('animationend', () => row.classList.remove('row-flash'), { once: true });
 
         fab.classList.add('bump');
         fab.addEventListener('animationend', ()=> fab.classList.remove('bump'), { once:true });
       }
 
-      saveCart();
-      actualizarResumen();
+      saveCart(); actualizarResumen();
     }
 
-    function countItems(){
-      return Object.values(cantidades).reduce((a,b)=> a+(b||0), 0);
-    }
+    function countItems(){ return Object.values(cantidades).reduce((a,b)=> a+(b||0), 0); }
 
     function setFabVisible(visible){
       if (!fab) return;
       if (visible){
-        if (fab.hasAttribute('hidden')) {
-          fab.removeAttribute('hidden');
-          requestAnimationFrame(()=> fab.classList.remove('hide'));
-        } else {
-          fab.classList.remove('hide');
-        }
+        if (fab.hasAttribute('hidden')) { fab.removeAttribute('hidden'); requestAnimationFrame(()=> fab.classList.remove('hide')); }
+        else { fab.classList.remove('hide'); }
       } else {
-        fab.classList.add('hide');
-        setTimeout(()=> fab.setAttribute('hidden',''), 200);
+        fab.classList.add('hide'); setTimeout(()=> fab.setAttribute('hidden',''), 200);
       }
     }
 
     function actualizarResumen() {
       listaEl.innerHTML = '';
-      let subtotal = 0;
-      let count = 0;
+      let subtotal = 0, count = 0;
 
       for (let id in cantidades) {
         const cantidad = cantidades[id];
         if (cantidad > 0) {
-          const span = document.getElementById(`cantidad-${id}`);
-          if (!span) continue;
+          const span = document.getElementById(`cantidad-${id}`); if (!span) continue;
           const productoDiv = span.closest('.producto');
           const nombre = productoDiv?.dataset?.nombre || '';
           const precio = parseInt(productoDiv?.dataset?.precio || '0', 10);
 
           const li = document.createElement('li');
           li.className = 'resumen-item';
-          li.innerHTML = `
-            <span class="resumen-name">${nombre}</span>
-            <span class="resumen-qty">x${cantidad}</span>
-            <span class="resumen-line">${formatARS(precio * cantidad)}</span>
-          `;
+          li.innerHTML = `<span class="resumen-name">${nombre}</span><span class="resumen-qty">x${cantidad}</span><span class="resumen-line">${formatARS(precio * cantidad)}</span>`;
           listaEl.appendChild(li);
 
-          subtotal += precio * cantidad;
-          count += cantidad;
+          subtotal += precio * cantidad; count += cantidad;
         }
       }
 
@@ -578,17 +464,13 @@
       const envioCosto = envioSel === 'envio' ? SHIPPING : 0;
 
       subtotalEl.textContent = formatARS(subtotal);
-      if (envioCosto > 0) {
-        envioCostoEl.textContent = formatARS(envioCosto);
-        envioLineEl.hidden = false;
-      } else {
-        envioLineEl.hidden = true;
-      }
+      if (envioCosto > 0) { envioCostoEl.textContent = formatARS(envioCosto); envioLineEl.hidden = false; }
+      else { envioLineEl.hidden = true; }
       totalEl.textContent = formatARS(subtotal + envioCosto);
 
       emptyMsg.hidden = count > 0;
 
-      // FAB visible si hay items y el sheet está cerrado
+      // FAB
       fabCount.textContent = count;
       fabTotal.textContent = formatARS(subtotal + envioCosto);
       setFabVisible(count > 0 && !sheetOpen);
@@ -596,31 +478,25 @@
       const nombreOk = document.getElementById('nombre').value.trim().length > 0;
       btnWA.disabled = !(count > 0 && nombreOk);
 
-      // === actualizar métricas ===
+      // Métricas
       METRICS_TOTAL = subtotal + envioCosto;
       METRICS_COUNT = count;
       METRICS_ENVIO = envioSel;
     }
 
     document.getElementById('nombre').addEventListener('input', actualizarResumen);
-    // Cambios de envío: actualizar + logEvent
     document.querySelectorAll('input[name=envio]').forEach(r => r.addEventListener('change', () => {
       actualizarResumen();
-      logEvent('shipping_change', {
-        method: METRICS_ENVIO,
-        shipping_cost: METRICS_ENVIO === 'envio' ? SHIPPING : 0
-      });
+      logEvent('shipping_change', { method: METRICS_ENVIO, shipping_cost: METRICS_ENVIO === 'envio' ? SHIPPING : 0 });
     }));
 
     function vaciarCarrito(){
       Object.keys(cantidades).forEach(k => cantidades[k]=0);
       document.querySelectorAll('[id^="cantidad-"]').forEach(span => span.textContent='0');
-      saveCart();
-      actualizarResumen();
-      showToast('Carrito vacío');
+      saveCart(); actualizarResumen(); showToast('Carrito vacío');
     }
 
-    /* ---------- Tabs ---------- */
+    /* Tabs */
     function mostrar(seccion) {
       document.getElementById('menu-rotiseria').style.display = seccion === 'rotiseria' ? 'block' : 'none';
       document.getElementById('menu-almacen').style.display = seccion === 'almacen' ? 'block' : 'none';
@@ -628,7 +504,7 @@
       document.getElementById('btn-almacen').classList.toggle('active', seccion === 'almacen');
     }
 
-    /* ---------- WhatsApp ---------- */
+    /* WhatsApp */
     function enviarPedido() {
       const name = document.getElementById('nombre').value.trim();
       const addr = document.getElementById('direccion').value.trim();
@@ -641,71 +517,50 @@
       let msg = `Hola, soy ${name}. Quiero hacer un pedido:\n`;
       Object.entries(cantidades).forEach(([id, qty]) => {
         if (qty > 0) {
-          const span = document.getElementById(`cantidad-${id}`);
-          if (!span) return;
+          const span = document.getElementById(`cantidad-${id}`); if (!span) return;
           const row = span.closest('.producto');
-          const namep = row.dataset.nombre;
-          const price = parseInt(row.dataset.precio, 10);
+          const namep = row.dataset.nombre; const price = parseInt(row.dataset.precio, 10);
           msg += `- ${namep} x${qty} - ${formatARS(price*qty)}\n`;
         }
       });
 
-      msg += envio === 'envio'
-        ? `Envío a domicilio a: ${addr} (+${formatARS(SHIPPING)})\n`
-        : 'Retiro en el local\n';
-
+      msg += envio === 'envio' ? `Envío a domicilio a: ${addr} (+${formatARS(SHIPPING)})\n` : 'Retiro en el local\n';
       msg += `Total: ${totalEl.textContent}`;
 
-      // === log de conversión WhatsApp ===
-      logEvent('whatsapp_click', {
-        total: METRICS_TOTAL,
-        items: METRICS_COUNT,
-        shipping: METRICS_ENVIO
-      });
+      logEvent('whatsapp_click', { total: METRICS_TOTAL, items: METRICS_COUNT, shipping: METRICS_ENVIO });
 
       const url = `https://wa.me/3415923882?text=${encodeURIComponent(msg)}`;
-      window.open(url, '_blank');
-      showToast('Abriendo WhatsApp...', 'ok');
+      window.open(url, '_blank'); showToast('Abriendo WhatsApp...', 'ok');
     }
 
-    /* ===== Bottom Sheet: abrir/cerrar, accesibilidad, focus trap ===== */
+    /* Bottom Sheet control */
     function trapFocus(e){
-      if (!sheetOpen) return;
-      if (e.key !== 'Tab') return;
+      if (!sheetOpen || e.key !== 'Tab') return;
       const focusables = sheet.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
       if (!focusables.length) return;
-      const first = focusables[0];
-      const last  = focusables[focusables.length - 1];
+      const first = focusables[0], last  = focusables[focusables.length - 1];
       if (e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
       else if (!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
     }
 
     function openSheet(){
       if (sheetOpen) return;
-      sheetOpen = true;
-      document.body.style.overflow = 'hidden';
-      sheet.classList.add('open');
-      backdrop.classList.add('open');
-      sheet.removeAttribute('aria-hidden');
-      backdrop.removeAttribute('aria-hidden');
+      sheetOpen = true; document.body.style.overflow = 'hidden';
+      sheet.classList.add('open'); backdrop.classList.add('open');
+      sheet.removeAttribute('aria-hidden'); backdrop.removeAttribute('aria-hidden');
       setFabVisible(false);
       setTimeout(()=> document.getElementById('sheetClose').focus(), 10);
       document.addEventListener('keydown', onSheetKeydown);
       document.addEventListener('keydown', trapFocus);
-
-      // === log de apertura del carrito (sheet) ===
       logEvent('cart_open', { total: METRICS_TOTAL, items: METRICS_COUNT });
     }
 
     function closeSheet(){
       if (!sheetOpen) return;
-      sheetOpen = false;
-      document.body.style.overflow = '';
-      sheet.classList.remove('open');
-      backdrop.classList.remove('open');
-      sheet.setAttribute('aria-hidden','true');
-      backdrop.setAttribute('aria-hidden','true');
-      actualizarResumen(); // restablece FAB si corresponde
+      sheetOpen = false; document.body.style.overflow = '';
+      sheet.classList.remove('open'); backdrop.classList.remove('open');
+      sheet.setAttribute('aria-hidden','true'); backdrop.setAttribute('aria-hidden','true');
+      actualizarResumen();
       document.removeEventListener('keydown', onSheetKeydown);
       document.removeEventListener('keydown', trapFocus);
     }
@@ -717,13 +572,13 @@
     sheetClose.addEventListener('click', closeSheet);
     backdrop.addEventListener('click', closeSheet);
 
-    // Deslizar hacia abajo (básico)
+    // Deslizar hacia abajo
     let startY = 0, currentY = 0, dragging = false;
     sheet.addEventListener('touchstart', (e)=>{ if (!sheetOpen) return; startY = e.touches[0].clientY; dragging = true; }, {passive:true});
     sheet.addEventListener('touchmove', (e)=>{ if (!dragging) return; currentY = e.touches[0].clientY; const diff = Math.max(0, currentY - startY); sheet.style.transform = `translateY(${diff}px)`; }, {passive:true});
     sheet.addEventListener('touchend', ()=>{ if (!dragging) return; const diff = Math.max(0, currentY - startY); dragging = false; startY = 0; currentY = 0; if (diff > 120) { sheet.style.transform = ''; closeSheet(); } else { sheet.classList.add('open'); sheet.style.transform = ''; } });
 
-    /* ===== Promo CTA (email) ===== */
+    /* Promo CTA (email) */
     (function promoInit(){
       const subj = encodeURIComponent(`Quiero una web para mi negocio`);
       const body = encodeURIComponent(
@@ -734,13 +589,12 @@ Tipo de sitio: (catálogo / pedidos / restaurante / otro)
 ¿Panel para editar productos?: (sí/no)
 ¿Plazo ideal?: (fecha)
 
-Gracias!`
-      );
+Gracias!`);
       const mailEl = document.getElementById('promoMail');
       if (mailEl) mailEl.href = `mailto:ludmilasolutions2.0@gmail.com?subject=${subj}&body=${body}`;
     })();
 
-    /* ===== Botón de export (visible con #admin) ===== */
+    /* Botón de export (visible con #admin) */
     (function exportInit(){
       const exportBtn = document.getElementById('exportBtn');
       if (location.hash.includes('admin')) {
