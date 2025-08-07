@@ -205,7 +205,7 @@
       .sheet.open{transform:translate(-50%,0)}
     }
 
-    /* ---------- Modal confirmar vaciado ---------- */
+    /* ---------- Modal ---------- */
     .dialog-backdrop{
       position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;place-items:center;z-index:101
     }
@@ -266,7 +266,7 @@
         <span class="badge">⚡ Entrega rápida</span>
         <span class="badge">📱 100% responsive</span>
         <span class="badge">🛒 Panel para productos</span>
-        <span class="badge">🔒 Hosting & dominio opcional</span>
+        <span class="badge">🔒 Hosting &amp; dominio opcional</span>
         <span class="badge">💬 Soporte por email</span>
       </div>
 
@@ -278,7 +278,7 @@
     </div>
   </section>
 
-  <!-- Barra admin oculta -->
+  <!-- Barra admin -->
   <div id="adminBar" hidden style="position:fixed;left:12px;bottom:16px;z-index:1000;display:flex;gap:.5rem;flex-wrap:wrap">
     <button id="exportOrdersBtn"  style="background:#fff;border:1px solid #ddd;padding:.45rem .6rem;border-radius:8px;box-shadow:0 6px 16px rgba(0,0,0,.18);font-size:.85rem;cursor:pointer;">📥 Exportar pedidos WSP (CSV)</button>
     <button id="exportSummaryBtn" style="background:#fff;border:1px solid #ddd;padding:.45rem .6rem;border-radius:8px;box-shadow:0 6px 16px rgba(0,0,0,.18);font-size:.85rem;cursor:pointer;">📊 Exportar top productos (CSV)</button>
@@ -324,14 +324,14 @@
 
           <div class="acciones">
             <button id="btn-whatsapp" onclick="enviarPedido()">Hacer pedido por WhatsApp</button>
-            <button id="btn-vaciar" type="button" onclick="vaciarCarrito()">Vaciar carrito</button>
+            <button id="btn-vaciar"   type="button" onclick="vaciarCarrito()">Vaciar carrito</button>
           </div>
         </div>
       </section>
     </div>
   </div>
 
-  <!-- Modal confirmación vaciado -->
+  <!-- Modal vaciar -->
   <div id="dlgClearBackdrop" class="dialog-backdrop" aria-hidden="true">
     <div role="dialog" aria-modal="true" class="dialog">
       <h3>¿Vaciar el carrito?</h3>
@@ -347,7 +347,7 @@
   <script>
   /* ======= Analytics & helpers ======= */
   const ANALYTICS_KEY='tachi_events_v1';
-  function getEvents(){try{return JSON.parse(localStorage.getItem(ANALYTICS_KEY)||'[]')}catch{ return[] }}
+  function getEvents(){try{return JSON.parse(localStorage.getItem(ANALYTICS_KEY)||'[]')}catch{return[]}}
   function saveEvents(l){localStorage.setItem(ANALYTICS_KEY,JSON.stringify(l))}
   function logEvent(t,d={}){const e={type:t,ts:new Date().toISOString(),path:location.pathname+location.search,...d};const l=getEvents();l.push(e);saveEvents(l)}
 
@@ -468,10 +468,7 @@
     const c=loadClient();
     if(c.name)nombreEl.value=c.name;
     if(c.address)document.getElementById('direccion').value=c.address;
-    if(c.shipping){
-      const o=document.querySelector(`input[name=envio][value="${c.shipping}"]`);
-      if(o)o.checked=true;
-    }
+    /* Ya NO hidratamos radio envío/retiro para evitar persistencia */
   }
 
   /* ======= Carrito ======= */
@@ -520,10 +517,10 @@
     METRICS_TOTAL=subtotal+envioCosto;METRICS_COUNT=count;METRICS_ENVIO=envioSel||'';
   }
 
-  /* ======= Guardar inputs cliente ======= */
+  /* ======= Guardar inputs cliente (sin guardar envío/retiro) ======= */
   nombreEl.addEventListener('input',()=>{saveClient({...loadClient(),name:nombreEl.value.trim()});actualizarResumen()});
   document.getElementById('direccion').addEventListener('input',e=>{saveClient({...loadClient(),address:e.target.value.trim()})});
-  document.querySelectorAll('input[name=envio]').forEach(r=>r.addEventListener('change',e=>{saveClient({...loadClient(),shipping:e.target.value});actualizarResumen()}));
+  document.querySelectorAll('input[name=envio]').forEach(r=>r.addEventListener('change',actualizarResumen));
 
   /* ======= Vaciar carrito ======= */
   const dlgBackdrop=document.getElementById('dlgClearBackdrop'),
@@ -608,7 +605,7 @@
     const io=new IntersectionObserver(entries=>{
       entries.forEach(entry=>{
         if(entry.isIntersecting){
-          fab.classList.add('hide'); // suavizado
+          fab.classList.add('hide');
         }else{
           if(countItems()>0 && !sheetOpen){
             fab.removeAttribute('hidden');
