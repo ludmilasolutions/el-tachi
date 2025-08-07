@@ -110,7 +110,7 @@
       max-width:min(560px, calc(100vw - 40px));
       background:#0b1f3a; color:#fff; border-left:4px solid var(--azul-3);
       padding:.7rem 1rem; border-radius:10px; box-shadow:0 10px 24px rgba(0,0,0,.25);
-      animation:fadeIn .18s ease-out; position:relative; overflow:hidden;
+      animation:fadeIn .14s ease-out; position:relative; overflow:hidden;
     }
     .toast.ok{ border-left-color: var(--ok); } 
     .toast.err{ border-left-color: var(--error); }
@@ -126,7 +126,7 @@
       content:""; position:absolute; inset:0;
       background: rgba(255,255,255,.10);
       transform-origin:right; transform:scaleX(1);
-      animation: toastwipe var(--dur, 2200ms) linear forwards;
+      animation: toastwipe var(--dur, 1700ms) linear forwards;
       animation-play-state: var(--play, running);
       z-index:0;
     }
@@ -370,7 +370,7 @@
 
     /* Snackbar (fondo que se vacía) con acción opcional */
     function showToast(message, type='ok', opts={}){
-      const { timeout=2200, actionText='', onAction=null } = opts;
+      const { timeout=1700, actionText='', onAction=null } = opts; // << más rápido por defecto
       const wrap = document.getElementById('toastWrap');
       const el = document.createElement('div');
       el.className = `toast ${type==='error'?'err':type==='ok'?'ok':type}`;
@@ -392,9 +392,9 @@
       wrap.appendChild(el);
 
       let hideTimer = setTimeout(remove, timeout);
-      // Pausar animación y temporizador al pasar el mouse
+      // Pausa animación y temporizador al pasar el mouse
       el.addEventListener('mouseenter', () => { clearTimeout(hideTimer); el.style.setProperty('--play','paused'); });
-      el.addEventListener('mouseleave', () => { el.style.removeProperty('--play'); hideTimer = setTimeout(remove, 800); });
+      el.addEventListener('mouseleave', () => { el.style.removeProperty('--play'); hideTimer = setTimeout(remove, 500); }); // << cierre más ágil
       document.addEventListener('keydown', escClose);
 
       function escClose(e){ if(e.key==='Escape'){ remove(); } }
@@ -572,7 +572,7 @@
       if (navigator.vibrate) { try{ navigator.vibrate(20); }catch{} }
 
       showToast('Carrito vacío', 'ok', {
-        timeout: 5000,
+        timeout: 5000, // dejamos más tiempo para poder Deshacer
         actionText: 'Deshacer',
         onAction: () => {
           const prev = JSON.parse(snapshot);
@@ -646,7 +646,7 @@
     /* Bottom Sheet */
     function trapFocus(e){
       if (!sheetOpen || e.key !== 'Tab') return;
-      const f = sheet.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+      const f = sheet.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])`);
       if (!f.length) return;
       const first=f[0], last=f[f.length-1];
       if (e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
