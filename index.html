@@ -642,7 +642,7 @@
       document.getElementById('exportSummaryBtn').onclick=exportTopProductsCSV;
       document.getElementById('clearMetricsBtn').onclick=clearMetrics;
     }
-    function isAdminHash(){return/\\badmin\\b/i.test(location.hash)}
+    function isAdminHash(){return/\badmin\b/i.test(location.hash)}
     function setAdmin(on){document.body.classList.toggle('is-admin',!!on);if(on){bar.removeAttribute('hidden');bindOnce()}else{bar.setAttribute('hidden','')}}
     function update(){setAdmin(isAdminHash())}
     window.addEventListener('hashchange',update);
