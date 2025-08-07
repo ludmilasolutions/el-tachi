@@ -100,11 +100,29 @@
     .cart-fab.bump{ animation: bump .3s ease; }
     @media (max-width:520px){ .cart-fab{ padding:.55rem .8rem; gap:.5rem; } .cart-total{ font-size:.95rem; } .cart-count{ min-width:22px; height:22px; font-size:.85rem; } }
 
-    /* Toasts */
-    .toast-wrap{ position:fixed; left:50%; bottom:84px; transform:translateX(-50%); z-index:100; display:flex; flex-direction:column; gap:.5rem; pointer-events:none; }
-    .toast{ pointer-events:auto; background:#0b1f3a; color:#fff; border-left:4px solid var(--azul-3); padding:.7rem 1rem; border-radius:8px; box-shadow:0 10px 24px rgba(0,0,0,.25); animation:fadeIn .18s ease-out; max-width: calc(100vw - 40px); }
+    /* ===== Snackbar / Toast mejorado ===== */
+    .toast-wrap{
+      position:fixed; left:50%; bottom:84px; transform:translateX(-50%);
+      z-index:100; display:flex; flex-direction:column; gap:.5rem; pointer-events:none;
+    }
+    .toast{
+      pointer-events:auto; display:flex; align-items:center; gap:.6rem;
+      max-width:min(560px, calc(100vw - 40px));
+      background:#0b1f3a; color:#fff; border-left:4px solid var(--azul-3);
+      padding:.7rem 1rem; border-radius:10px; box-shadow:0 10px 24px rgba(0,0,0,.25);
+      animation:fadeIn .18s ease-out; position:relative;
+    }
     .toast.ok{ border-left-color: var(--ok); } .toast.err{ border-left-color: var(--error); }
+    .toast .msg{ flex:1; font-weight:600; }
+    .toast .action{
+      background:transparent; border:1px solid rgba(255,255,255,.35); color:#fff;
+      padding:.35rem .7rem; border-radius:8px; cursor:pointer; font-weight:700;
+    }
+    .toast .action:focus{ outline:2px solid #fff; outline-offset:2px; }
+    .toast .progress{ position:absolute; left:0; right:0; bottom:-6px; height:3px; border-radius:999px; background:rgba(255,255,255,.25); overflow:hidden; }
+    .toast .progress i{ display:block; height:100%; width:100%; background:#fff; transform:scaleX(1); transform-origin:left; animation:toastbar 5s linear forwards; }
     @keyframes fadeIn{ from{opacity:0; transform:translate(-50%,10px)} to{opacity:1; transform:translate(-50%,0)} }
+    @keyframes toastbar{ to{ transform:scaleX(0);} }
 
     .section-divider{
       margin: 2rem auto 0; max-width: 900px; padding: 0 1rem; height: 12px; border-radius: 999px;
@@ -338,7 +356,43 @@
 
     function asset(path){ const host=location.hostname; if(host.endsWith('github.io')){ const parts=location.pathname.split('/').filter(Boolean); const repo=parts[0]||''; return `/${repo}/${path}`;} return `/${path}`; }
     function normalizar(data){ if(data && Array.isArray(data.categorias)){ const o={}; data.categorias.forEach(c=>{ o[c.categoria]=c.productos||[]; }); return o; } return data||{}; }
-    function showToast(msg,type='ok',timeout=2200){ const w=document.getElementById('toastWrap'); const el=document.createElement('div'); el.className=`toast ${type==='error'?'err':type==='ok'?'ok':''}`; el.textContent=msg; w.appendChild(el); setTimeout(()=>{el.style.opacity='0'; el.style.transition='opacity .2s';},timeout); setTimeout(()=>w.removeChild(el),timeout+220); }
+
+    /* Snackbar con acción (Deshacer) */
+    function showToast(message, type='ok', opts={}){
+      const { timeout=2200, actionText='', onAction=null } = opts;
+      const wrap = document.getElementById('toastWrap');
+      const el = document.createElement('div');
+      el.className = `toast ${type==='error'?'err':type==='ok'?'ok':type}`;
+      el.setAttribute('role','status'); el.setAttribute('aria-live','polite');
+
+      const msg = document.createElement('div'); msg.className='msg'; msg.textContent = message;
+      el.appendChild(msg);
+
+      if (actionText && typeof onAction === 'function'){
+        const btn = document.createElement('button');
+        btn.className='action'; btn.type='button'; btn.textContent=actionText;
+        btn.addEventListener('click', () => { try{ onAction(); } finally{ remove(); } });
+        el.appendChild(btn);
+      }
+
+      const bar = document.createElement('div'); bar.className='progress';
+      const fill = document.createElement('i'); bar.appendChild(fill);
+      el.appendChild(bar);
+
+      wrap.appendChild(el);
+
+      let hideTimer = setTimeout(remove, timeout);
+      el.addEventListener('mouseenter', () => { clearTimeout(hideTimer); fill.style.animationPlayState='paused'; });
+      el.addEventListener('mouseleave', () => { hideTimer = setTimeout(remove, 800); fill.style.animationPlayState='running'; });
+      document.addEventListener('keydown', escClose);
+
+      function escClose(e){ if(e.key==='Escape'){ remove(); } }
+      function remove(){
+        clearTimeout(hideTimer);
+        document.removeEventListener('keydown', escClose);
+        if (el.parentNode) el.parentNode.removeChild(el);
+      }
+    }
 
     /* ---------- Estado ---------- */
     const cantidades   = {};
@@ -407,11 +461,11 @@
     function cargarProductos() {
       const p1 = fetch(asset('data/productos-rotiseria.json'))
         .then(res => res.json()).then(data => renderProductos('menu-rotiseria', data))
-        .catch(() => showToast('Error cargando Rotisería', 'error'));
+        .catch(() => showToast('Error cargando Rotisería', 'err'));
 
       const p2 = fetch(asset('data/productos-almacen.json'))
         .then(res => res.json()).then(data => renderProductos('menu-almacen', data))
-        .catch(() => showToast('Error cargando Almacén', 'error'));
+        .catch(() => showToast('Error cargando Almacén', 'err'));
 
       Promise.allSettled([p1, p2]).then(hydrateFromStorage);
     }
@@ -459,7 +513,7 @@
         if (cantidad > 0) {
           const span = document.getElementById(`cantidad-${id}`); if (!span) continue;
           const productoDiv = span.closest('.producto');
-        const nombre = productoDiv?.dataset?.nombre || '';
+          const nombre = productoDiv?.dataset?.nombre || '';
           const precio = parseInt(productoDiv?.dataset?.precio || '0', 10);
 
           const li = document.createElement('li');
@@ -496,10 +550,30 @@
     document.getElementById('nombre').addEventListener('input', actualizarResumen);
     document.querySelectorAll('input[name=envio]').forEach(r => r.addEventListener('change', actualizarResumen));
 
+    /* Vaciar con Deshacer */
     function vaciarCarrito(){
+      const snapshot = JSON.stringify(cantidades);      // para deshacer
+
       Object.keys(cantidades).forEach(k => cantidades[k]=0);
       document.querySelectorAll('[id^="cantidad-"]').forEach(span => span.textContent='0');
-      saveCart(); actualizarResumen(); showToast('Carrito vacío');
+      saveCart(); actualizarResumen();
+
+      if (navigator.vibrate) { try{ navigator.vibrate(20); }catch{} }
+
+      showToast('Carrito vacío', 'ok', {
+        timeout: 5000,
+        actionText: 'Deshacer',
+        onAction: () => {
+          const prev = JSON.parse(snapshot);
+          Object.keys(prev).forEach(k => { cantidades[k] = prev[k] || 0; });
+          Object.keys(cantidades).forEach(id => {
+            const el = document.getElementById(`cantidad-${id}`);
+            if (el) el.textContent = cantidades[id] || 0;
+          });
+          saveCart(); actualizarResumen();
+          showToast('Se restauró el carrito', 'ok', { timeout: 1800 });
+        }
+      });
     }
 
     /* Tabs */
@@ -516,9 +590,9 @@
       const addr = document.getElementById('direccion').value.trim();
       const envio = document.querySelector('input[name=envio]:checked').value;
 
-      if (!name) { showToast('Ingresá tu nombre', 'error'); return; }
-      if (countItems() === 0) { showToast('Seleccioná al menos un producto', 'error'); return; }
-      if (envio === 'envio' && !addr) { showToast('Ingresá tu dirección para el envío', 'error'); return; }
+      if (!name) { showToast('Ingresá tu nombre', 'err'); return; }
+      if (countItems() === 0) { showToast('Seleccioná al menos un producto', 'err'); return; }
+      if (envio === 'envio' && !addr) { showToast('Ingresá tu dirección para el envío', 'err'); return; }
 
       let msg = `Hola, soy ${name}. Quiero hacer un pedido:\n`;
       const items = [];
@@ -542,7 +616,6 @@
         : 'Retiro en el local\n';
       msg += `Total: ${totalEl.textContent}`;
 
-      // Registrar pedido WSP
       const order_id = Date.now().toString(36) + Math.random().toString(36).slice(2,6);
       logEvent('order_wsp', {
         order_id,
@@ -635,7 +708,6 @@ Tipo de sitio: (catálogo / pedidos / restaurante / otro)
 
       function update(){ setAdmin(isAdminHash()); }
 
-      // Cambios de hash y restauración desde historial / pestaña
       window.addEventListener('hashchange', update);
       window.addEventListener('pageshow', update);
       document.addEventListener('visibilitychange', () => { if (!document.hidden) update(); });
