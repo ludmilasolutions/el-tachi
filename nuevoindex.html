@@ -276,7 +276,6 @@
       const events = getEvents().filter(e=>e.type==='order_wsp');
       if(!events.length){ alert('No hay pedidos por WhatsApp aún'); return; }
 
-      // Flatten: una fila por producto dentro del pedido
       const rows = [];
       events.forEach(o=>{
         (o.items||[]).forEach(it=>{
@@ -539,7 +538,7 @@
         : 'Retiro en el local\n';
       msg += `Total: ${totalEl.textContent}`;
 
-      // Registrar pedido WSP (solo estos se usan luego)
+      // Registrar pedido WSP
       const order_id = Date.now().toString(36) + Math.random().toString(36).slice(2,6);
       logEvent('order_wsp', {
         order_id,
@@ -600,20 +599,33 @@ Tipo de sitio: (catálogo / pedidos / restaurante / otro)
 ¿Panel para editar productos?: (sí/no)
 ¿Plazo ideal?: (fecha)
 
-Gracias!`);
+¡Gracias!`);
       const mailEl = document.getElementById('promoMail');
       if (mailEl) mailEl.href = `mailto:ludmilasolutions2.0@gmail.com?subject=${subj}&body=${body}`;
     })();
 
-    /* Barra admin (#admin) */
+    /* Barra admin (#admin) con hashchange */
     (function adminInit(){
       const bar = document.getElementById('adminBar');
-      if (location.hash.includes('admin')) {
-        bar.hidden = false;
-        document.getElementById('exportOrdersBtn').addEventListener('click', exportWspOrdersCSV);
-        document.getElementById('exportSummaryBtn').addEventListener('click', exportTopProductsCSV);
-        document.getElementById('clearMetricsBtn').addEventListener('click', clearMetrics);
+      let bound = false;
+
+      function bind() {
+        if (bound) return;
+        bound = true;
+        document.getElementById('exportOrdersBtn').onclick  = exportWspOrdersCSV;
+        document.getElementById('exportSummaryBtn').onclick = exportTopProductsCSV;
+        document.getElementById('clearMetricsBtn').onclick  = clearMetrics;
       }
+      function show() { bar.hidden = false; bind(); }
+      function hide() { bar.hidden = true; }
+
+      function update() {
+        if (location.hash.includes('admin')) show();
+        else hide();
+      }
+
+      window.addEventListener('hashchange', update);
+      update(); // estado inicial
     })();
   </script>
 </body>
