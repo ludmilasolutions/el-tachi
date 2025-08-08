@@ -107,6 +107,7 @@ collections:
             name: "whatsapp"
             widget: "string"
             hint: "Sin + ni 0. Ej: 3415923882"
+
           - label: "Costo de envío"
             name: "shipping"
             widget: "number"
@@ -117,6 +118,7 @@ collections:
             name: "horarios"
             widget: "object"
             fields:
+              # -------- Rotisería --------
               - label: "Rotisería"
                 name: "rotiseria"
                 widget: "object"
@@ -125,6 +127,11 @@ collections:
                     name: "cerrado"
                     widget: "boolean"
                     default: false
+                  - label: "Mensaje de cierre (si 'Cerrado forzado' está activo)"
+                    name: "mensaje_cierre"
+                    widget: "string"
+                    required: false
+                    hint: "Ej: 'Próximamente', 'Cerrado por mantenimiento', 'Volvemos el jueves'."
                   - label: "Días abiertos"
                     name: "dias"
                     widget: "select"
@@ -137,6 +144,7 @@ collections:
                       - { label: "Jue", value: 4 }
                       - { label: "Vie", value: 5 }
                       - { label: "Sáb", value: 6 }
+                    hint: "0=Dom ... 6=Sáb"
                   - label: "Rangos horarios"
                     name: "rangos"
                     widget: "list"
@@ -144,6 +152,7 @@ collections:
                       - { label: "Desde (HH:MM)", name: "desde", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"] }
                       - { label: "Hasta (HH:MM)", name: "hasta", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"] }
 
+              # -------- Almacén --------
               - label: "Almacén"
                 name: "almacen"
                 widget: "object"
@@ -152,6 +161,11 @@ collections:
                     name: "cerrado"
                     widget: "boolean"
                     default: false
+                  - label: "Mensaje de cierre (si 'Cerrado forzado' está activo)"
+                    name: "mensaje_cierre"
+                    widget: "string"
+                    required: false
+                    hint: "Ej: 'Próximamente', 'Cerrado momentáneamente', etc."
                   - label: "Días abiertos"
                     name: "dias"
                     widget: "select"
