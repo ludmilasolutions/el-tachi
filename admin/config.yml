@@ -86,3 +86,81 @@ collections:
               - { label: "Etiqueta (badge)", name: "tag", widget: "string", required: false, hint: "Ej: Pack, -12%" }
               - { label: "Descripción", name: "desc", widget: "string", required: false }
               - { label: "Vigencia hasta", name: "vigencia_hasta", widget: "date", format: "YYYY-MM-DD", required: false }
+
+  # ===== Ajustes (horarios, envío, WhatsApp) =====
+  - name: "ajustes"
+    label: "Ajustes del Sitio"
+    files:
+      - file: "data/ajustes.json"
+        label: "Horarios, Envío y WhatsApp"
+        name: "ajustes_file"
+        format: "json"
+        fields:
+          - label: "WhatsApp (solo números)"
+            name: "whatsapp"
+            widget: "string"
+            hint: "Sin + ni 0. Ej: 3415923882"
+          - label: "Costo de envío"
+            name: "shipping"
+            widget: "number"
+            value_type: "int"
+            default: 1000
+
+          - label: "Horarios"
+            name: "horarios"
+            widget: "object"
+            fields:
+              - label: "Rotisería"
+                name: "rotiseria"
+                widget: "object"
+                fields:
+                  - label: "Cerrado forzado"
+                    name: "cerrado"
+                    widget: "boolean"
+                    default: false
+                  - label: "Días abiertos"
+                    name: "dias"
+                    widget: "select"
+                    multiple: true
+                    options:
+                      - { label: "Dom", value: 0 }
+                      - { label: "Lun", value: 1 }
+                      - { label: "Mar", value: 2 }
+                      - { label: "Mié", value: 3 }
+                      - { label: "Jue", value: 4 }
+                      - { label: "Vie", value: 5 }
+                      - { label: "Sáb", value: 6 }
+                    hint: "0=Dom ... 6=Sáb"
+                  - label: "Rangos horarios"
+                    name: "rangos"
+                    widget: "list"
+                    fields:
+                      - { label: "Desde (HH:MM)", name: "desde", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"] }
+                      - { label: "Hasta (HH:MM)", name: "hasta", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"] }
+
+              - label: "Almacén"
+                name: "almacen"
+                widget: "object"
+                fields:
+                  - label: "Cerrado forzado"
+                    name: "cerrado"
+                    widget: "boolean"
+                    default: false
+                  - label: "Días abiertos"
+                    name: "dias"
+                    widget: "select"
+                    multiple: true
+                    options:
+                      - { label: "Dom", value: 0 }
+                      - { label: "Lun", value: 1 }
+                      - { label: "Mar", value: 2 }
+                      - { label: "Mié", value: 3 }
+                      - { label: "Jue", value: 4 }
+                      - { label: "Vie", value: 5 }
+                      - { label: "Sáb", value: 6 }
+                  - label: "Rangos horarios"
+                    name: "rangos"
+                    widget: "list"
+                    fields:
+                      - { label: "Desde (HH:MM)", name: "desde", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"] }
+                      - { label: "Hasta (HH:MM)", name: "hasta", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"] }
