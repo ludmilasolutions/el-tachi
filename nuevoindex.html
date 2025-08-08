@@ -350,20 +350,15 @@
 
   <!-- ============   SCRIPTS   ============ -->
   <script>
-  /* ======= Horarios por sección ======= */
-  /* Días: 0=Dom, 1=Lun, 2=Mar, 3=Mié, 4=Jue, 5=Vie, 6=Sáb */
-  const HORARIOS = {
-    rotiseria: {
-      dias: [4,5,6,0], // Jue, Vie, Sáb, Dom
-      rangos: [ { desde:'19:30', hasta:'22:30' } ]
-    },
-    almacen: {
-      dias: [0,1,2,3,4,5,6], // Todos los días
-      rangos: [ { desde:'09:00', hasta:'23:59' } ] // cubre 09:00 -> medianoche
-    }
+  /* ======= Variables editables por CMS (defaults) ======= */
+  // Días: 0=Dom, 1=Lun, 2=Mar, 3=Mié, 4=Jue, 5=Vie, 6=Sáb
+  let HORARIOS = {
+    rotiseria: { dias:[4,5,6,0], rangos:[{desde:'19:30', hasta:'22:30'}] },
+    almacen:   { dias:[0,1,2,3,4,5,6], rangos:[{desde:'09:00', hasta:'23:59'}] }
   };
-  /* Cierre forzado (vacaciones/obra) aparte del horario */
-  const SECCIONES_CERRADAS = { rotiseria:false, almacen:false };
+  let SECCIONES_CERRADAS = { rotiseria:false, almacen:false };
+  let SHIPPING = 1000;                 // costo de envío editable
+  let WSP_NUMBER = '3415923882';       // WhatsApp editable
 
   /* ======= Analytics & helpers ======= */
   const ANALYTICS_KEY='tachi_events_v1';
@@ -420,7 +415,7 @@
   }
 
   /* ======= Persistencia & helpers ======= */
-  const CART_KEY='tachi_cart_v1',CLIENT_KEY='tachi_client_v1',SHIPPING=1000;
+  const CART_KEY='tachi_cart_v1',CLIENT_KEY='tachi_client_v1';
   const formatARS=n=>new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n);
   const loadCart =()=>{try{return JSON.parse(localStorage.getItem(CART_KEY)||'{}')}catch{return{}}};
   const saveCart =obj=>localStorage.setItem(CART_KEY,JSON.stringify(obj));
@@ -496,6 +491,34 @@
     });
   }
 
+  /* ======= AJUSTES desde CMS ======= */
+  async function cargarAjustes(){
+    try{
+      const r = await fetch(asset('data/ajustes.json'));
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      const aj = await r.json();
+
+      // WhatsApp y envío
+      if(aj.whatsapp) WSP_NUMBER = String(aj.whatsapp).replace(/\D/g,'') || WSP_NUMBER;
+      if(typeof aj.shipping === 'number') SHIPPING = aj.shipping;
+
+      // Horarios y cierre forzado
+      const h = aj.horarios || {};
+      ['rotiseria','almacen'].forEach(sec=>{
+        const cfg = h[sec] || {};
+        if(!HORARIOS[sec]) HORARIOS[sec]={dias:[],rangos:[]};
+        if(Array.isArray(cfg.dias)) HORARIOS[sec].dias = cfg.dias.map(Number);
+        if(Array.isArray(cfg.rangos)) HORARIOS[sec].rangos = cfg.rangos.map(r=>({desde:r.desde, hasta:r.hasta}));
+        if(typeof cfg.cerrado === 'boolean') SECCIONES_CERRADAS[sec] = cfg.cerrado;
+      });
+
+      actualizarTabsPorHorario();
+    }catch(err){
+      console.warn('No se pudo cargar data/ajustes.json; usando defaults.', err);
+      showToast('Ajustes por defecto cargados','warn',1800);
+    }
+  }
+
   /* ======= Estado DOM ======= */
   const cantidades={}, listaEl=document.getElementById('lista'),
         subtotalEl=document.getElementById('subtotal'), totalEl=document.getElementById('total'),
@@ -546,9 +569,6 @@
   }
 
   /* ======= Mezclar Promos arriba ======= */
-  // Estructura esperada:
-  // productos-*.json => { "categorias":[ { "categoria":"Pizzas","productos":[{nombre,precio,desc}] }, ... ] }
-  // promos-*.json => { "promos":[ {nombre,precio,precio_original?,tag?,desc?,vigencia_hasta?} ] }
   function mergePromos(baseData, promosData){
     const out = baseData && Array.isArray(baseData.categorias) ? { categorias:[...baseData.categorias] } : { categorias:[] };
     const promos = (promosData && Array.isArray(promosData.promos)) ? promosData.promos : [];
@@ -572,22 +592,23 @@
   }
 
   /* ======= Cargar JSON ======= */
-  function cargarProductos(){
+  async function cargarProductos(){
+    await cargarAjustes(); // ← primero leemos ajustes
+
     const rotiseria = fetch(asset('data/productos-rotiseria.json')).then(r=>r.json()).catch(()=>{ showToast('Error cargando Rotisería','error'); return {categorias:[]} });
     const almacen   = fetch(asset('data/productos-almacen.json')).then(r=>r.json()).catch(()=>{ showToast('Error cargando Almacén','error'); return {categorias:[]} });
     const promosR   = fetch(asset('data/promos-rotiseria.json')).then(r=>r.json()).catch(()=>({}));
     const promosA   = fetch(asset('data/promos-almacen.json')).then(r=>r.json()).catch(()=>({}));
 
-    Promise.all([rotiseria, almacen, promosR, promosA]).then(([rOk,aOk,prOk,paOk])=>{
-      const rMerge = mergePromos(rOk, prOk);
-      const aMerge = mergePromos(aOk, paOk);
+    const [rOk,aOk,prOk,paOk] = await Promise.all([rotiseria, almacen, promosR, promosA]);
+    const rMerge = mergePromos(rOk, prOk);
+    const aMerge = mergePromos(aOk, paOk);
 
-      renderProductos('menu-rotiseria', rMerge);
-      renderProductos('menu-almacen',  aMerge);
+    renderProductos('menu-rotiseria', rMerge);
+    renderProductos('menu-almacen',  aMerge);
 
-      hydrateCart();hydrateClient();actualizarResumen();
-      actualizarTabsPorHorario();
-    });
+    hydrateCart();hydrateClient();actualizarResumen();
+    actualizarTabsPorHorario();
   }
   cargarProductos();
 
@@ -767,7 +788,7 @@
 
     logEvent('order_wsp',{ order_id, shipping:envio, shipping_cost, subtotal, total, items });
 
-    window.open(`https://wa.me/3415923882?text=${encodeURIComponent(msg)}`,'_blank');
+    window.open(`https://wa.me/${WSP_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank');
     showToast('Abriendo WhatsApp...','ok');
   }
 
