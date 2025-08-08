@@ -5,246 +5,233 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Admin · El Tachi</title>
   <link rel="icon" href="/uploads/logo.png" />
-  <link rel="stylesheet" href="/admin/custom.css" />
+  <style>
+    body{font:14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial}
+    #status{padding:16px;white-space:pre-wrap}
+  </style>
 </head>
 <body>
+  <div id="status">Cargando CMS…</div>
+
   <!-- Netlify Identity (login) -->
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   <!-- Netlify CMS -->
   <script src="https://unpkg.com/netlify-cms-app@^2.15.0/dist/netlify-cms.js"></script>
 
   <script>
-    function boot() {
-      if (!window.CMS || !CMS.init) return setTimeout(boot, 100);
+    const $ = (s) => document.querySelector(s);
+    const log = (...a) => { console.log(...a); $('#status').textContent += '\n' + a.join(' '); };
 
-      CMS.init({
-        config: {
+    async function waitCMS(tries=0){
+      if (window.CMS && typeof CMS.init === 'function') return true;
+      if (tries>50) throw new Error('El script del CMS no cargó');
+      await new Promise(r=>setTimeout(r,100));
+      return waitCMS(tries+1);
+    }
+
+    (async function boot(){
+      try{
+        log('[1] Esperando script del CMS…');
+        await waitCMS();
+        log('[1] OK');
+
+        // ⚠️ Si querés volver a usar config.yml, cambiá a: CMS.init({ configPath: "config.yml" });
+        // Por ahora inicializamos inline para aislar problemas de YAML/ruta.
+        const config = {
           backend: { name: "git-gateway", branch: "main" },
           logo_url: "/uploads/logo.png",
           site_url: "/",
           locale: "es",
           media_folder: "uploads",
           public_folder: "/uploads",
-
           collections: [
-            // ===== ROTISERÍA =====
             {
               name: "rotiseria",
               label: "Productos Rotisería",
-              files: [
-                {
-                  file: "data/productos-rotiseria.json",
-                  label: "Lista de productos Rotisería",
-                  name: "productos_rotiseria",
-                  format: "json",
+              files: [{
+                file: "data/productos-rotiseria.json",
+                label: "Lista de productos Rotisería",
+                name: "productos_rotiseria",
+                format: "json",
+                fields: [{
+                  label: "Categorías",
+                  name: "categorias",
+                  widget: "list",
                   fields: [
-                    {
-                      label: "Categorías",
-                      name: "categorias",
-                      widget: "list",
+                    { label: "Nombre", name: "categoria", widget: "string" },
+                    { label: "Productos", name: "productos", widget: "list",
                       fields: [
-                        { label: "Nombre", name: "categoria", widget: "string" },
-                        {
-                          label: "Productos",
-                          name: "productos",
-                          widget: "list",
-                          fields: [
-                            { label: "Nombre", name: "nombre", widget: "string" },
-                            { label: "Precio", name: "precio", widget: "number", value_type: "int" },
-                            { label: "Descripción", name: "desc", widget: "string", required: false }
-                          ]
-                        }
+                        { label: "Nombre", name: "nombre", widget: "string" },
+                        { label: "Precio", name: "precio", widget: "number", value_type: "int" },
+                        { label: "Descripción", name: "desc", widget: "string", required: false }
                       ]
                     }
                   ]
-                }
-              ]
+                }]
+              }]
             },
-
             {
               name: "promos_rotiseria",
               label: "Promos Rotisería",
-              files: [
-                {
-                  file: "data/promos-rotiseria.json",
-                  label: "Listado de Promos (Rotisería)",
-                  name: "promos_rotiseria_file",
-                  format: "json",
+              files: [{
+                file: "data/promos-rotiseria.json",
+                label: "Listado de Promos (Rotisería)",
+                name: "promos_rotiseria_file",
+                format: "json",
+                fields: [{
+                  label: "Promos",
+                  name: "promos",
+                  widget: "list",
                   fields: [
-                    {
-                      label: "Promos",
-                      name: "promos",
-                      widget: "list",
-                      fields: [
-                        { label: "Nombre", name: "nombre", widget: "string" },
-                        { label: "Precio promo", name: "precio", widget: "number", value_type: "int" },
-                        { label: "Precio original (tachado)", name: "precio_original", widget: "number", value_type: "int", required: false },
-                        { label: "Etiqueta (badge)", name: "tag", widget: "string", required: false, hint: "Ej: Combo, 2x1, -20%" },
-                        { label: "Descripción", name: "desc", widget: "string", required: false },
-                        { label: "Vigencia hasta", name: "vigencia_hasta", widget: "date", format: "YYYY-MM-DD", required: false }
-                      ]
-                    }
+                    { label: "Nombre", name: "nombre", widget: "string" },
+                    { label: "Precio promo", name: "precio", widget: "number", value_type: "int" },
+                    { label: "Precio original (tachado)", name: "precio_original", widget: "number", value_type: "int", required: false },
+                    { label: "Etiqueta (badge)", name: "tag", widget: "string", required: false, hint: "Ej: Combo, 2x1, -20%" },
+                    { label: "Descripción", name: "desc", widget: "string", required: false },
+                    { label: "Vigencia hasta", name: "vigencia_hasta", widget: "date", format: "YYYY-MM-DD", required: false }
                   ]
-                }
-              ]
+                }]
+              }]
             },
-
-            // ===== ALMACÉN =====
             {
               name: "almacen",
               label: "Productos Almacén",
-              files: [
-                {
-                  file: "data/productos-almacen.json",
-                  label: "Lista de productos Almacén",
-                  name: "productos_almacen",
-                  format: "json",
+              files: [{
+                file: "data/productos-almacen.json",
+                label: "Lista de productos Almacén",
+                name: "productos_almacen",
+                format: "json",
+                fields: [{
+                  label: "Categorías",
+                  name: "categorias",
+                  widget: "list",
                   fields: [
-                    {
-                      label: "Categorías",
-                      name: "categorias",
-                      widget: "list",
+                    { label: "Nombre", name: "categoria", widget: "string" },
+                    { label: "Productos", name: "productos", widget: "list",
                       fields: [
-                        { label: "Nombre", name: "categoria", widget: "string" },
-                        {
-                          label: "Productos",
-                          name: "productos",
-                          widget: "list",
-                          fields: [
-                            { label: "Nombre", name: "nombre", widget: "string" },
-                            { label: "Precio", name: "precio", widget: "number", value_type: "int" },
-                            { label: "Descripción", name: "desc", widget: "string", required: false }
-                          ]
-                        }
+                        { label: "Nombre", name: "nombre", widget: "string" },
+                        { label: "Precio", name: "precio", widget: "number", value_type: "int" },
+                        { label: "Descripción", name: "desc", widget: "string", required: false }
                       ]
                     }
                   ]
-                }
-              ]
+                }]
+              }]
             },
-
             {
               name: "promos_almacen",
               label: "Promos Almacén",
-              files: [
-                {
-                  file: "data/promos-almacen.json",
-                  label: "Listado de Promos (Almacén)",
-                  name: "promos_almacen_file",
-                  format: "json",
+              files: [{
+                file: "data/promos-almacen.json",
+                label: "Listado de Promos (Almacén)",
+                name: "promos_almacen_file",
+                format: "json",
+                fields: [{
+                  label: "Promos",
+                  name: "promos",
+                  widget: "list",
                   fields: [
-                    {
-                      label: "Promos",
-                      name: "promos",
-                      widget: "list",
-                      fields: [
-                        { label: "Nombre", name: "nombre", widget: "string" },
-                        { label: "Precio promo", name: "precio", widget: "number", value_type: "int" },
-                        { label: "Precio original (tachado)", name: "precio_original", widget: "number", value_type: "int", required: false },
-                        { label: "Etiqueta (badge)", name: "tag", widget: "string", required: false, hint: "Ej: Pack, -12%" },
-                        { label: "Descripción", name: "desc", widget: "string", required: false },
-                        { label: "Vigencia hasta", name: "vigencia_hasta", widget: "date", format: "YYYY-MM-DD", required: false }
-                      ]
-                    }
+                    { label: "Nombre", name: "nombre", widget: "string" },
+                    { label: "Precio promo", name: "precio", widget: "number", value_type: "int" },
+                    { label: "Precio original (tachado)", name: "precio_original", widget: "number", value_type: "int", required: false },
+                    { label: "Etiqueta (badge)", name: "tag", widget: "string", required: false, hint: "Ej: Pack, -12%" },
+                    { label: "Descripción", name: "desc", widget: "string", required: false },
+                    { label: "Vigencia hasta", name: "vigencia_hasta", widget: "date", format: "YYYY-MM-DD", required: false }
                   ]
-                }
-              ]
+                }]
+              }]
             },
-
-            // ===== AJUSTES =====
             {
               name: "ajustes",
               label: "Ajustes del Sitio",
-              files: [
-                {
-                  file: "data/ajustes.json",
-                  label: "Horarios, Envío y WhatsApp",
-                  name: "ajustes_file",
-                  format: "json",
-                  fields: [
-                    { label: "WhatsApp (solo números)", name: "whatsapp", widget: "string", hint: "Sin + ni 0. Ej: 3415923882" },
-                    { label: "Costo de envío", name: "shipping", widget: "number", value_type: "int", default: 1000 },
-                    {
-                      label: "Horarios",
-                      name: "horarios",
-                      widget: "object",
-                      fields: [
-                        {
-                          label: "Rotisería",
-                          name: "rotiseria",
-                          widget: "object",
-                          fields: [
-                            { label: "Cerrado forzado", name: "cerrado", widget: "boolean", default: false },
-                            {
-                              label: "Días abiertos",
-                              name: "dias",
-                              widget: "select",
-                              multiple: true,
-                              options: [
-                                { label: "Dom", value: 0 },
-                                { label: "Lun", value: 1 },
-                                { label: "Mar", value: 2 },
-                                { label: "Mié", value: 3 },
-                                { label: "Jue", value: 4 },
-                                { label: "Vie", value: 5 },
-                                { label: "Sáb", value: 6 }
-                              ],
-                              hint: "0=Dom ... 6=Sáb"
-                            },
-                            {
-                              label: "Rangos horarios",
-                              name: "rangos",
-                              widget: "list",
-                              fields: [
-                                { label: "Desde (HH:MM)", name: "desde", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"] },
-                                { label: "Hasta (HH:MM)", name: "hasta", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"] }
-                              ]
-                            }
-                          ]
-                        },
-                        {
-                          label: "Almacén",
-                          name: "almacen",
-                          widget: "object",
-                          fields: [
-                            { label: "Cerrado forzado", name: "cerrado", widget: "boolean", default: false },
-                            {
-                              label: "Días abiertos",
-                              name: "dias",
-                              widget: "select",
-                              multiple: true,
-                              options: [
-                                { label: "Dom", value: 0 },
-                                { label: "Lun", value: 1 },
-                                { label: "Mar", value: 2 },
-                                { label: "Mié", value: 3 },
-                                { label: "Jue", value: 4 },
-                                { label: "Vie", value: 5 },
-                                { label: "Sáb", value: 6 }
-                              ]
-                            },
-                            {
-                              label: "Rangos horarios",
-                              name: "rangos",
-                              widget: "list",
-                              fields: [
-                                { label: "Desde (HH:MM)", name: "desde", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"] },
-                                { label: "Hasta (HH:MM)", name: "hasta", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"] }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
+              files: [{
+                file: "data/ajustes.json",
+                label: "Horarios, Envío y WhatsApp",
+                name: "ajustes_file",
+                format: "json",
+                fields: [
+                  { label: "WhatsApp (solo números)", name: "whatsapp", widget: "string", hint: "Sin + ni 0. Ej: 3415923882" },
+                  { label: "Costo de envío", name: "shipping", widget: "number", value_type: "int", default: 1000 },
+                  {
+                    label: "Horarios",
+                    name: "horarios",
+                    widget: "object",
+                    fields: [
+                      {
+                        label: "Rotisería",
+                        name: "rotiseria",
+                        widget: "object",
+                        fields: [
+                          { label: "Cerrado forzado", name: "cerrado", widget: "boolean", default: false },
+                          {
+                            label: "Días abiertos",
+                            name: "dias",
+                            widget: "select",
+                            multiple: true,
+                            options: [
+                              { label: "Dom", value: 0 }, { label: "Lun", value: 1 }, { label: "Mar", value: 2 },
+                              { label: "Mié", value: 3 }, { label: "Jue", value: 4 }, { label: "Vie", value: 5 }, { label: "Sáb", value: 6 }
+                            ],
+                            hint: "0=Dom ... 6=Sáb"
+                          },
+                          {
+                            label: "Rangos horarios",
+                            name: "rangos",
+                            widget: "list",
+                            fields: [
+                              { label: "Desde (HH:MM)", name: "desde", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"] },
+                              { label: "Hasta (HH:MM)", name: "hasta", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"] }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        label: "Almacén",
+                        name: "almacen",
+                        widget: "object",
+                        fields: [
+                          { label: "Cerrado forzado", name: "cerrado", widget: "boolean", default: false },
+                          {
+                            label: "Días abiertos",
+                            name: "dias",
+                            widget: "select",
+                            multiple: true,
+                            options: [
+                              { label: "Dom", value: 0 }, { label: "Lun", value: 1 }, { label: "Mar", value: 2 },
+                              { label: "Mié", value: 3 }, { label: "Jue", value: 4 }, { label: "Vie", value: 5 }, { label: "Sáb", value: 6 }
+                            ]
+                          },
+                          {
+                            label: "Rangos horarios",
+                            name: "rangos",
+                            widget: "list",
+                            fields: [
+                              { label: "Desde (HH:MM)", name: "desde", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"] },
+                              { label: "Hasta (HH:MM)", name: "hasta", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"] }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }]
             }
           ]
-        }
-      });
+        };
+
+        $('#status').textContent = 'Iniciando CMS…';
+        CMS.init({ config });
+      }catch(err){
+        console.error(err);
+        $('#status').innerHTML = 'Error iniciando CMS:\n' + (err && err.message || err);
+      }
+    })();
+
+    // (Opcional) redirigir post-login
+    if (window.netlifyIdentity) {
+      window.netlifyIdentity.on("login", () => location.reload());
     }
-    boot();
   </script>
 </body>
 </html>
