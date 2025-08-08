@@ -2,19 +2,39 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Panel de Administración</title>
-  <link rel="icon" type="image/png" href="/uploads/logo.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin · El Tachi</title>
+  <link rel="icon" href="/uploads/logo.png" />
+  <link rel="stylesheet" href="/admin/custom.css" />
 </head>
 <body>
-  <!-- Carga de Netlify CMS -->
-  <script src="https://unpkg.com/netlify-cms-app/dist/netlify-cms.js"></script>
+  <!-- Netlify Identity (login) -->
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <!-- Netlify CMS -->
+  <script src="https://unpkg.com/netlify-cms-app@^2.15.0/dist/netlify-cms.js"></script>
 
-  <!-- Inicializa el CMS con tu config.yml -->
   <script>
-    NetlifyCmsApp.init({
-      configPath: 'config.yml'
-    });
+    // Inicia Netlify Identity (opcional)
+    if (window.netlifyIdentity) {
+      window.netlifyIdentity.on("init", (user) => {
+        if (!user) {
+          window.netlifyIdentity.on("login", () => {
+            document.location.href = "/admin/";
+          });
+        }
+      });
+    }
+
+    // Espera a que la global CMS esté lista y arranca
+    function bootCMS() {
+      if (window.CMS && typeof window.CMS.init === "function") {
+        // Lee /admin/config.yml por defecto
+        window.CMS.init({ configPath: "config.yml" });
+      } else {
+        setTimeout(bootCMS, 100);
+      }
+    }
+    bootCMS();
   </script>
 </body>
 </html>
