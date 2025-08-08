@@ -1,94 +1,34 @@
-/* ==== VARIABLES DE COLOR ==== */
-:root {
-  --color-principal: #0056b3; /* Azul principal */
-  --color-secundario: #ffcc00; /* Amarillo */
-  --color-texto: #ffffff;
-  --color-fondo: #f7f7f7;
-  --fuente-titulo: 'Roboto', sans-serif;
-}
-
-/* ==== ESTILO GLOBAL ==== */
-body {
-  background-color: var(--color-fondo);
-  font-family: var(--fuente-titulo);
-  font-size: 16px;
-}
-
-/* ==== SIDEBAR ==== */
+/* === Sidebar: colores legibles para item seleccionado === */
 [class*="SidebarContainer"] {
   background-color: var(--color-principal) !important;
-  color: var(--color-texto) !important;
-  font-size: 1rem;
+  color: #fff !important;
 }
 
-[class*="SidebarContainer"] a,
-[class*="SidebarContainer"] button {
-  color: var(--color-texto) !important;
-  font-weight: 500;
+/* Texto de todos los links del sidebar */
+[class*="SidebarContainer"] a {
+  color: #fff !important;
 }
 
+/* Estado seleccionado/activo (Netlify CMS usa aria-current) */
+[class*="SidebarContainer"] a[aria-current="page"],
+[class*="SidebarContainer"] a[aria-selected="true"],
+[class*="SidebarContainer"] [role="menuitem"][aria-current="page"],
+[class*="SidebarContainer"] [data-active="true"] {
+  background-color: rgba(255,255,255,0.18) !important; /* fondo más oscuro */
+  color: #fff !important;               /* texto blanco siempre visible */
+  font-weight: 700 !important;
+}
+
+/* Hover en el sidebar */
 [class*="SidebarContainer"] a:hover {
-  background-color: rgba(255, 255, 255, 0.15) !important;
-  font-weight: bold;
+  background-color: rgba(255,255,255,0.12) !important;
+  color: #fff !important;
 }
 
-/* ==== ENCABEZADO ==== */
-[class*="AppHeaderContainer"] {
-  background-color: var(--color-principal) !important;
-  color: var(--color-texto) !important;
-  font-size: 1.1rem;
+/* Buscador del sidebar (placeholder y texto) */
+[class*="SidebarContainer"] input {
+  color: #0b1f3a !important;
 }
-
-[class*="AppHeaderContainer"] h1 {
-  font-size: 1.6rem !important;
-  font-weight: bold !important;
-}
-
-[class*="AppHeaderContainer"] button {
-  font-size: 1rem !important;
-}
-
-/* ==== BOTONES ==== */
-button,
-[class*="Button"] {
-  background-color: var(--color-principal) !important;
-  color: var(--color-texto) !important;
-  border-radius: 6px !important;
-  border: none !important;
-  font-size: 1rem !important;
-  padding: 8px 16px !important;
-  transition: 0.2s ease all;
-}
-
-button:hover,
-[class*="Button"]:hover {
-  background-color: var(--color-secundario) !important;
-  color: #000 !important;
-}
-
-/* ==== LISTA DE ELEMENTOS ==== */
-[class*="CollectionListItem"] {
-  border-left: 4px solid var(--color-principal) !important;
-  padding: 10px !important;
-  font-size: 1rem;
-  transition: all 0.2s ease;
-}
-
-[class*="CollectionListItem"]:hover {
-  border-left-color: var(--color-secundario) !important;
-  background-color: #f0f0f0 !important;
-}
-
-/* ==== TITULOS Y ETIQUETAS ==== */
-label {
-  font-size: 1rem !important;
-  font-weight: 600 !important;
-  color: var(--color-principal) !important;
-}
-
-/* ==== CAMPOS DE FORMULARIO ==== */
-input, textarea, select {
-  font-size: 1rem !important;
-  padding: 8px !important;
-  border-radius: 6px !important;
+[class*="SidebarContainer"] input::placeholder {
+  color: rgba(0,0,0,0.55) !important;
 }
