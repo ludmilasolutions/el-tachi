@@ -426,7 +426,6 @@
   }
   function seccionCerradaAhora(sec){ return !estaAbierto(sec); }
   function mensajeCierre(sec){
-    // Si está cerrado forzado y hay mensaje, usarlo. Si no, devolver próximo horario si existe.
     if(SECCIONES_CERRADAS[sec] && CIERRE_MSGS[sec]?.trim()){
       return CIERRE_MSGS[sec].trim();
     }
@@ -770,12 +769,11 @@
     sheet.classList.remove('open');backdrop.classList.remove('open');
     actualizarResumen();document.removeEventListener('keydown',trapFocus);
   }
-  const fab=document.getElementById('cartFab');
-  const sheet=document.getElementById('cartSheet');
-  const sheetClose=document.getElementById('sheetClose');
-  const backdrop=document.getElementById('sheetBackdrop');
+
+  // (solo listeners; evitamos redeclarar variables)
   fab.addEventListener('click',e=>{e.preventDefault();openSheet()});
-  sheetClose.addEventListener('click',closeSheet);backdrop.addEventListener('click',closeSheet);
+  sheetClose.addEventListener('click',closeSheet);
+  backdrop.addEventListener('click',closeSheet);
 
   /* ======= Ocultar FAB al llegar a promo ======= */
   (function fabScrollHide(){
