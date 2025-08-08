@@ -5,6 +5,7 @@ backend:
 logo_url: "/uploads/logo.png"      # Logo en la barra del CMS
 site_url: "/"                      # Link del título del panel
 locale: "es"                       # Interfaz en español
+load_config_file: false            # Evita buscar otra config
 customStyles: "/admin/custom.css"  # Aplica estilos del panel
 
 media_folder: "uploads"
