@@ -1,16 +1,31 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Administración – El Tachi</title>
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <title>Admin · El Tachi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Estilos del panel -->
+    <link rel="stylesheet" href="/admin/custom.css" />
   </head>
   <body>
-    <!-- 🔧 Este div es imprescindible para que se monte el CMS -->
-    <div id="nc-root"></div>
+    <!-- Netlify Identity Widget (login) -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <!-- Netlify CMS app -->
+    <script src="https://unpkg.com/netlify-cms-app@^2.15.0/dist/netlify-cms.js"></script>
 
-    <!-- Cargar CMS -->
-    <script src="https://unpkg.com/netlify-cms@2.10.192/dist/netlify-cms.js"></script>
+    <script>
+      // Inicia Netlify Identity
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.on("init", user => {
+          if (!user) {
+            window.netlifyIdentity.on("login", () => {
+              document.location.href = "/admin/";
+            });
+          }
+        });
+      }
+      // Arranca el CMS
+      window.CMS.init();
+    </script>
   </body>
 </html>
