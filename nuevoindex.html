@@ -202,27 +202,32 @@
       display:grid;grid-template-rows:auto 1fr;z-index:99
     }
     .sheet.open{transform:translateY(0)}
+    /* --- CABECERA EN GRID: título | pasos | X --- */
     .sheet-header{
-      padding:.6rem .8rem .4rem;display:flex;align-items:center;gap:.5rem;
-      position:sticky;top:0;background:var(--card);border-bottom:1px solid #e8e8e8;
+      display:grid;
+      grid-template-columns: 1fr auto 40px;
+      align-items:center;
+      gap:.4rem;
+      padding:.6rem .8rem .4rem;
+      position:sticky; top:0; background:var(--card);
+      border-bottom:1px solid #e8e8e8;
       border-top-left-radius:16px;border-top-right-radius:16px;
-      position:relative; /* para posicionar la X */
+      z-index:5;
     }
     .sheet-handle{width:36px;height:4px;border-radius:999px;background:#d7d7d7;margin:.2rem auto;position:absolute;left:50%;transform:translateX(-50%);top:6px}
-    .sheet-title{margin:0 auto 0 .4rem;font-size:1.05rem;font-weight:800;color:#0b376d; padding-right:2.2rem;} /* espacio para la X */
+    .sheet-title{margin:0;font-size:1.05rem;font-weight:800;color:#0b376d}
     .sheet-close{
-      position:absolute; top:.5rem; right:.6rem;
-      background:transparent; border:none; font-size:1.6rem; color:var(--azul);
-      cursor:pointer; line-height:1; z-index:5;
+      justify-self:end;
+      background:transparent;border:none;font-size:1.8rem;color:var(--azul);
+      cursor:pointer;line-height:1;
     }
     .sheet-body{overflow:auto;padding:.8rem .9rem 1rem}
-
     @media(min-width:800px){
       .sheet{left:50%;right:auto;transform:translate(-50%,100%);width:720px;border-radius:16px}
       .sheet.open{transform:translate(-50%,0)}
     }
     @media(max-width:600px){
-      .sheet-close{font-size:1.8rem; top:.6rem; right:.8rem}
+      .sheet-close{font-size:2rem}
     }
 
     /* ---------- Modal ---------- */
@@ -240,8 +245,10 @@
 
     /* ——— PASOS EN SHEET ——— */
     .steps {
-      display:flex; gap:.5rem; align-items:center; margin:.2rem .4rem .6rem;
+      justify-self:center;
+      display:flex; gap:.5rem; align-items:center;
       font-weight:800; font-size:.9rem; color:#64748b;
+      white-space:nowrap;
     }
     .step {display:flex; align-items:center; gap:.4rem}
     .step .dot {width:10px; height:10px; border-radius:999px; background:#cbd5e1}
