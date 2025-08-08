@@ -3,39 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin · Smoke Test</title>
+  <title>Admin · El Tachi</title>
+  <link rel="icon" href="/uploads/logo.png" />
 </head>
 <body>
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   <script src="https://unpkg.com/netlify-cms-app@^2.15.0/dist/netlify-cms.js"></script>
   <script>
-    function boot() {
-      if (!window.CMS || !CMS.init) return setTimeout(boot, 100);
-      CMS.init({
-        config: {
-          backend: { name: "git-gateway", branch: "main" },
-          media_folder: "uploads",
-          public_folder: "/uploads",
-          collections: [
-            {
-              name: "test",
-              label: "Test",
-              files: [
-                {
-                  file: "data/test.json",
-                  label: "Archivo de prueba",
-                  name: "archivo_test",
-                  format: "json",
-                  fields: [
-                    { label: "Título", name: "titulo", widget: "string" }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      });
+    function bootCMS(){
+      if (window.CMS && CMS.init) CMS.init({ configPath: "config.yml" });
+      else setTimeout(bootCMS, 100);
     }
-    boot();
+    bootCMS();
   </script>
 </body>
 </html>
