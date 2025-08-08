@@ -1,23 +1,25 @@
 /* ===========================
-   Netlify CMS · El Tachi
-   Paleta y estilos globales
+   Netlify CMS · El Tachi (custom.css)
+   Paleta + estilos globales
    =========================== */
 
 :root{
-  --color-principal:#0056b3;   /* Azul */
-  --color-secundario:#ffcc00;  /* Amarillo */
-  --color-fondo:#f7f7f7;
-  --color-texto:#111;
-  --color-card:#fff;
-  --radius:10px;
+  --azul:#0056b3;
+  --azul-dark:#00439a;
+  --amarillo:#ffcc00;
+  --amarillo-dark:#ffb400;
+  --bg:#f7f7f7;
+  --text:#111;
+  --card:#fff;
   --shadow:0 2px 8px rgba(0,0,0,.08);
   --focus:0 0 0 3px rgba(0,86,179,.25);
+  --radius:10px;
 }
 
 html,body{
   font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-  background:var(--color-fondo);
-  color:var(--color-texto);
+  background:var(--bg);
+  color:var(--text);
   font-size:16px;
 }
 
@@ -25,12 +27,12 @@ html,body{
    HEADER (barra superior)
    =========================== */
 [class*="AppHeaderContainer"]{
-  background:linear-gradient(90deg, #00439a, var(--color-principal)) !important;
+  background:linear-gradient(90deg, var(--azul-dark), var(--azul)) !important;
   color:#fff !important;
 }
 [class*="AppHeaderContainer"] h1,
-[class*="AppHeaderContainer"] button,
-[class*="AppHeaderContainer"] a{
+[class*="AppHeaderContainer"] a,
+[class*="AppHeaderContainer"] button{
   color:#fff !important;
 }
 
@@ -38,37 +40,29 @@ html,body{
    SIDEBAR (menú izquierdo)
    =========================== */
 [class*="SidebarContainer"]{
-  background:var(--color-principal) !important;
+  background:var(--azul) !important;
   color:#fff !important;
 }
-
-/* enlaces del sidebar (estado normal) */
 [class*="SidebarContainer"] a{
   color:#fff !important;
   border-radius:8px !important;
 }
-
-/* hover */
 [class*="SidebarContainer"] a:hover{
   background:rgba(255,255,255,.16) !important;
   color:#fff !important;
 }
-
-/* seleccionado/activo: SIEMPRE legible */
+/* Activo/seleccionado: amarillo, texto negro */
 [class*="SidebarContainer"] a[aria-current="page"],
 [class*="SidebarContainer"] a[aria-selected="true"],
 [class*="SidebarContainer"] [role="menuitem"][aria-current="page"],
 [class*="SidebarContainer"] [data-active="true"]{
-  background:var(--color-secundario) !important;
+  background:var(--amarillo) !important;
   color:#000 !important;
   font-weight:700 !important;
 }
-
-/* buscador del sidebar */
+/* Buscador del sidebar */
 [class*="SidebarContainer"] input{
-  background:#fff !important;
-  color:#000 !important;
-  border-radius:8px !important;
+  background:#fff !important; color:#000 !important; border-radius:8px !important;
 }
 [class*="SidebarContainer"] input::placeholder{ color:rgba(0,0,0,.55)!important; }
 
@@ -77,7 +71,7 @@ html,body{
    =========================== */
 [class*="CollectionListItem"],
 [class*="Card"]{
-  background:var(--color-card) !important;
+  background:var(--card) !important;
   border-radius:var(--radius) !important;
   box-shadow:var(--shadow) !important;
   transition:transform .15s ease, box-shadow .15s ease !important;
@@ -92,7 +86,7 @@ html,body{
    BOTONES
    =========================== */
 button, [class*="Button"]{
-  background:linear-gradient(90deg, var(--color-secundario), #ffb400) !important;
+  background:linear-gradient(90deg, var(--amarillo), var(--amarillo-dark)) !important;
   color:#000 !important;
   border:none !important;
   border-radius:8px !important;
@@ -104,23 +98,20 @@ button:hover, [class*="Button"]:hover{
   transform:translateY(-1px);
   box-shadow:0 6px 16px rgba(0,0,0,.15) !important;
 }
-
-/* variantes “secundarias” que el CMS pinta en gris: las llevamos al azul */
+/* “Secundarios” al azul */
 button[variant="secondary"], [class*="Button--secondary"]{
-  background:var(--color-principal) !important;
-  color:#fff !important;
+  background:var(--azul) !important; color:#fff !important;
 }
 
 /* ===========================
    FORM (labels + campos)
    =========================== */
 label{
-  color:var(--color-principal) !important;
+  color:var(--azul) !important;
   font-weight:700 !important;
   margin-bottom:4px !important;
   font-size:1rem !important;
 }
-
 input, textarea, select{
   background:#fff !important;
   border:1px solid #d8d8d8 !important;
@@ -130,18 +121,14 @@ input, textarea, select{
   transition:border-color .15s ease, box-shadow .15s ease !important;
 }
 input:focus, textarea:focus, select:focus{
-  border-color:var(--color-principal) !important;
+  border-color:var(--azul) !important;
   box-shadow:var(--focus) !important;
   outline:0 !important;
 }
 
 /* ===========================
-   CONTENEDORES EDITOR / PREVIEW
+   EDITOR / CONTROLES
    =========================== */
-[class*="EditorContainer"],
-[class*="PreviewPane"]{
-  background:transparent !important;
-}
 [class*="ControlContainer"]{
   background:#fff !important;
   border-radius:var(--radius) !important;
@@ -150,18 +137,43 @@ input:focus, textarea:focus, select:focus{
 }
 
 /* ===========================
+   FIX: Botones de toolbar en listas
+   (X eliminar / flecha arrastrar) — SIEMPRE visibles
+   =========================== */
+/* Contenedor de toolbar de items (Netlify CMS usa esta clase) */
+.nc-controlPane-toolbar button{
+  background:#fff !important;       /* fondo claro para que se vea el icono */
+  border:1px solid #e2e2e2 !important;
+  border-radius:6px !important;
+  padding:6px !important;
+  box-shadow:none !important;
+}
+.nc-controlPane-toolbar button:hover{
+  border-color:#cfcfcf !important;
+  background:#f8f8f8 !important;
+}
+.nc-controlPane-toolbar button svg{
+  fill:#000 !important;             /* íconos NEGROS: se ven sobre amarillo/ blanco */
+  stroke:#000 !important;
+}
+/* Si algún tema fuerza botones amarillos, garantizamos contraste del icono */
+.nc-controlPane-toolbar button[style*="background"],
+.nc-controlPane-toolbar button[class*="primary"]{
+  color:#000 !important;
+}
+.nc-controlPane-toolbar button[style*="background"] svg{
+  fill:#000 !important; stroke:#000 !important;
+}
+
+/* Handler de arrastre (a veces es un “grip”): que no desaparezca */
+[class*="dragHandle"] svg{
+  fill:#000 !important; stroke:#000 !important;
+}
+
+/* ===========================
    UTILIDADES
    =========================== */
-a{ color:var(--color-principal); }
-a:hover{ color:#002e6f; }
-
-/* Mensajes/Badges de estado */
-[class*="Badge"],
-[class*="Alert"]{
-  border-radius:999px !important;
-}
-
-/* Espaciados más aireados en columnas */
-[class*="MainContainer"]{
-  padding-bottom:24px !important;
-}
+a{ color:var(--azul); }
+a:hover{ color:#00316e; }
+[class*="Badge"], [class*="Alert"]{ border-radius:999px !important; }
+[class*="MainContainer"]{ padding-bottom:24px !important; }
