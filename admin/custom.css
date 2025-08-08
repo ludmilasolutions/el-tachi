@@ -1,40 +1,51 @@
-/* ==== ESTILO GENERAL ==== */
+/* ==== VARIABLES DE COLOR ==== */
 :root {
-  --color-principal: #0056b3; /* Azul */
+  --color-principal: #0056b3; /* Azul principal */
   --color-secundario: #ffcc00; /* Amarillo */
   --color-texto: #ffffff;
   --color-fondo: #f7f7f7;
+  --fuente-titulo: 'Roboto', sans-serif;
 }
 
+/* ==== ESTILO GLOBAL ==== */
 body {
   background-color: var(--color-fondo);
-  font-family: 'Roboto', sans-serif;
+  font-family: var(--fuente-titulo);
+  font-size: 16px;
 }
 
 /* ==== SIDEBAR ==== */
 [class*="SidebarContainer"] {
   background-color: var(--color-principal) !important;
   color: var(--color-texto) !important;
+  font-size: 1rem;
 }
 
 [class*="SidebarContainer"] a,
 [class*="SidebarContainer"] button {
   color: var(--color-texto) !important;
+  font-weight: 500;
 }
 
 [class*="SidebarContainer"] a:hover {
   background-color: rgba(255, 255, 255, 0.15) !important;
+  font-weight: bold;
 }
 
 /* ==== ENCABEZADO ==== */
 [class*="AppHeaderContainer"] {
   background-color: var(--color-principal) !important;
   color: var(--color-texto) !important;
+  font-size: 1.1rem;
 }
 
-[class*="AppHeaderContainer"] h1,
+[class*="AppHeaderContainer"] h1 {
+  font-size: 1.6rem !important;
+  font-weight: bold !important;
+}
+
 [class*="AppHeaderContainer"] button {
-  color: var(--color-texto) !important;
+  font-size: 1rem !important;
 }
 
 /* ==== BOTONES ==== */
@@ -44,6 +55,9 @@ button,
   color: var(--color-texto) !important;
   border-radius: 6px !important;
   border: none !important;
+  font-size: 1rem !important;
+  padding: 8px 16px !important;
+  transition: 0.2s ease all;
 }
 
 button:hover,
@@ -55,10 +69,26 @@ button:hover,
 /* ==== LISTA DE ELEMENTOS ==== */
 [class*="CollectionListItem"] {
   border-left: 4px solid var(--color-principal) !important;
+  padding: 10px !important;
+  font-size: 1rem;
   transition: all 0.2s ease;
 }
 
 [class*="CollectionListItem"]:hover {
   border-left-color: var(--color-secundario) !important;
   background-color: #f0f0f0 !important;
+}
+
+/* ==== TITULOS Y ETIQUETAS ==== */
+label {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  color: var(--color-principal) !important;
+}
+
+/* ==== CAMPOS DE FORMULARIO ==== */
+input, textarea, select {
+  font-size: 1rem !important;
+  padding: 8px !important;
+  border-radius: 6px !important;
 }
