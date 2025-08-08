@@ -1,179 +1,117 @@
-/* ===========================
-   Netlify CMS · El Tachi (custom.css)
-   Paleta + estilos globales
-   =========================== */
-
-:root{
-  --azul:#0056b3;
-  --azul-dark:#00439a;
-  --amarillo:#ffcc00;
-  --amarillo-dark:#ffb400;
-  --bg:#f7f7f7;
-  --text:#111;
-  --card:#fff;
-  --shadow:0 2px 8px rgba(0,0,0,.08);
-  --focus:0 0 0 3px rgba(0,86,179,.25);
-  --radius:10px;
+/* === Tipografía global === */
+body {
+  font-family: 'Roboto', sans-serif !important;
 }
 
-html,body{
-  font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  font-size:16px;
+/* === Barra superior === */
+header, .nc-appHeader-root {
+  background-color: #004aad !important;
+  color: white !important;
 }
 
-/* ===========================
-   HEADER (barra superior)
-   =========================== */
-[class*="AppHeaderContainer"]{
-  background:linear-gradient(90deg, var(--azul-dark), var(--azul)) !important;
-  color:#fff !important;
-}
-[class*="AppHeaderContainer"] h1,
-[class*="AppHeaderContainer"] a,
-[class*="AppHeaderContainer"] button{
-  color:#fff !important;
+header svg, .nc-appHeader-root svg {
+  fill: white !important;
 }
 
-/* ===========================
-   SIDEBAR (menú izquierdo)
-   =========================== */
-[class*="SidebarContainer"]{
-  background:var(--azul) !important;
-  color:#fff !important;
-}
-[class*="SidebarContainer"] a{
-  color:#fff !important;
-  border-radius:8px !important;
-}
-[class*="SidebarContainer"] a:hover{
-  background:rgba(255,255,255,.16) !important;
-  color:#fff !important;
-}
-/* Activo/seleccionado: amarillo, texto negro */
-[class*="SidebarContainer"] a[aria-current="page"],
-[class*="SidebarContainer"] a[aria-selected="true"],
-[class*="SidebarContainer"] [role="menuitem"][aria-current="page"],
-[class*="SidebarContainer"] [data-active="true"]{
-  background:var(--amarillo) !important;
-  color:#000 !important;
-  font-weight:700 !important;
-}
-/* Buscador del sidebar */
-[class*="SidebarContainer"] input{
-  background:#fff !important; color:#000 !important; border-radius:8px !important;
-}
-[class*="SidebarContainer"] input::placeholder{ color:rgba(0,0,0,.55)!important; }
-
-/* ===========================
-   TARJETAS / LISTAS
-   =========================== */
-[class*="CollectionListItem"],
-[class*="Card"]{
-  background:var(--card) !important;
-  border-radius:var(--radius) !important;
-  box-shadow:var(--shadow) !important;
-  transition:transform .15s ease, box-shadow .15s ease !important;
-}
-[class*="CollectionListItem"]:hover,
-[class*="Card"]:hover{
-  transform:translateY(-1px);
-  box-shadow:0 6px 18px rgba(0,0,0,.12) !important;
+/* === Botones principales === */
+button, .nc-button {
+  background-color: #ffc107 !important; /* Amarillo */
+  color: #111 !important;
+  border-radius: 6px !important;
+  border: none !important;
+  font-weight: bold !important;
 }
 
-/* ===========================
-   BOTONES
-   =========================== */
-button, [class*="Button"]{
-  background:linear-gradient(90deg, var(--amarillo), var(--amarillo-dark)) !important;
-  color:#000 !important;
-  border:none !important;
-  border-radius:8px !important;
-  font-weight:700 !important;
-  padding:8px 16px !important;
-  transition:transform .15s ease, box-shadow .15s ease !important;
-}
-button:hover, [class*="Button"]:hover{
-  transform:translateY(-1px);
-  box-shadow:0 6px 16px rgba(0,0,0,.15) !important;
-}
-/* “Secundarios” al azul */
-button[variant="secondary"], [class*="Button--secondary"]{
-  background:var(--azul) !important; color:#fff !important;
+button:hover, .nc-button:hover {
+  background-color: #ffb300 !important;
 }
 
-/* ===========================
-   FORM (labels + campos)
-   =========================== */
-label{
-  color:var(--azul) !important;
-  font-weight:700 !important;
-  margin-bottom:4px !important;
-  font-size:1rem !important;
-}
-input, textarea, select{
-  background:#fff !important;
-  border:1px solid #d8d8d8 !important;
-  border-radius:8px !important;
-  padding:10px 12px !important;
-  font-size:1rem !important;
-  transition:border-color .15s ease, box-shadow .15s ease !important;
-}
-input:focus, textarea:focus, select:focus{
-  border-color:var(--azul) !important;
-  box-shadow:var(--focus) !important;
-  outline:0 !important;
+/* === Barra lateral === */
+.nc-sidebar {
+  background-color: #004aad !important;
 }
 
-/* ===========================
-   EDITOR / CONTROLES
-   =========================== */
-[class*="ControlContainer"]{
-  background:#fff !important;
-  border-radius:var(--radius) !important;
-  box-shadow:var(--shadow) !important;
-  padding:12px !important;
+.nc-sidebar .nc-sidebarNav-link {
+  color: white !important;
 }
 
-/* ===========================
-   FIX: Botones de toolbar en listas
-   (X eliminar / flecha arrastrar) — SIEMPRE visibles
-   =========================== */
-/* Contenedor de toolbar de items (Netlify CMS usa esta clase) */
-.nc-controlPane-toolbar button{
-  background:#fff !important;       /* fondo claro para que se vea el icono */
-  border:1px solid #e2e2e2 !important;
-  border-radius:6px !important;
-  padding:6px !important;
-  box-shadow:none !important;
+.nc-sidebar .nc-sidebarNav-link-active {
+  background-color: #ffc107 !important;
+  color: #111 !important;
 }
-.nc-controlPane-toolbar button:hover{
-  border-color:#cfcfcf !important;
-  background:#f8f8f8 !important;
+
+/* === Titulares de colecciones === */
+h1, h2, h3 {
+  font-weight: bold !important;
 }
-.nc-controlPane-toolbar button svg{
-  fill:#000 !important;             /* íconos NEGROS: se ven sobre amarillo/ blanco */
-  stroke:#000 !important;
+
+/* === Campos y etiquetas === */
+label {
+  font-weight: bold !important;
+  color: #004aad !important;
 }
-/* Si algún tema fuerza botones amarillos, garantizamos contraste del icono */
+
+/* === Input y textarea === */
+input, textarea, select {
+  border-radius: 6px !important;
+  border: 1px solid #ccc !important;
+  padding: 6px !important;
+}
+
+/* === Botones de agregar nuevo ítem en listas === */
+button.nc-arrayWidget-topBtn,
+button.nc-arrayWidget-addBtn {
+  background-color: #ffc107 !important;
+  color: #111 !important;
+}
+
+button.nc-arrayWidget-topBtn:hover,
+button.nc-arrayWidget-addBtn:hover {
+  background-color: #ffb300 !important;
+}
+
+/* === FIX para botones pequeños de toolbar (✖ eliminar / arrastrar) === */
+.nc-controlPane-toolbar button,
+[class*="List"] [class*="toolbar"] button,
+[class*="Array"] [class*="toolbar"] button,
+[class*="Object"] [class*="toolbar"] button,
+[class*="list"] [class*="toolbar"] button,
+[class*="array"] [class*="toolbar"] button {
+  background: #ffffff !important;
+  color: #111 !important;
+  border: 1px solid #d9d9d9 !important;
+  border-radius: 6px !important;
+  padding: 6px !important;
+  box-shadow: none !important;
+}
+
+.nc-controlPane-toolbar button svg,
+[class*="List"] [class*="toolbar"] button svg,
+[class*="Array"] [class*="toolbar"] button svg,
+[class*="Object"] [class*="toolbar"] button svg,
+[class*="list"] [class*="toolbar"] button svg,
+[class*="array"] [class*="toolbar"] button svg {
+  fill: #111 !important;
+  stroke: #111 !important;
+}
+
+.nc-controlPane-toolbar button:hover,
+[class*="List"] [class*="toolbar"] button:hover,
+[class*="Array"] [class*="toolbar"] button:hover,
+[class*="Object"] [class*="toolbar"] button:hover,
+[class*="list"] [class*="toolbar"] button:hover,
+[class*="array"] [class*="toolbar"] button:hover {
+  background: #f6f6f6 !important;
+  border-color: #cfcfcf !important;
+}
+
+/* Si algún estilo inline les pone amarillo, forzamos negro en íconos */
 .nc-controlPane-toolbar button[style*="background"],
-.nc-controlPane-toolbar button[class*="primary"]{
-  color:#000 !important;
+[class*="toolbar"] button[style*="background"] {
+  color: #111 !important;
 }
-.nc-controlPane-toolbar button[style*="background"] svg{
-  fill:#000 !important; stroke:#000 !important;
+.nc-controlPane-toolbar button[style*="background"] svg,
+[class*="toolbar"] button[style*="background"] svg {
+  fill: #111 !important;
+  stroke: #111 !important;
 }
-
-/* Handler de arrastre (a veces es un “grip”): que no desaparezca */
-[class*="dragHandle"] svg{
-  fill:#000 !important; stroke:#000 !important;
-}
-
-/* ===========================
-   UTILIDADES
-   =========================== */
-a{ color:var(--azul); }
-a:hover{ color:#00316e; }
-[class*="Badge"], [class*="Alert"]{ border-radius:999px !important; }
-[class*="MainContainer"]{ padding-bottom:24px !important; }
