@@ -3,38 +3,39 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin · El Tachi</title>
-  <link rel="icon" href="/uploads/logo.png" />
-  <link rel="stylesheet" href="/admin/custom.css" />
+  <title>Admin · Smoke Test</title>
 </head>
 <body>
-  <!-- Netlify Identity (login) -->
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-  <!-- Netlify CMS -->
   <script src="https://unpkg.com/netlify-cms-app@^2.15.0/dist/netlify-cms.js"></script>
-
   <script>
-    // Inicia Netlify Identity (opcional)
-    if (window.netlifyIdentity) {
-      window.netlifyIdentity.on("init", (user) => {
-        if (!user) {
-          window.netlifyIdentity.on("login", () => {
-            document.location.href = "/admin/";
-          });
+    function boot() {
+      if (!window.CMS || !CMS.init) return setTimeout(boot, 100);
+      CMS.init({
+        config: {
+          backend: { name: "git-gateway", branch: "main" },
+          media_folder: "uploads",
+          public_folder: "/uploads",
+          collections: [
+            {
+              name: "test",
+              label: "Test",
+              files: [
+                {
+                  file: "data/test.json",
+                  label: "Archivo de prueba",
+                  name: "archivo_test",
+                  format: "json",
+                  fields: [
+                    { label: "Título", name: "titulo", widget: "string" }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       });
     }
-
-    // Espera a que la global CMS esté lista y arranca
-    function bootCMS() {
-      if (window.CMS && typeof window.CMS.init === "function") {
-        // Lee /admin/config.yml por defecto
-        window.CMS.init({ configPath: "config.yml" });
-      } else {
-        setTimeout(bootCMS, 100);
-      }
-    }
-    bootCMS();
+    boot();
   </script>
 </body>
 </html>
