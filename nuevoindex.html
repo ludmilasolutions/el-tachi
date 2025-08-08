@@ -205,16 +205,24 @@
     .sheet-header{
       padding:.6rem .8rem .4rem;display:flex;align-items:center;gap:.5rem;
       position:sticky;top:0;background:var(--card);border-bottom:1px solid #e8e8e8;
-      border-top-left-radius:16px;border-top-right-radius:16px
+      border-top-left-radius:16px;border-top-right-radius:16px;
+      position:relative; /* para posicionar la X */
     }
     .sheet-handle{width:36px;height:4px;border-radius:999px;background:#d7d7d7;margin:.2rem auto;position:absolute;left:50%;transform:translateX(-50%);top:6px}
-    .sheet-title{margin:0 auto 0 .4rem;font-size:1.05rem;font-weight:800;color:#0b376d}
-    .sheet-close{margin-left:auto;background:#fff;border:1px solid #dcdcdc;border-radius:8px;padding:.35rem .6rem;cursor:pointer}
+    .sheet-title{margin:0 auto 0 .4rem;font-size:1.05rem;font-weight:800;color:#0b376d; padding-right:2.2rem;} /* espacio para la X */
+    .sheet-close{
+      position:absolute; top:.5rem; right:.6rem;
+      background:transparent; border:none; font-size:1.6rem; color:var(--azul);
+      cursor:pointer; line-height:1; z-index:5;
+    }
     .sheet-body{overflow:auto;padding:.8rem .9rem 1rem}
 
     @media(min-width:800px){
       .sheet{left:50%;right:auto;transform:translate(-50%,100%);width:720px;border-radius:16px}
       .sheet.open{transform:translate(-50%,0)}
+    }
+    @media(max-width:600px){
+      .sheet-close{font-size:1.8rem; top:.6rem; right:.8rem}
     }
 
     /* ---------- Modal ---------- */
@@ -673,7 +681,7 @@
 
     METRICS_TOTAL=subtotal+envioCosto;METRICS_COUNT=count;METRICS_ENVIO=envioSel||'';
 
-    actualizarPasos(); // ← actualizar progreso
+    actualizarPasos(); // ← progreso
   }
 
   /* ======= Guardar inputs cliente ======= */
