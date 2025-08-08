@@ -18,7 +18,7 @@
       ]
     },
     "almacen": {
-      "cerrado": true,
+      "cerrado": false,
       "dias": [
         0,
         1,
