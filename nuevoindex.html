@@ -335,8 +335,8 @@
   <!-- ============   SCRIPTS   ============ -->
   <script>
   /* ======= CONFIG BACKEND ======= */
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycb...TU_ID.../exec'; // ← REEMPLAZAR
-  const TOKEN      = 'tachi_2025_super_seguro_9a8f2c1'; // ← REEMPLAZAR
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbcyWwY0kwLC3G6dzXt9GEdmdDrP_cWb-9_gM8qwQ5TmW8VkO4on7yxBhFMdLpfZMdrpQ/exec';
+  const TOKEN      = 'tachi_2025_super_seguro_9a8f2c1';
 
   /* ======= Helpers ======= */
   const CART_KEY='tachi_cart_v1',CLIENT_KEY='tachi_client_v1',SHIPPING=1000;
@@ -515,32 +515,28 @@
       }
     });
 
-    // Totales y metadatos
+    // Totales
     const subtotal = items.reduce((a,i)=>a+i.line_total,0);
     const shipping_cost = envio==='envio'?SHIPPING:0;
     const total = subtotal + shipping_cost;
-    const now = new Date();
-    const fecha = now.toLocaleDateString('es-AR'); // ej: 08/08/2025
-    const hora  = now.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}); // ej: 14:37
-    const order_id = 'W'+now.toISOString().replace(/[-:.TZ]/g,'').slice(0,14);
 
-    // Mensaje WhatsApp (incluye nombre, fecha y hora)
-    let msg=`Hola, soy ${name}. Quiero hacer un pedido (${fecha} ${hora}):\n`;
+    // Mensaje WhatsApp SIMPLE (sin fecha, sin ID, sin costo de envío)
+    let msg=`Hola, soy ${name}. Quiero pedir:\n`;
     items.forEach(i=>{ msg+=`- ${i.name} x${i.qty} - ${formatARS(i.line_total)}\n`; });
     msg+= envio==='envio'
-      ? `Envío a domicilio a: ${addr} (+${formatARS(SHIPPING)})\n`
+      ? `Envío a domicilio: ${addr}\n`
       : 'Retiro en el local\n';
-    msg+= `Total: ${formatARS(total)}\n`;
-    msg+= `ID: ${order_id}`;
+    msg+= `Total: ${formatARS(total)}`;
 
-    // Enviar a Google Sheets (no bloquea el WhatsApp)
+    // Enviar a Google Sheets (incluimos metadatos)
     try{
+      const now = new Date();
       const payload = {
         token: TOKEN,
         ts: now.toISOString(),
-        date: fecha,
-        time: hora,
-        order_id,
+        date: now.toLocaleDateString('es-AR'),
+        time: now.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}),
+        order_id: 'W'+now.toISOString().replace(/[-:.TZ]/g,'').slice(0,14),
         name,
         address: addr,
         shipping: envio,
