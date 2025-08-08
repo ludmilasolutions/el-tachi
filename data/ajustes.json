@@ -3,7 +3,7 @@
   "shipping": 1000,
   "horarios": {
     "rotiseria": {
-      "cerrado": true,
+      "cerrado": false,
       "dias": [
         4,
         5,
@@ -18,7 +18,7 @@
       ]
     },
     "almacen": {
-      "cerrado": false,
+      "cerrado": true,
       "dias": [
         0,
         1,
@@ -33,7 +33,8 @@
           "desde": "09:00",
           "hasta": "23:59"
         }
-      ]
+      ],
+      "mensaje_cierre": "Próximamente"
     }
   }
 }
