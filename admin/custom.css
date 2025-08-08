@@ -1,55 +1,79 @@
-/* ==== Fondo general y tipografía ==== */
+/* ===== FUENTE Y BASE ===== */
 body {
   font-family: 'Roboto', sans-serif;
   background-color: #f8f9fa;
+  color: #333;
 }
 
-/* ==== Encabezado del panel ==== */
+/* ===== HEADER DEL PANEL ===== */
+.css-1o8zuzv, /* Contenedor del header */
 .cms-editor-outer .css-1o8zuzv {
-  background-color: #0056b3 !important; /* Azul fuerte */
-  color: white !important;
+  background: linear-gradient(90deg, #004aad, #007bff) !important;
+  color: #fff !important;
+  font-weight: bold;
 }
 
-/* ==== Botones principales ==== */
+.css-1o8zuzv a {
+  color: #fff !important;
+}
+
+/* ===== BOTONES ===== */
 button,
 .cms-button {
-  background-color: #ffc107 !important; /* Amarillo */
+  background: linear-gradient(90deg, #ffc107, #ffb300) !important;
   color: #000 !important;
   border-radius: 8px !important;
   font-weight: bold !important;
+  padding: 6px 14px !important;
+  transition: all 0.3s ease !important;
+  border: none !important;
 }
 
 button:hover,
 .cms-button:hover {
-  background-color: #e0a800 !important;
+  background: linear-gradient(90deg, #ffb300, #e0a800) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 
-/* ==== Links ==== */
-a {
-  color: #0056b3;
-}
-
-a:hover {
-  color: #003f7f;
-}
-
-/* ==== Lista de entradas ==== */
-.css-14gy7wr {
-  background: white;
-  border-radius: 10px;
-  padding: 10px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* ==== Campos de formulario ==== */
+/* ===== CAMPOS DE FORMULARIO ===== */
 input, textarea, select {
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 8px;
+  border: 1px solid #ccc !important;
+  border-radius: 6px !important;
+  padding: 8px !important;
+  transition: all 0.2s ease;
 }
 
 input:focus, textarea:focus, select:focus {
-  border-color: #0056b3;
+  border-color: #004aad !important;
+  box-shadow: 0 0 5px rgba(0,74,173,0.5);
   outline: none;
-  box-shadow: 0 0 4px #0056b3;
+}
+
+/* ===== TARJETAS DE LISTA ===== */
+.css-14gy7wr {
+  background: #fff !important;
+  border-radius: 10px !important;
+  padding: 12px !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08) !important;
+  transition: transform 0.2s ease;
+}
+
+.css-14gy7wr:hover {
+  transform: scale(1.01);
+}
+
+/* ===== LINKS ===== */
+a {
+  color: #004aad;
+}
+
+a:hover {
+  color: #002f6c;
+}
+
+/* ===== MENSAJES Y ALERTAS ===== */
+.cms-editor-outer .css-1q2n00j {
+  background-color: #004aad !important;
+  color: #fff !important;
 }
