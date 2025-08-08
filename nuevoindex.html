@@ -47,7 +47,7 @@
     .tabs button:hover{background:#0055aa}
     .tabs button.active{background:var(--azul-2);border-color:var(--amarillo);box-shadow:0 4px 12px rgba(0,0,0,.3)}
 
-    /* --- Estado sección cerrada (Opción B) --- */
+    /* --- Estado sección cerrada --- */
     .tab-closed{opacity:.55; cursor:not-allowed; filter:grayscale(60%)}
     .tab-closed::after{content:' (CERRADO)'; font-weight:800}
     .seccion-closed-overlay{
@@ -225,10 +225,6 @@
     .dialog p{margin:0 0 1.2rem}
     .dialog-actions{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap}
     .dialog-actions .btn{flex:1 1 120px}
-
-    /* ---------- Admin bar ---------- */
-    #adminBar{display:none !important}
-    body.is-admin #adminBar{display:flex !important}
   </style>
 </head>
 <body>
@@ -282,13 +278,6 @@
       <p class="promo-note">Creado por <strong>Ludmila Mercado</strong></p>
     </div>
   </section>
-
-  <!-- Barra admin -->
-  <div id="adminBar" hidden style="position:fixed;left:12px;bottom:16px;z-index:1000;display:flex;gap:.5rem;flex-wrap:wrap">
-    <button id="exportOrdersBtn"  style="background:#fff;border:1px solid #ddd;padding:.45rem .6rem;border-radius:8px;box-shadow:0 6px 16px rgba(0,0,0,.18);font-size:.85rem;cursor:pointer;">📥 Exportar pedidos WSP (CSV)</button>
-    <button id="exportSummaryBtn" style="background:#fff;border:1px solid #ddd;padding:.45rem .6rem;border-radius:8px;box-shadow:0 6px 16px rgba(0,0,0,.18);font-size:.85rem;cursor:pointer;">📊 Exportar top productos (CSV)</button>
-    <button id="clearMetricsBtn"   style="background:#fff;border:1px solid #ddd;padding:.45rem .6rem;border-radius:8px;box-shadow:0 6px 16px rgba(0,0,0,.18);font-size:.85rem;cursor:pointer;">🗑 Limpiar métricas</button>
-  </div>
 
   <!-- Toasts -->
   <div id="toastWrap" class="toast-wrap"></div>
@@ -357,16 +346,17 @@
     almacen:   { dias:[0,1,2,3,4,5,6], rangos:[{desde:'09:00', hasta:'23:59'}] }
   };
   let SECCIONES_CERRADAS = { rotiseria:false, almacen:false };
+  let CIERRE_MSGS = { rotiseria:'', almacen:'' }; // Mensaje de cierre personalizado (CMS)
   let SHIPPING = 1000;                 // costo de envío editable
   let WSP_NUMBER = '3415923882';       // WhatsApp editable
 
-  /* ======= Analytics & helpers ======= */
+  /* ======= Analytics (se usan para métricas locales) ======= */
   const ANALYTICS_KEY='tachi_events_v1';
   function getEvents(){try{return JSON.parse(localStorage.getItem(ANALYTICS_KEY)||'[]')}catch{return[]}}
   function saveEvents(l){localStorage.setItem(ANALYTICS_KEY,JSON.stringify(l))}
   function logEvent(t,d={}){const e={type:t,ts:new Date().toISOString(),path:location.pathname+location.search,...d};const l=getEvents();l.push(e);saveEvents(l)}
 
-  /* ======= CSV utilidades ======= */
+  /* ======= CSV utilidades (quedan por si los querés reutilizar) ======= */
   const SEP=Intl.NumberFormat().format(1.1).includes(',')?';':',';
   const csvEscape=v=>v==null?'':(/[\"\\n\\r]/.test(v)||String(v).includes(SEP))?`\"${String(v).replace(/\"/g,'\"\"')}\"`:v;
   function downloadCSV(name,headers,rows){
@@ -376,45 +366,7 @@
     a.href=url;a.download=name;document.body.appendChild(a);a.click();URL.revokeObjectURL(url);a.remove();
   }
 
-  /* exportadores barra admin */
-  function exportWspOrdersCSV(){
-    const ev=getEvents().filter(e=>e.type==='order_wsp');
-    if(!ev.length){alert('No hay pedidos por WhatsApp aún');return}
-    const rows=[];
-    ev.forEach(o=>{
-      (o.items||[]).forEach(it=>{
-        rows.push({ts:o.ts,order_id:o.order_id,shipping:o.shipping,
-          producto:it.name,cantidad:it.qty,precio_unit:it.unit_price,
-          linea_total:it.line_total,subtotal:o.subtotal,
-          envio:o.shipping_cost,total:o.total});
-      });
-    });
-    downloadCSV(`pedidos-wsp-${new Date().toISOString().slice(0,10)}.csv`,
-      ['ts','order_id','shipping','producto','cantidad','precio_unit','linea_total','subtotal','envio','total'],
-      rows);
-  }
-  function exportTopProductsCSV(){
-    const ev=getEvents().filter(e=>e.type==='order_wsp');
-    if(!ev.length){alert('No hay pedidos por WhatsApp aún');return}
-    const map=new Map();
-    ev.forEach(o=>{
-      (o.items||[]).forEach(it=>{
-        if(!map.has(it.name))map.set(it.name,{unidades:0,ingreso:0,pedidos:new Set()});
-        const m=map.get(it.name);m.unidades+=it.qty;m.ingreso+=it.line_total;m.pedidos.add(o.order_id);
-      });
-    });
-    const rows=[...map.entries()].map(([p,m])=>({producto:p,unidades:m.unidades,ingreso:m.ingreso,pedidos:m.pedidos.size}))
-                .sort((a,b)=>b.unidades-a.unidades||b.ingreso-a.ingreso);
-    downloadCSV(`top-productos-wsp-${new Date().toISOString().slice(0,10)}.csv`,
-      ['producto','unidades','ingreso','pedidos'],rows);
-  }
-  function clearMetrics(){
-    if(!getEvents().length){alert('No hay métricas guardadas.');return}
-    if(!confirm('¿Borrar todas las métricas locales? Esta acción no se puede deshacer.'))return;
-    localStorage.removeItem(ANALYTICS_KEY);alert('Listo: métricas borradas.');
-  }
-
-  /* ======= Persistencia & helpers ======= */
+  /* ======= Helpers ======= */
   const CART_KEY='tachi_cart_v1',CLIENT_KEY='tachi_client_v1';
   const formatARS=n=>new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n);
   const loadCart =()=>{try{return JSON.parse(localStorage.getItem(CART_KEY)||'{}')}catch{return{}}};
@@ -473,6 +425,14 @@
     return id.includes('almacen') ? 'almacen' : 'rotiseria';
   }
   function seccionCerradaAhora(sec){ return !estaAbierto(sec); }
+  function mensajeCierre(sec){
+    // Si está cerrado forzado y hay mensaje, usarlo. Si no, devolver próximo horario si existe.
+    if(SECCIONES_CERRADAS[sec] && CIERRE_MSGS[sec]?.trim()){
+      return CIERRE_MSGS[sec].trim();
+    }
+    const prox = proximoHorario(sec);
+    return prox ? `Próximo horario: ${prox}.` : 'Cerrado por ahora.';
+  }
 
   function actualizarTabsPorHorario(){
     const tabs = [
@@ -484,9 +444,11 @@
       if(seccionCerradaAhora(sec)){
         btn.classList.add('tab-closed');
         btn.setAttribute('aria-disabled','true');
+        btn.title = mensajeCierre(sec);
       }else{
         btn.classList.remove('tab-closed');
         btn.removeAttribute('aria-disabled');
+        btn.removeAttribute('title');
       }
     });
   }
@@ -502,7 +464,7 @@
       if(aj.whatsapp) WSP_NUMBER = String(aj.whatsapp).replace(/\D/g,'') || WSP_NUMBER;
       if(typeof aj.shipping === 'number') SHIPPING = aj.shipping;
 
-      // Horarios y cierre forzado
+      // Horarios / cierre forzado / mensaje de cierre
       const h = aj.horarios || {};
       ['rotiseria','almacen'].forEach(sec=>{
         const cfg = h[sec] || {};
@@ -510,6 +472,7 @@
         if(Array.isArray(cfg.dias)) HORARIOS[sec].dias = cfg.dias.map(Number);
         if(Array.isArray(cfg.rangos)) HORARIOS[sec].rangos = cfg.rangos.map(r=>({desde:r.desde, hasta:r.hasta}));
         if(typeof cfg.cerrado === 'boolean') SECCIONES_CERRADAS[sec] = cfg.cerrado;
+        CIERRE_MSGS[sec] = (cfg.mensaje_cierre || '').toString();
       });
 
       actualizarTabsPorHorario();
@@ -625,8 +588,7 @@
     // Bloqueo por horario/sección
     const sec = seccionDeId(id);
     if(delta > 0 && seccionCerradaAhora(sec)){
-      const prox = proximoHorario(sec);
-      showToast(`${sec[0].toUpperCase()+sec.slice(1)} está cerrada. ${prox?`Próximo: ${prox}.`:''}`, 'warn');
+      showToast(`${sec[0].toUpperCase()+sec.slice(1)} está cerrada. ${mensajeCierre(sec)}`, 'warn');
       return;
     }
 
@@ -680,12 +642,10 @@
     let motivos = [];
 
     if(tiene.rotiseria>0 && seccionCerradaAhora('rotiseria')){
-      puedePedir=false;
-      const prox = proximoHorario('rotiseria'); motivos.push(`Rotisería cerrada. ${prox?`Próximo: ${prox}.`:''}`);
+      puedePedir=false; motivos.push(`Rotisería cerrada. ${mensajeCierre('rotiseria')}`);
     }
     if(tiene.almacen>0 && seccionCerradaAhora('almacen')){
-      puedePedir=false;
-      const prox = proximoHorario('almacen'); motivos.push(`Almacén cerrado. ${prox?`Próximo: ${prox}.`:''}`);
+      puedePedir=false; motivos.push(`Almacén cerrado. ${mensajeCierre('almacen')}`);
     }
 
     const estado = document.getElementById('estadoHorarios') || (()=>{
@@ -726,12 +686,11 @@
     const otra = sec==='almacen' ? 'rotiseria' : 'almacen';
 
     if(seccionCerradaAhora(sec)){
-      const prox = proximoHorario(sec);
-      showToast(`La sección ${sec} está cerrada. ${prox?`Próximo: ${prox}.`:''}`,'warn');
+      showToast(`La sección ${sec} está cerrada. ${mensajeCierre(sec)}`,'warn');
 
       const cont = document.getElementById(`menu-${sec}`);
       cont.style.display = 'block';
-      cont.innerHTML = `<div class="seccion-closed-overlay">🚧 ${sec[0].toUpperCase()+sec.slice(1)} está cerrada por ahora. ${prox?`<br>Próximo horario: <b>${prox}</b>.`:''}</div>`;
+      cont.innerHTML = `<div class="seccion-closed-overlay">🚧 ${sec[0].toUpperCase()+sec.slice(1)} está cerrada por ahora.<br>${mensajeCierre(sec)}</div>`;
 
       document.getElementById(`menu-${otra}`).style.display='none';
       document.getElementById(`btn-${sec}`).classList.add('active');
@@ -811,6 +770,10 @@
     sheet.classList.remove('open');backdrop.classList.remove('open');
     actualizarResumen();document.removeEventListener('keydown',trapFocus);
   }
+  const fab=document.getElementById('cartFab');
+  const sheet=document.getElementById('cartSheet');
+  const sheetClose=document.getElementById('sheetClose');
+  const backdrop=document.getElementById('sheetBackdrop');
   fab.addEventListener('click',e=>{e.preventDefault();openSheet()});
   sheetClose.addEventListener('click',closeSheet);backdrop.addEventListener('click',closeSheet);
 
@@ -839,24 +802,6 @@
     const body=encodeURIComponent(`Hola Ludmila,\nVi tu trabajo y quiero pedir un presupuesto para mi web.\n\nTipo de sitio: (catálogo / pedidos / restaurante / otro)\n¿Panel para editar productos?: (sí/no)\n¿Plazo ideal?: (fecha)\n\n¡Gracias!`);
     const mailEl=document.getElementById('promoMail');
     if(mailEl)mailEl.href=`mailto:ludmilasolutions2.0@gmail.com?subject=${subj}&body=${body}`;
-  })();
-
-  /* ======= Barra admin (#admin) ======= */
-  (function adminInit(){
-    const bar=document.getElementById('adminBar');let bound=false;
-    function bindOnce(){
-      if(bound)return;bound=true;
-      document.getElementById('exportOrdersBtn').onclick=exportWspOrdersCSV;
-      document.getElementById('exportSummaryBtn').onclick=exportTopProductsCSV;
-      document.getElementById('clearMetricsBtn').onclick=clearMetrics;
-    }
-    function isAdminHash(){return/\badmin\b/i.test(location.hash)}
-    function setAdmin(on){document.body.classList.toggle('is-admin',!!on);if(on){bar.removeAttribute('hidden');bindOnce()}else{bar.setAttribute('hidden','')}}
-    function update(){setAdmin(isAdminHash())}
-    window.addEventListener('hashchange',update);
-    window.addEventListener('pageshow',update);
-    document.addEventListener('visibilitychange',()=>{if(!document.hidden)update()});
-    update();
   })();
 
   // Refrescar tabs cada minuto por cambios de horario
