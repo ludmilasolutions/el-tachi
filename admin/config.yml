@@ -2,12 +2,6 @@ backend:
   name: git-gateway
   branch: main
 
-logo_url: "/uploads/logo.png"      # Logo en la barra del CMS
-site_url: "/"                      # Link del título del panel
-locale: "es"                       # Interfaz en español
-load_config_file: false            # Evita buscar otra config
-customStyles: "/admin/custom.css"  # Aplica estilos del panel
-
 media_folder: "uploads"
 public_folder: "/uploads"
 
@@ -103,16 +97,8 @@ collections:
         name: "ajustes_file"
         format: "json"
         fields:
-          - label: "WhatsApp (solo números)"
-            name: "whatsapp"
-            widget: "string"
-            hint: "Sin + ni 0. Ej: 3415923882"
-          - label: "Costo de envío"
-            name: "shipping"
-            widget: "number"
-            value_type: "int"
-            default: 1000
-
+          - { label: "WhatsApp (solo números)", name: "whatsapp", widget: "string", hint: "Sin + ni 0. Ej: 3415923882" }
+          - { label: "Costo de envío", name: "shipping", widget: "number", value_type: "int", default: 1000 }
           - label: "Horarios"
             name: "horarios"
             widget: "object"
@@ -121,10 +107,7 @@ collections:
                 name: "rotiseria"
                 widget: "object"
                 fields:
-                  - label: "Cerrado forzado"
-                    name: "cerrado"
-                    widget: "boolean"
-                    default: false
+                  - { label: "Cerrado forzado", name: "cerrado", widget: "boolean", default: false }
                   - label: "Días abiertos"
                     name: "dias"
                     widget: "select"
@@ -149,10 +132,7 @@ collections:
                 name: "almacen"
                 widget: "object"
                 fields:
-                  - label: "Cerrado forzado"
-                    name: "cerrado"
-                    widget: "boolean"
-                    default: false
+                  - { label: "Cerrado forzado", name: "cerrado", widget: "boolean", default: false }
                   - label: "Días abiertos"
                     name: "dias"
                     widget: "select"
@@ -162,12 +142,4 @@ collections:
                       - { label: "Lun", value: 1 }
                       - { label: "Mar", value: 2 }
                       - { label: "Mié", value: 3 }
-                      - { label: "Jue", value: 4 }
-                      - { label: "Vie", value: 5 }
-                      - { label: "Sáb", value: 6 }
-                  - label: "Rangos horarios"
-                    name: "rangos"
-                    widget: "list"
-                    fields:
-                      - { label: "Desde (HH:MM)", name: "desde", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"] }
-                      - { label: "Hasta (HH:MM)", name: "hasta", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"] }
+                      - { label: "Jue", va
