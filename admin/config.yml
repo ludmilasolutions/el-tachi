@@ -2,13 +2,14 @@ backend:
   name: git-gateway
   branch: main
 
-media_folder: "uploads"
-public_folder: "/uploads"
-
-# (Opcional) branding básico del panel
 logo_url: "/uploads/logo.png"
 site_url: "/"
 locale: "es"
+load_config_file: false
+custom_styles: "/admin/custom.css"
+
+media_folder: "uploads"
+public_folder: "/uploads"
 
 collections:
   # ===== ROTISERÍA =====
@@ -102,8 +103,16 @@ collections:
         name: "ajustes_file"
         format: "json"
         fields:
-          - { label: "WhatsApp (solo números)", name: "whatsapp", widget: "string", hint: "Sin + ni 0. Ej: 3415923882" }
-          - { label: "Costo de envío", name: "shipping", widget: "number", value_type: "int", default: 1000 }
+          - label: "WhatsApp (solo números)"
+            name: "whatsapp"
+            widget: "string"
+            hint: "Sin + ni 0. Ej: 3415923882"
+          - label: "Costo de envío"
+            name: "shipping"
+            widget: "number"
+            value_type: "int"
+            default: 1000
+
           - label: "Horarios"
             name: "horarios"
             widget: "object"
@@ -112,7 +121,10 @@ collections:
                 name: "rotiseria"
                 widget: "object"
                 fields:
-                  - { label: "Cerrado forzado", name: "cerrado", widget: "boolean", default: false }
+                  - label: "Cerrado forzado"
+                    name: "cerrado"
+                    widget: "boolean"
+                    default: false
                   - label: "Días abiertos"
                     name: "dias"
                     widget: "select"
@@ -125,7 +137,6 @@ collections:
                       - { label: "Jue", value: 4 }
                       - { label: "Vie", value: 5 }
                       - { label: "Sáb", value: 6 }
-                    hint: "0=Dom ... 6=Sáb"
                   - label: "Rangos horarios"
                     name: "rangos"
                     widget: "list"
@@ -137,7 +148,10 @@ collections:
                 name: "almacen"
                 widget: "object"
                 fields:
-                  - { label: "Cerrado forzado", name: "cerrado", widget: "boolean", default: false }
+                  - label: "Cerrado forzado"
+                    name: "cerrado"
+                    widget: "boolean"
+                    default: false
                   - label: "Días abiertos"
                     name: "dias"
                     widget: "select"
