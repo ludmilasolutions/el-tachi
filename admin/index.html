@@ -4,19 +4,20 @@
     <meta charset="utf-8" />
     <title>Admin · El Tachi</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/uploads/logo.png" />
     <!-- Estilos del panel -->
     <link rel="stylesheet" href="/admin/custom.css" />
   </head>
   <body>
     <!-- Netlify Identity Widget (login) -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-    <!-- Netlify CMS app -->
+    <!-- Netlify CMS -->
     <script src="https://unpkg.com/netlify-cms-app@^2.15.0/dist/netlify-cms.js"></script>
 
     <script>
       // Inicia Netlify Identity
       if (window.netlifyIdentity) {
-        window.netlifyIdentity.on("init", user => {
+        window.netlifyIdentity.on("init", (user) => {
           if (!user) {
             window.netlifyIdentity.on("login", () => {
               document.location.href = "/admin/";
@@ -24,8 +25,18 @@
           }
         });
       }
-      // Arranca el CMS
-      window.CMS.init();
+
+      // Espera a que el script del CMS esté disponible
+      function bootCMS() {
+        if (window.CMS && typeof window.CMS.init === "function") {
+          // Usamos el config.yml de /admin/ (por defecto load_config_file = true)
+          window.CMS.init();
+        } else {
+          // Reintenta un par de veces si todavía no cargó
+          setTimeout(bootCMS, 100);
+        }
+      }
+      window.addEventListener("load", bootCMS);
     </script>
   </body>
 </html>
