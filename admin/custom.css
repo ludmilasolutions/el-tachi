@@ -1,79 +1,64 @@
-/* ===== FUENTE Y BASE ===== */
+/* ==== ESTILO GENERAL ==== */
+:root {
+  --color-principal: #0056b3; /* Azul */
+  --color-secundario: #ffcc00; /* Amarillo */
+  --color-texto: #ffffff;
+  --color-fondo: #f7f7f7;
+}
+
 body {
+  background-color: var(--color-fondo);
   font-family: 'Roboto', sans-serif;
-  background-color: #f8f9fa;
-  color: #333;
 }
 
-/* ===== HEADER DEL PANEL ===== */
-.css-1o8zuzv, /* Contenedor del header */
-.cms-editor-outer .css-1o8zuzv {
-  background: linear-gradient(90deg, #004aad, #007bff) !important;
-  color: #fff !important;
-  font-weight: bold;
+/* ==== SIDEBAR ==== */
+[class*="SidebarContainer"] {
+  background-color: var(--color-principal) !important;
+  color: var(--color-texto) !important;
 }
 
-.css-1o8zuzv a {
-  color: #fff !important;
+[class*="SidebarContainer"] a,
+[class*="SidebarContainer"] button {
+  color: var(--color-texto) !important;
 }
 
-/* ===== BOTONES ===== */
+[class*="SidebarContainer"] a:hover {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* ==== ENCABEZADO ==== */
+[class*="AppHeaderContainer"] {
+  background-color: var(--color-principal) !important;
+  color: var(--color-texto) !important;
+}
+
+[class*="AppHeaderContainer"] h1,
+[class*="AppHeaderContainer"] button {
+  color: var(--color-texto) !important;
+}
+
+/* ==== BOTONES ==== */
 button,
-.cms-button {
-  background: linear-gradient(90deg, #ffc107, #ffb300) !important;
-  color: #000 !important;
-  border-radius: 8px !important;
-  font-weight: bold !important;
-  padding: 6px 14px !important;
-  transition: all 0.3s ease !important;
+[class*="Button"] {
+  background-color: var(--color-principal) !important;
+  color: var(--color-texto) !important;
+  border-radius: 6px !important;
   border: none !important;
 }
 
 button:hover,
-.cms-button:hover {
-  background: linear-gradient(90deg, #ffb300, #e0a800) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+[class*="Button"]:hover {
+  background-color: var(--color-secundario) !important;
+  color: #000 !important;
 }
 
-/* ===== CAMPOS DE FORMULARIO ===== */
-input, textarea, select {
-  border: 1px solid #ccc !important;
-  border-radius: 6px !important;
-  padding: 8px !important;
+/* ==== LISTA DE ELEMENTOS ==== */
+[class*="CollectionListItem"] {
+  border-left: 4px solid var(--color-principal) !important;
   transition: all 0.2s ease;
 }
 
-input:focus, textarea:focus, select:focus {
-  border-color: #004aad !important;
-  box-shadow: 0 0 5px rgba(0,74,173,0.5);
-  outline: none;
-}
-
-/* ===== TARJETAS DE LISTA ===== */
-.css-14gy7wr {
-  background: #fff !important;
-  border-radius: 10px !important;
-  padding: 12px !important;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08) !important;
-  transition: transform 0.2s ease;
-}
-
-.css-14gy7wr:hover {
-  transform: scale(1.01);
-}
-
-/* ===== LINKS ===== */
-a {
-  color: #004aad;
-}
-
-a:hover {
-  color: #002f6c;
-}
-
-/* ===== MENSAJES Y ALERTAS ===== */
-.cms-editor-outer .css-1q2n00j {
-  background-color: #004aad !important;
-  color: #fff !important;
+[class*="CollectionListItem"]:hover {
+  border-left-color: var(--color-secundario) !important;
+  background-color: #f0f0f0 !important;
 }
