@@ -1,20 +1,3 @@
 {
-  "promos": [
-    {
-      "nombre": "Combo Familiar (2 Muzzas + 1 Fainá)",
-      "precio": 23000,
-      "precio_original": 27000,
-      "tag": "Combo",
-      "desc": "Rinde para 4. Válido Jue a Dom.",
-      "vigencia_hasta": "2025-12-31"
-    },
-    {
-      "nombre": "Docena Empanadas 12x10",
-      "precio": 9000,
-      "precio_original": 10800,
-      "tag": "12x10",
-      "desc": "Elección de sabores.",
-      "vigencia_hasta": "2025-12-31"
-    }
-  ]
+  "promos": []
 }
