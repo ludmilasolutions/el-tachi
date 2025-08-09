@@ -1,0 +1,117 @@
+/* === Tipografía global === */
+body {
+  font-family: 'Roboto', sans-serif !important;
+}
+
+/* === Barra superior === */
+header, .nc-appHeader-root {
+  background-color: #004aad !important;
+  color: white !important;
+}
+
+header svg, .nc-appHeader-root svg {
+  fill: white !important;
+}
+
+/* === Botones principales === */
+button, .nc-button {
+  background-color: #ffc107 !important; /* Amarillo */
+  color: #111 !important;
+  border-radius: 6px !important;
+  border: none !important;
+  font-weight: bold !important;
+}
+
+button:hover, .nc-button:hover {
+  background-color: #ffb300 !important;
+}
+
+/* === Barra lateral === */
+.nc-sidebar {
+  background-color: #004aad !important;
+}
+
+.nc-sidebar .nc-sidebarNav-link {
+  color: white !important;
+}
+
+.nc-sidebar .nc-sidebarNav-link-active {
+  background-color: #ffc107 !important;
+  color: #111 !important;
+}
+
+/* === Titulares de colecciones === */
+h1, h2, h3 {
+  font-weight: bold !important;
+}
+
+/* === Campos y etiquetas === */
+label {
+  font-weight: bold !important;
+  color: #004aad !important;
+}
+
+/* === Input y textarea === */
+input, textarea, select {
+  border-radius: 6px !important;
+  border: 1px solid #ccc !important;
+  padding: 6px !important;
+}
+
+/* === Botones de agregar nuevo ítem en listas === */
+button.nc-arrayWidget-topBtn,
+button.nc-arrayWidget-addBtn {
+  background-color: #ffc107 !important;
+  color: #111 !important;
+}
+
+button.nc-arrayWidget-topBtn:hover,
+button.nc-arrayWidget-addBtn:hover {
+  background-color: #ffb300 !important;
+}
+
+/* === FIX para botones pequeños de toolbar (✖ eliminar / arrastrar) === */
+.nc-controlPane-toolbar button,
+[class*="List"] [class*="toolbar"] button,
+[class*="Array"] [class*="toolbar"] button,
+[class*="Object"] [class*="toolbar"] button,
+[class*="list"] [class*="toolbar"] button,
+[class*="array"] [class*="toolbar"] button {
+  background: #ffffff !important;
+  color: #111 !important;
+  border: 1px solid #d9d9d9 !important;
+  border-radius: 6px !important;
+  padding: 6px !important;
+  box-shadow: none !important;
+}
+
+.nc-controlPane-toolbar button svg,
+[class*="List"] [class*="toolbar"] button svg,
+[class*="Array"] [class*="toolbar"] button svg,
+[class*="Object"] [class*="toolbar"] button svg,
+[class*="list"] [class*="toolbar"] button svg,
+[class*="array"] [class*="toolbar"] button svg {
+  fill: #111 !important;
+  stroke: #111 !important;
+}
+
+.nc-controlPane-toolbar button:hover,
+[class*="List"] [class*="toolbar"] button:hover,
+[class*="Array"] [class*="toolbar"] button:hover,
+[class*="Object"] [class*="toolbar"] button:hover,
+[class*="list"] [class*="toolbar"] button:hover,
+[class*="array"] [class*="toolbar"] button:hover {
+  background: #f6f6f6 !important;
+  border-color: #cfcfcf !important;
+}
+
+/* Si algún estilo inline les pone amarillo, forzamos negro en íconos */
+.nc-controlPane-toolbar button[style*="background"],
+[class*="toolbar"] button[style*="background"] {
+  color: #111 !important;
+}
+.nc-controlPane-toolbar button[style*="background"] svg,
+[class*="toolbar"] button[style*="background"] svg {
+  fill: #111 !important;
+  stroke: #111 !important;
+}
