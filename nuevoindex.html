@@ -412,7 +412,7 @@
 
   /* ======= CSV ======= */
   const SEP=Intl.NumberFormat().format(1.1).includes(',')?';':',';
-  const csvEscape=v=>v==null?'':(/[\"\\n\\r]/.test(v)||String(v).includes(SEP))?\"${String(v).replace(/\"/g,'\"\"')}\":v;
+  const csvEscape=v=>v==null?'':(/[\"\\n\\r]/.test(v)||String(v).includes(SEP))?`\"${String(v).replace(/\"/g,'\"\"')}\"`:v;
   function downloadCSV(name,headers,rows){
     const lines=[headers.join(SEP),...rows.map(r=>headers.map(h=>csvEscape(r[h])).join(SEP))];
     const blob=new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8;'});
@@ -427,14 +427,14 @@
   const saveCart =obj=>localStorage.setItem(CART_KEY,JSON.stringify(obj));
   const loadClient=()=>{try{return JSON.parse(localStorage.getItem(CLIENT_KEY)||'{}')}catch{return{}}};
   const saveClient=obj=>localStorage.setItem(CLIENT_KEY,JSON.stringify(obj));
-  const asset=p=>location.hostname.endsWith('github.io')?/${location.pathname.split('/').filter(Boolean)[0]}/${p}:/${p};
+  const asset=p=>location.hostname.endsWith('github.io')?`/${location.pathname.split('/').filter(Boolean)[0]}/${p}`:`/${p}`;
   const normalizar=d=>Array.isArray(d?.categorias)?Object.fromEntries(d.categorias.map(c=>[c.categoria,c.productos||[]])):d||{};
 
   /* ======= Toast ======= */
   function showToast(msg,type='ok',t=2400){
     const wrap=document.getElementById('toastWrap');
     const el=document.createElement('div');
-    el.className=toast ${type==='error'?'err':type==='warn'?'warn':'ok'};
+    el.className=`toast ${type==='error'?'err':type==='warn'?'warn':'ok'}`;
     el.textContent=msg;
     wrap.appendChild(el);
     setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .2s'},t);
@@ -459,7 +459,7 @@
     if(cfg.dias.includes(d)){
       for(const r of cfg.rangos){
         if(now <= hmToMin(r.hasta)){
-          return now <= hmToMin(r.desde) ? Hoy ${r.desde}–${r.hasta} : Hoy hasta ${r.hasta};
+          return now <= hmToMin(r.desde) ? `Hoy ${r.desde}–${r.hasta}` : `Hoy hasta ${r.hasta}`;
         }
       }
     }
@@ -467,7 +467,7 @@
       const nd=(d+i)%7;
       if(cfg.dias.includes(nd)){
         const r=cfg.rangos[0];
-        return ${diasTxt[nd]} ${r.desde}–${r.hasta};
+        return `${diasTxt[nd]} ${r.desde}–${r.hasta}`;
       }
     }
     return null;
@@ -483,7 +483,7 @@
       return CIERRE_MSGS[sec].trim();
     }
     const prox = proximoHorario(sec);
-    return prox ? Próximo horario: ${prox}. : 'Cerrado por ahora.';
+    return prox ? `Próximo horario: ${prox}.` : 'Cerrado por ahora.';
   }
   function actualizarTabsPorHorario(){
     [{sec:'rotiseria',btn:document.getElementById('btn-rotiseria')},
@@ -540,32 +540,32 @@
       const items=norm[cat]||[];const det=document.createElement('details');
       const sum=document.createElement('summary');sum.textContent=cat;det.appendChild(sum);
       items.forEach((prod,i)=>{
-        const id=${contId}-${cat}-${i};if(!(id in cantidades))cantidades[id]=0;
+        const id=`${contId}-${cat}-${i}`;if(!(id in cantidades))cantidades[id]=0;
         const isPromo = !!prod._promo;
         const priceHTML = isPromo
-          ? <div class="price-wrap">
-               ${prod._promo.precio_original ? <span class="price-old">${formatARS(prod._promo.precio_original)}</span> : ''}
+          ? `<div class="price-wrap">
+               ${prod._promo.precio_original ? `<span class="price-old">${formatARS(prod._promo.precio_original)}</span>` : ''}
                <span class="price-new">${formatARS(prod.precio)}</span>
-             </div>
-          : <div class="price-wrap"><span class="price-new">${formatARS(prod.precio)}</span></div>;
+             </div>`
+          : `<div class="price-wrap"><span class="price-new">${formatARS(prod.precio)}</span></div>`;
 
         const div=document.createElement('div');div.className='producto';
         const thumb = prod.img ? asset(prod.img) : asset('logo.png');
-        div.innerHTML=
+        div.innerHTML=`
           <div class="prod-thumb"><img src="${thumb}" alt="${prod.nombre}"></div>
           <div class="producto-info">
             <h3 style="margin:0;color:#004c99;font-size:1rem">
               ${prod.nombre}
-              ${isPromo && prod._promo.tag ? <span class="promo-badge">${prod._promo.tag}</span> : ''}
+              ${isPromo && prod._promo.tag ? `<span class="promo-badge">${prod._promo.tag}</span>` : ''}
             </h3>
-            ${prod.desc?<p>${prod.desc}</p>:''}
+            ${prod.desc?`<p>${prod.desc}</p>`:''}
             ${priceHTML}
           </div>
           <div class="contador">
             <button onclick="cambiarCantidad('${id}',-1,this)">−</button>
             <span id="cantidad-${id}">0</span>
             <button onclick="cambiarCantidad('${id}',1,this)">+</button>
-          </div>;
+          </div>`;
         div.dataset.nombre=prod.nombre;div.dataset.precio=prod.precio;det.appendChild(div);
       });
       cont.appendChild(det);
@@ -616,7 +616,7 @@
   cargarProductos();
 
   /* ======= Hydration ======= */
-  const hydrateCart=()=>Object.entries(loadCart()).forEach(([id,q])=>{if(q>0){cantidades[id]=q;const el=document.getElementById(cantidad-${id});if(el)el.textContent=q}});
+  const hydrateCart=()=>Object.entries(loadCart()).forEach(([id,q])=>{if(q>0){cantidades[id]=q;const el=document.getElementById(`cantidad-${id}`);if(el)el.textContent=q}});
   function hydrateClient(){
     const c=loadClient();
     if(c.name)nombreEl.value=c.name;
@@ -627,11 +627,11 @@
   function cambiarCantidad(id,delta,btn){
     const sec = seccionDeId(id);
     if(delta > 0 && seccionCerradaAhora(sec)){
-      showToast(${sec[0].toUpperCase()+sec.slice(1)} está cerrada. ${mensajeCierre(sec)}, 'warn');
+      showToast(`${sec[0].toUpperCase()+sec.slice(1)} está cerrada. ${mensajeCierre(sec)}`, 'warn');
       return;
     }
     cantidades[id]=Math.max(0,(cantidades[id]||0)+delta);
-    const span=document.getElementById(cantidad-${id});if(span)span.textContent=cantidades[id];
+    const span=document.getElementById(`cantidad-${id}`);if(span)span.textContent=cantidades[id];
     if(delta>0&&btn){
       btn.classList.add('btn-pop');btn.addEventListener('animationend',()=>btn.classList.remove('btn-pop'),{once:true});
       const row=btn.closest('.producto');row.classList.add('row-flash');row.addEventListener('animationend',()=>row.classList.remove('row-flash'),{once:true});
@@ -653,10 +653,10 @@
 
     for(const id in cantidades){
       const qty=cantidades[id];if(qty<=0)continue;
-      const span=document.getElementById(cantidad-${id});if(!span)continue;
+      const span=document.getElementById(`cantidad-${id}`);if(!span)continue;
       const row=span.closest('.producto');const name=row?.dataset?.nombre;const price=parseInt(row?.dataset?.precio||0,10);
       const li=document.createElement('li');li.className='resumen-item';
-      li.innerHTML=<span class="resumen-name">${name||'-'}</span><span class="resumen-qty">x${qty}</span><span class="resumen-line">${formatARS(price*qty)}</span>;
+      li.innerHTML=`<span class="resumen-name">${name||'-'}</span><span class="resumen-qty">x${qty}</span><span class="resumen-line">${formatARS(price*qty)}</span>`;
       listaEl.appendChild(li);subtotal+=price*qty;count+=qty;
       const sec = seccionDeId(id); tiene[sec]+=qty;
     }
@@ -674,8 +674,8 @@
 
     // Validación por horarios
     let puedePedir = true; let motivos = [];
-    if(tiene.rotiseria>0 && seccionCerradaAhora('rotiseria')){ puedePedir=false; motivos.push(Rotisería cerrada. ${mensajeCierre('rotiseria')}); }
-    if(tiene.almacen>0 && seccionCerradaAhora('almacen')){  puedePedir=false; motivos.push(Almacén cerrado. ${mensajeCierre('almacen')}); }
+    if(tiene.rotiseria>0 && seccionCerradaAhora('rotiseria')){ puedePedir=false; motivos.push(`Rotisería cerrada. ${mensajeCierre('rotiseria')}`); }
+    if(tiene.almacen>0 && seccionCerradaAhora('almacen')){  puedePedir=false; motivos.push(`Almacén cerrado. ${mensajeCierre('almacen')}`); }
 
     const estado = document.getElementById('estadoHorarios') || (()=>{
       const p=document.createElement('p'); p.id='estadoHorarios'; p.style.margin='6px 0 0'; p.style.fontSize='.95rem'; p.style.color='#7a4c00';
@@ -724,13 +724,13 @@
   function mostrar(sec){
     const otra = sec==='almacen' ? 'rotiseria' : 'almacen';
     if(seccionCerradaAhora(sec)){
-      showToast(La sección ${sec} está cerrada. ${mensajeCierre(sec)},'warn');
-      const cont = document.getElementById(menu-${sec});
+      showToast(`La sección ${sec} está cerrada. ${mensajeCierre(sec)}`,'warn');
+      const cont = document.getElementById(`menu-${sec}`);
       cont.style.display = 'block';
-      cont.innerHTML = <div class="seccion-closed-overlay">🚧 ${sec[0].toUpperCase()+sec.slice(1)} está cerrada por ahora.<br>${mensajeCierre(sec)}</div>;
-      document.getElementById(menu-${otra}).style.display='none';
-      document.getElementById(btn-${sec}).classList.add('active');
-      document.getElementById(btn-${otra}).classList.remove('active');
+      cont.innerHTML = `<div class="seccion-closed-overlay">🚧 ${sec[0].toUpperCase()+sec.slice(1)} está cerrada por ahora.<br>${mensajeCierre(sec)}</div>`;
+      document.getElementById(`menu-${otra}`).style.display='none';
+      document.getElementById(`btn-${sec}`).classList.add('active');
+      document.getElementById(`btn-${otra}`).classList.remove('active');
       return;
     }
     document.getElementById('menu-rotiseria').style.display = (sec==='rotiseria')?'block':'none';
@@ -758,14 +758,14 @@
       return;
     }
 
-    let msg=Hola, soy ${name}. Quiero hacer un pedido:\n;
+    let msg=`Hola, soy ${name}. Quiero hacer un pedido:\n`;
     const items=[];
     Object.entries(cantidades).forEach(([id,qty])=>{
       if(qty>0){
-        const span=document.getElementById(cantidad-${id}); if(!span) return;
+        const span=document.getElementById(`cantidad-${id}`); if(!span) return;
         const row=span.closest('.producto');
         const n=row.dataset.nombre, p=parseInt(row.dataset.precio,10), line=p*qty;
-        msg+=- ${n} x${qty} - ${formatARS(line)}\n;
+        msg+=`- ${n} x${qty} - ${formatARS(line)}\n`;
         items.push({ name:n, qty, unit_price:p, line_total:line });
       }
     });
@@ -775,12 +775,12 @@
     const total = subtotal + shipping_cost;
     const order_id = 'W'+new Date().toISOString().replace(/[-:.TZ]/g,'').slice(0,14);
 
-    msg+=envio==='envio'?Envío a domicilio a: ${addr} (+${formatARS(SHIPPING)})\n:'Retiro en el local\n';
-    msg+=Total: ${formatARS(total)};
+    msg+=envio==='envio'?`Envío a domicilio a: ${addr} (+${formatARS(SHIPPING)})\n`:'Retiro en el local\n';
+    msg+=`Total: ${formatARS(total)}`;
 
     logEvent('order_wsp',{ order_id, shipping:envio, shipping_cost, subtotal, total, items });
 
-    window.open(https://wa.me/${WSP_NUMBER}?text=${encodeURIComponent(msg)},'_blank');
+    window.open(`https://wa.me/${WSP_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank');
     showToast('Abriendo WhatsApp...','ok');
   }
 
@@ -836,9 +836,9 @@
   /* ======= Promo mail link ======= */
   (function promoInit(){
     const subj=encodeURIComponent('Quiero una web para mi negocio');
-    const body=encodeURIComponent(Hola Ludmila,\nVi tu trabajo y quiero pedir un presupuesto para mi web.\n\nTipo de sitio: (catálogo / pedidos / restaurante / otro)\n¿Panel para editar productos?: (sí/no)\n¿Plazo ideal?: (fecha)\n\n¡Gracias!);
+    const body=encodeURIComponent(`Hola Ludmila,\nVi tu trabajo y quiero pedir un presupuesto para mi web.\n\nTipo de sitio: (catálogo / pedidos / restaurante / otro)\n¿Panel para editar productos?: (sí/no)\n¿Plazo ideal?: (fecha)\n\n¡Gracias!`);
     const mailEl=document.getElementById('promoMail');
-    if(mailEl)mailEl.href=mailto:ludmilasolutions2.0@gmail.com?subject=${subj}&body=${body};
+    if(mailEl)mailEl.href=`mailto:ludmilasolutions2.0@gmail.com?subject=${subj}&body=${body}`;
   })();
 
   // Refrescar tabs cada minuto por cambios de horario
