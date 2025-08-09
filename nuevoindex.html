@@ -150,7 +150,8 @@
     /* ---------- Toasts ---------- */
     .toast-wrap{
       position:fixed;left:50%;bottom:84px;transform:translateX(-50%);
-      z-index:100;display:flex;flex-direction:column;gap:.5rem;pointer-events:none
+      z-index:200; /* SUBIDO para que no lo tape el sheet */
+      display:flex;flex-direction:column;gap:.5rem;pointer-events:none
     }
     .toast{
       pointer-events:auto;background:#0b1f3a;color:#fff;border-left:4px solid var(--azul-3);
@@ -685,7 +686,8 @@
     })();
     estado.textContent = puedePedir ? '' : motivos.join(' ');
 
-    btnWA.disabled = !(count>0 && nombreEl.value.trim().length>0 && envioInput && puedePedir);
+    // 🔧 Importante: NO deshabilitar por falta de selección de envío/retiro
+    btnWA.disabled = !(count>0 && nombreEl.value.trim().length>0 && puedePedir);
 
     METRICS_TOTAL=subtotal+envioCosto;METRICS_COUNT=count;METRICS_ENVIO=envioSel||'';
 
@@ -744,7 +746,22 @@
   function enviarPedido(){
     const name=nombreEl.value.trim(),addr=document.getElementById('direccion').value.trim();
     const envioInput=document.querySelector('input[name=envio]:checked');
-    if(!envioInput){showToast('Seleccioná si es envío o retiro','error');return}
+    const segmented = document.querySelector('.segmented');
+
+    // 👉 Validación de selección de retiro/envío con aviso visible y resaltado
+    if(!envioInput){
+      const wrap = document.getElementById('toastWrap');
+      // Reposicionar el toast si el sheet está abierto para que no quede tapado
+      wrap.style.bottom = sheetOpen ? 'calc(100vh - 76vh)' : '84px'; // 76vh ≈ alto típico del sheet
+      showToast('📦 Por favor, seleccioná si es con Retiro o con Envío', 'error');
+      if(segmented){
+        segmented.style.boxShadow = '0 0 0 3px rgba(255, 204, 0, 0.6)';
+        segmented.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(()=> segmented.style.boxShadow = '', 1500);
+      }
+      return;
+    }
+
     const envio=envioInput.value;
     if(!name){showToast('Ingresá tu nombre','error');return}
     if(countItems()===0){showToast('Seleccioná al menos un producto','error');return}
