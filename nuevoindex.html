@@ -202,32 +202,34 @@
       display:grid;grid-template-rows:auto 1fr;z-index:99
     }
     .sheet.open{transform:translateY(0)}
-    /* --- CABECERA EN GRID: título | pasos | X --- */
+    /* --- CABECERA: ahora con close fijo arriba-derecha --- */
     .sheet-header{
-      display:grid;
-      grid-template-columns: 1fr auto 40px;
-      align-items:center;
-      gap:.4rem;
-      padding:.6rem .8rem .4rem;
       position:sticky; top:0; background:var(--card);
       border-bottom:1px solid #e8e8e8;
       border-top-left-radius:16px;border-top-right-radius:16px;
       z-index:5;
+      padding:.6rem .8rem .4rem;
+      padding-right:56px; /* espacio para la X absoluta */
     }
-    .sheet-handle{width:36px;height:4px;border-radius:999px;background:#d7d7d7;margin:.2rem auto;position:absolute;left:50%;transform:translateX(-50%);top:6px}
-    .sheet-title{margin:0;font-size:1.05rem;font-weight:800;color:#0b376d}
+    .sheet-handle{
+      width:36px;height:4px;border-radius:999px;background:#d7d7d7;
+      margin:.2rem auto;position:absolute;left:50%;transform:translateX(-50%);top:6px
+    }
+    .sheet-title{margin:0 0 .35rem;font-size:1.05rem;font-weight:800;color:#0b376d}
     .sheet-close{
-      justify-self:end;
-      background:transparent;border:none;font-size:1.8rem;color:var(--azul);
-      cursor:pointer;line-height:1;
+      position:absolute; right:8px; top:6px;
+      width:44px; height:44px; display:grid; place-items:center;
+      background:#ffffffcc; backdrop-filter:saturate(1.2) blur(2px);
+      border:1px solid #d7d7d7; border-radius:12px;
+      font-size:28px; line-height:1; color:var(--azul);
+      cursor:pointer; z-index:6;
+      -webkit-tap-highlight-color:transparent;
     }
+    .sheet-close:active{transform:scale(.98)}
     .sheet-body{overflow:auto;padding:.8rem .9rem 1rem}
     @media(min-width:800px){
       .sheet{left:50%;right:auto;transform:translate(-50%,100%);width:720px;border-radius:16px}
       .sheet.open{transform:translate(-50%,0)}
-    }
-    @media(max-width:600px){
-      .sheet-close{font-size:2rem}
     }
 
     /* ---------- Modal ---------- */
@@ -238,6 +240,7 @@
       box-shadow:0 16px 32px rgba(0,0,0,.28);padding:1.4rem 1.2rem;text-align:center;
       animation:popin .24s ease-out
     }
+    @keyframes popin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
     .dialog h3{margin:.2rem 0 1rem;font-size:1.25rem;color:#0b376d}
     .dialog p{margin:0 0 1.2rem}
     .dialog-actions{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap}
@@ -245,10 +248,8 @@
 
     /* ——— PASOS EN SHEET ——— */
     .steps {
-      justify-self:center;
       display:flex; gap:.5rem; align-items:center;
-      font-weight:800; font-size:.9rem; color:#64748b;
-      white-space:nowrap;
+      font-weight:800; font-size:.9rem; color:#64748b; white-space:nowrap;
     }
     .step {display:flex; align-items:center; gap:.4rem}
     .step .dot {width:10px; height:10px; border-radius:999px; background:#cbd5e1}
@@ -804,7 +805,7 @@
     sheet.classList.remove('open');backdrop.classList.remove('open');
     actualizarResumen();document.removeEventListener('keydown',trapFocus);
   }
-  fab.addEventListener('click',e=>{e.preventDefault();openSheet()});
+  document.getElementById('cartFab').addEventListener('click',e=>{e.preventDefault();openSheet()});
   sheetClose.addEventListener('click',closeSheet);
   backdrop.addEventListener('click',closeSheet);
 
@@ -826,8 +827,13 @@
     if(!sentinel)return;
     const io=new IntersectionObserver(entries=>{
       entries.forEach(entry=>{
-        if(entry.isIntersecting){ fab.classList.add('hide'); }
-        else{ if(countItems()>0 && !sheetOpen){ fab.removeAttribute('hidden'); fab.classList.remove('hide'); } }
+        if(entry.isIntersecting){ document.getElementById('cartFab').classList.add('hide'); }
+        else{
+          if(countItems()>0 && !sheetOpen){
+            const f=document.getElementById('cartFab');
+            f.removeAttribute('hidden'); f.classList.remove('hide');
+          }
+        }
       });
     },{threshold:0});
     io.observe(sentinel);
