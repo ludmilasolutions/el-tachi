@@ -47,9 +47,9 @@
     {
       "categoria": "Cervezas – Botellas",
       "productos": [
-        { "nombre": "Quilmes", "precio": 2900 },
-        { "nombre": "Brahma", "precio": 2900 },
-        { "nombre": "Iguana", "precio": 2400 },
+        { "nombre": "Quilmes 1L", "precio": 2900 },
+        { "nombre": "Brahma 1L", "precio": 2900 },
+        { "nombre": "Iguana 1L", "precio": 2400 },
         { "nombre": "361 descartable", "precio": 2000 }
       ]
     },
