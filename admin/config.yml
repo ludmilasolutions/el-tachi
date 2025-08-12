@@ -97,6 +97,8 @@ collections:
   # ===== AJUSTES =====
   - name: "ajustes"
     label: "Ajustes del Sitio"
+    editor:
+      preview: false
     files:
       - file: "data/ajustes.json"
         label: "Horarios, Envío y WhatsApp"
@@ -149,6 +151,8 @@ collections:
                   - label: "Rangos horarios"
                     name: "rangos"
                     widget: "list"
+                    default:
+                      - { desde: "00:00", hasta: "23:59" }
                     fields:
                       - { label: "Desde (HH:MM)", name: "desde", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"] }
                       - { label: "Hasta (HH:MM)", name: "hasta", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"] }
@@ -183,6 +187,8 @@ collections:
                   - label: "Rangos horarios"
                     name: "rangos"
                     widget: "list"
+                    default:
+                      - { desde: "00:00", hasta: "23:59" }
                     fields:
                       - { label: "Desde (HH:MM)", name: "desde", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"] }
                       - { label: "Hasta (HH:MM)", name: "hasta", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"] }
