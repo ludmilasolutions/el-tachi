@@ -98,18 +98,18 @@
     {
       "categoria": "🍽️ Pizzanesa para 2 Personas",
       "productos": [
-        { "nombre": "Pizzanesa Carne Especial (2)", "precio": 16500 },
-        { "nombre": "Pizzanesa Carne Napolitana (2)", "precio": 16500 },
-        { "nombre": "Pizzanesa Carne Salame (2)", "precio": 16500 },
-        { "nombre": "Pizzanesa Carne Muzzarella (2)", "precio": 15000 },
-        { "nombre": "Pizzanesa Carne Roquefort (2)", "precio": 17000 },
-        { "nombre": "Pizzanesa Carne Bomba (2)", "precio": 17000 },
-        { "nombre": "Pizzanesa Pollo Especial (2)", "precio": 15500 },
-        { "nombre": "Pizzanesa Pollo Napolitana (2)", "precio": 15500 },
-        { "nombre": "Pizzanesa Pollo Salame (2)", "precio": 15500 },
-        { "nombre": "Pizzanesa Pollo Muzzarella (2)", "precio": 14000 },
-        { "nombre": "Pizzanesa Pollo Roquefort (2)", "precio": 16500 },
-        { "nombre": "Pizzanesa Pollo Bomba (2)", "precio": 16500 }
+        { "nombre": "Pizzanesa Carne Especial (2 Personas)", "precio": 16500 },
+        { "nombre": "Pizzanesa Carne Napolitana (2 Personas)", "precio": 16500 },
+        { "nombre": "Pizzanesa Carne Salame (2 Personas)", "precio": 16500 },
+        { "nombre": "Pizzanesa Carne Muzzarella (2 Personas)", "precio": 15000 },
+        { "nombre": "Pizzanesa Carne Roquefort (2 Personas)", "precio": 17000 },
+        { "nombre": "Pizzanesa Carne Bomba (2 Personas)", "precio": 17000 },
+        { "nombre": "Pizzanesa Pollo Especial (2 Personas)", "precio": 15500 },
+        { "nombre": "Pizzanesa Pollo Napolitana (2 Personas)", "precio": 15500 },
+        { "nombre": "Pizzanesa Pollo Salame (2 Personas)", "precio": 15500 },
+        { "nombre": "Pizzanesa Pollo Muzzarella (2 Personas)", "precio": 14000 },
+        { "nombre": "Pizzanesa Pollo Roquefort (2 Personas)", "precio": 16500 },
+        { "nombre": "Pizzanesa Pollo Bomba (2 Personas)", "precio": 16500 }
       ]
     },
     {
