@@ -23,7 +23,7 @@
         { "nombre": "Cunnington", "precio": 1500 },
         { "nombre": "Pritty x 3L", "precio": 2800 },
         { "nombre": "Doble Cola x 3L", "precio": 2100 },
-        { "nombre": "Secco x 3L", "precio": 1700 },
+        { "nombre": "Secco x 3L", "precio": 1700 }
       ]
     },
     {
@@ -71,7 +71,7 @@
       "productos": [
         { "nombre": "Baggio x 1L", "precio": 1700 },
         { "nombre": "Baggio chico", "precio": 500 },
-        { "nombre": "Cepita", "precio": 3200 }
+        { "nombre": "Cepita", "precio": 3200 },
         { "nombre": "Gatorade x 500cc", "precio": 1400 }
       ]
     },
