@@ -34,12 +34,13 @@
     {
       "categoria": "🍺 Cervezas – Latas",
       "productos": [
-        { "nombre": "Schneider", "precio": 1700 },
-        { "nombre": "Quilmes / Brahma", "precio": 1600 },
-        { "nombre": "Santa Fe", "precio": 1700 },
-        { "nombre": "1890", "precio": 1500 },
-        { "nombre": "361", "precio": 1300 },
-        { "nombre": "Isenbeck", "precio": 1500 },
+        { "nombre": "Lata Schneider", "precio": 1700 },
+        { "nombre": "Lata Quilmes", "precio": 1600 },
+        { "nombre": "Lata Brahma", "precio": 1600 }
+        { "nombre": "Lata Santa Fe", "precio": 1700 },
+        { "nombre": "Lata 1890", "precio": 1500 },
+        { "nombre": "Lata 361", "precio": 1300 },
+        { "nombre": "Lata Isenbeck", "precio": 1500 },
         { "nombre": "Lata Schneider 710cc", "precio": 3000 }
       ]
     },
