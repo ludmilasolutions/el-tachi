@@ -281,11 +281,11 @@
   <main>
     <div class="tabs">
       <button id="btn-rotiseria" class="active" onclick="mostrar('rotiseria')">🍕 Rotisería</button>
-      <button id="btn-almacen"  onclick="mostrar('almacen')">🛍️ Almacén</button>
+      <button id="btn-bebidas"  onclick="mostrar('bebidas')">🥤 Bebidas</button>
     </div>
 
     <div id="menu-rotiseria"></div>
-    <div id="menu-almacen" style="display:none"></div>
+    <div id="menu-bebidas" style="display:none"></div>
   </main>
 
   <!-- FAB -->
@@ -399,10 +399,10 @@
   /* ======= Variables editables por CMS (defaults) ======= */
   let HORARIOS = {
     rotiseria: { dias:[4,5,6,0], rangos:[{desde:'19:30', hasta:'22:30'}] },
-    almacen:   { dias:[0,1,2,3,4,5,6], rangos:[{desde:'09:00', hasta:'23:59'}] }
+    bebidas:   { dias:[0,1,2,3,4,5,6], rangos:[{desde:'09:00', hasta:'23:59'}] }
   };
-  let SECCIONES_CERRADAS = { rotiseria:false, almacen:false };
-  let CIERRE_MSGS = { rotiseria:'', almacen:'' };
+  let SECCIONES_CERRADAS = { rotiseria:false, bebidas:false };
+  let CIERRE_MSGS = { rotiseria:'', bebidas:'' };
   let SHIPPING = 1000;
   let WSP_NUMBER = '3415923882';
 
@@ -476,8 +476,8 @@
   }
   function seccionDeId(id){
     if(id.startsWith('menu-rotiseria-')) return 'rotiseria';
-    if(id.startsWith('menu-almacen-'))   return 'almacen';
-    return id.includes('almacen') ? 'almacen' : 'rotiseria';
+    if(id.startsWith('menu-bebidas-'))   return 'bebidas';
+    return id.includes('bebidas') ? 'bebidas' : 'rotiseria';
   }
   function seccionCerradaAhora(sec){ return !estaAbierto(sec); }
   function mensajeCierre(sec){
@@ -489,7 +489,7 @@
   }
   function actualizarTabsPorHorario(){
     [{sec:'rotiseria',btn:document.getElementById('btn-rotiseria')},
-     {sec:'almacen',  btn:document.getElementById('btn-almacen')}].forEach(({sec,btn})=>{
+     {sec:'bebidas',  btn:document.getElementById('btn-bebidas')}].forEach(({sec,btn})=>{
       if(!btn) return;
       if(seccionCerradaAhora(sec)){
         btn.classList.add('tab-closed'); btn.setAttribute('aria-disabled','true'); btn.title=mensajeCierre(sec);
@@ -508,7 +508,7 @@
       if(aj.whatsapp) WSP_NUMBER = String(aj.whatsapp).replace(/\D/g,'') || WSP_NUMBER;
       if(typeof aj.shipping === 'number') SHIPPING = aj.shipping;
       const h = aj.horarios || {};
-      ['rotiseria','almacen'].forEach(sec=>{
+      ['rotiseria','bebidas'].forEach(sec=>{
         const cfg = h[sec] || {};
         if(!HORARIOS[sec]) HORARIOS[sec]={dias:[],rangos:[]};
         if(Array.isArray(cfg.dias)) HORARIOS[sec].dias = cfg.dias.map(Number);
@@ -601,16 +601,16 @@
   async function cargarProductos(){
     await cargarAjustes();
     const rotiseria = fetch(asset('data/productos-rotiseria.json')).then(r=>r.json()).catch(()=>{ showToast('Error cargando Rotisería','error'); return {categorias:[]} });
-    const almacen   = fetch(asset('data/productos-almacen.json')).then(r=>r.json()).catch(()=>{ showToast('Error cargando Almacén','error'); return {categorias:[]} });
+    const bebidas   = fetch(asset('data/productos-bebidas.json')).then(r=>r.json()).catch(()=>{ showToast('Error cargando Bebidas','error'); return {categorias:[]} });
     const promosR   = fetch(asset('data/promos-rotiseria.json')).then(r=>r.json()).catch(()=>({}));
-    const promosA   = fetch(asset('data/promos-almacen.json')).then(r=>r.json()).catch(()=>({}));
+    const promosB   = fetch(asset('data/promos-bebidas.json')).then(r=>r.json()).catch(()=>({}));
 
-    const [rOk,aOk,prOk,paOk] = await Promise.all([rotiseria, almacen, promosR, promosA]);
+    const [rOk,bOk,prOk,pbOk] = await Promise.all([rotiseria, bebidas, promosR, promosB]);
     const rMerge = mergePromos(rOk, prOk);
-    const aMerge = mergePromos(aOk, paOk);
+    const bMerge = mergePromos(bOk, pbOk);
 
     renderProductos('menu-rotiseria', rMerge);
-    renderProductos('menu-almacen',  aMerge);
+    renderProductos('menu-bebidas',  bMerge);
 
     hydrateCart();hydrateClient();actualizarResumen();
     actualizarTabsPorHorario();
@@ -651,7 +651,7 @@
   /* ======= Totales + validación por horario ======= */
   function actualizarResumen(){
     listaEl.innerHTML='';let subtotal=0,count=0;
-    const tiene = { rotiseria:0, almacen:0 };
+    const tiene = { rotiseria:0, bebidas:0 };
 
     for(const id in cantidades){
       const qty=cantidades[id];if(qty<=0)continue;
@@ -677,7 +677,7 @@
     // Validación por horarios
     let puedePedir = true; let motivos = [];
     if(tiene.rotiseria>0 && seccionCerradaAhora('rotiseria')){ puedePedir=false; motivos.push(`Rotisería cerrada. ${mensajeCierre('rotiseria')}`); }
-    if(tiene.almacen>0 && seccionCerradaAhora('almacen')){  puedePedir=false; motivos.push(`Almacén cerrado. ${mensajeCierre('almacen')}`); }
+    if(tiene.bebidas>0 && seccionCerradaAhora('bebidas')){  puedePedir=false; motivos.push(`Bebidas cerrada. ${mensajeCierre('bebidas')}`); }
 
     const estado = document.getElementById('estadoHorarios') || (()=>{
       const p=document.createElement('p'); p.id='estadoHorarios'; p.style.margin='6px 0 0'; p.style.fontSize='.95rem'; p.style.color='#7a4c00';
@@ -725,21 +725,22 @@
 
   /* ======= Tabs ======= */
   function mostrar(sec){
-    const otra = sec==='almacen' ? 'rotiseria' : 'almacen';
+    const otra = sec==='bebidas' ? 'rotiseria' : 'bebidas';
     if(seccionCerradaAhora(sec)){
       showToast(`La sección ${sec} está cerrada. ${mensajeCierre(sec)}`,'warn');
       const cont = document.getElementById(`menu-${sec}`);
       cont.style.display = 'block';
-      cont.innerHTML = `<div class="seccion-closed-overlay">🚧 ${sec[0].toUpperCase()+sec.slice(1)} está cerrada por ahora.<br>${mensajeCierre(sec)}</div>`;
+      const nombreSec = sec[0].toUpperCase()+sec.slice(1);
+      cont.innerHTML = `<div class="seccion-closed-overlay">🚧 ${nombreSec} está cerrada por ahora.<br>${mensajeCierre(sec)}</div>`;
       document.getElementById(`menu-${otra}`).style.display='none';
       document.getElementById(`btn-${sec}`).classList.add('active');
       document.getElementById(`btn-${otra}`).classList.remove('active');
       return;
     }
     document.getElementById('menu-rotiseria').style.display = (sec==='rotiseria')?'block':'none';
-    document.getElementById('menu-almacen').style.display    = (sec==='almacen')?'block':'none';
+    document.getElementById('menu-bebidas').style.display    = (sec==='bebidas')?'block':'none';
     document.getElementById('btn-rotiseria').classList.toggle('active', sec==='rotiseria');
-    document.getElementById('btn-almacen').classList.toggle('active', sec==='almacen');
+    document.getElementById('btn-bebidas').classList.toggle('active', sec==='bebidas');
   }
 
   /* ======= WhatsApp ======= */
@@ -767,10 +768,10 @@
     if(countItems()===0){showToast('Seleccioná al menos un producto','error');return}
     if(envio==='envio'&&!addr){showToast('Ingresá tu dirección para el envío','error');return}
 
-    const itemsPorSeccion = { rotiseria:0, almacen:0 };
+    const itemsPorSeccion = { rotiseria:0, bebidas:0 };
     Object.entries(cantidades).forEach(([id,qty])=>{ if(qty>0) itemsPorSeccion[seccionDeId(id)] += qty; });
     if((itemsPorSeccion.rotiseria>0 && seccionCerradaAhora('rotiseria')) ||
-       (itemsPorSeccion.almacen>0   && seccionCerradaAhora('almacen'))){
+       (itemsPorSeccion.bebidas>0   && seccionCerradaAhora('bebidas'))){
       actualizarResumen();
       showToast('No se puede enviar: hay productos de una sección cerrada.','error');
       return;
