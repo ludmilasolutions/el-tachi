@@ -150,7 +150,7 @@
     /* ---------- Toasts ---------- */
     .toast-wrap{
       position:fixed;left:50%;bottom:84px;transform:translateX(-50%);
-      z-index:200; /* SUBIDO para que no lo tape el sheet */
+      z-index:200;
       display:flex;flex-direction:column;gap:.5rem;pointer-events:none
     }
     .toast{
@@ -203,14 +203,13 @@
       display:grid;grid-template-rows:auto 1fr;z-index:99
     }
     .sheet.open{transform:translateY(0)}
-    /* --- CABECERA: ahora con close fijo arriba-derecha --- */
     .sheet-header{
       position:sticky; top:0; background:var(--card);
       border-bottom:1px solid #e8e8e8;
       border-top-left-radius:16px;border-top-right-radius:16px;
       z-index:5;
       padding:.6rem .8rem .4rem;
-      padding-right:56px; /* espacio para la X absoluta */
+      padding-right:56px;
     }
     .sheet-handle{
       width:36px;height:4px;border-radius:999px;background:#d7d7d7;
@@ -422,15 +421,42 @@
     a.href=url;a.download=name;document.body.appendChild(a);a.click();URL.revokeObjectURL(url);a.remove();
   }
 
-  /* ======= Helpers ======= */
-  const CART_KEY='tachi_cart_v1',CLIENT_KEY='tachi_client_v1';
-  const formatARS=n=>new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n);
-  const loadCart =()=>{try{return JSON.parse(localStorage.getItem(CART_KEY)||'{}')}catch{return{}}};
-  const saveCart =obj=>localStorage.setItem(CART_KEY,JSON.stringify(obj));
-  const loadClient=()=>{try{return JSON.parse(localStorage.getItem(CLIENT_KEY)||'{}')}catch{return{}}};
-  const saveClient=obj=>localStorage.setItem(CLIENT_KEY,JSON.stringify(obj));
+  /* ======= Helpers + TTL (2 horas) ======= */
   const asset=p=>location.hostname.endsWith('github.io')?`/${location.pathname.split('/').filter(Boolean)[0]}/${p}`:`/${p}`;
   const normalizar=d=>Array.isArray(d?.categorias)?Object.fromEntries(d.categorias.map(c=>[c.categoria,c.productos||[]])):d||{};
+
+  // --- Storage con vencimiento (TTL) ---
+  function setWithTTL(key, value, ttlMs){
+    const payload = { v: value, exp: Date.now() + ttlMs };
+    localStorage.setItem(key, JSON.stringify(payload));
+  }
+  function getWithTTL(key, fallback){
+    try{
+      const raw = JSON.parse(localStorage.getItem(key));
+      if(!raw || typeof raw !== 'object') return fallback;
+      if(raw.exp && Date.now() > raw.exp){
+        localStorage.removeItem(key);
+        return fallback;
+      }
+      return (raw.v === undefined ? fallback : raw.v);
+    }catch{ return fallback; }
+  }
+  function isExpired(key){
+    try{
+      const raw = JSON.parse(localStorage.getItem(key));
+      return !!(raw && raw.exp && Date.now() > raw.exp);
+    }catch{ return false; }
+  }
+
+  const CART_TTL_MS   = 2 * 60 * 60 * 1000; // 2h
+  const CLIENT_TTL_MS = 2 * 60 * 60 * 1000; // 2h
+
+  const CART_KEY  ='tachi_cart_v1';
+  const CLIENT_KEY='tachi_client_v1';
+  const loadCart   = () => getWithTTL(CART_KEY, {});
+  const saveCart   = (obj) => setWithTTL(CART_KEY, obj,   CART_TTL_MS);
+  const loadClient = () => getWithTTL(CLIENT_KEY, {});
+  const saveClient = (obj) => setWithTTL(CLIENT_KEY, obj, CLIENT_TTL_MS);
 
   /* ======= Toast ======= */
   function showToast(msg,type='ok',t=2400){
@@ -600,8 +626,13 @@
   /* ======= Cargar JSON ======= */
   async function cargarProductos(){
     await cargarAjustes();
-    const rotiseria = fetch(asset('data/productos-rotiseria.json')).then(r=>r.json()).catch(()=>{ showToast('Error cargando Rotisería','error'); return {categorias:[]} });
-    const bebidas   = fetch(asset('data/productos-bebidas.json')).then(r=>r.json()).catch(()=>{ showToast('Error cargando Bebidas','error'); return {categorias:[]} });
+
+    // limpiar si expiró (sin mostrar avisos)
+    if(isExpired(CART_KEY))   localStorage.removeItem(CART_KEY);
+    if(isExpired(CLIENT_KEY)) localStorage.removeItem(CLIENT_KEY);
+
+    const rotiseria = fetch(asset('data/productos-rotiseria.json')).then(r=>r.json()).catch(()=>{ return {categorias:[]} });
+    const bebidas   = fetch(asset('data/productos-bebidas.json')).then(r=>r.json()).catch(()=>{ return {categorias:[]} });
     const promosR   = fetch(asset('data/promos-rotiseria.json')).then(r=>r.json()).catch(()=>({}));
     const promosB   = fetch(asset('data/promos-bebidas.json')).then(r=>r.json()).catch(()=>({}));
 
@@ -618,6 +649,7 @@
   cargarProductos();
 
   /* ======= Hydration ======= */
+  const formatARS=n=>new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n);
   const hydrateCart=()=>Object.entries(loadCart()).forEach(([id,q])=>{if(q>0){cantidades[id]=q;const el=document.getElementById(`cantidad-${id}`);if(el)el.textContent=q}});
   function hydrateClient(){
     const c=loadClient();
@@ -691,7 +723,7 @@
 
     METRICS_TOTAL=subtotal+envioCosto;METRICS_COUNT=count;METRICS_ENVIO=envioSel||'';
 
-    actualizarPasos(); // ← progreso
+    actualizarPasos();
   }
 
   /* ======= Guardar inputs cliente ======= */
@@ -719,7 +751,7 @@
   dlgYes.addEventListener('click',()=>{
     Object.keys(cantidades).forEach(k=>cantidades[k]=0);
     document.querySelectorAll('[id^="cantidad-"]').forEach(el=>el.textContent='0');
-    saveCart(cantidades);actualizarResumen();cerrarDialogoVaciar();showToast('Carrito vacío','warn');
+    saveCart(cantidades);actualizarResumen();cerrarDialogoVaciar();
   });
   const vaciarCarrito=abrirDialogoVaciar;
 
@@ -727,7 +759,6 @@
   function mostrar(sec){
     const otra = sec==='bebidas' ? 'rotiseria' : 'bebidas';
     if(seccionCerradaAhora(sec)){
-      showToast(`La sección ${sec} está cerrada. ${mensajeCierre(sec)}`,'warn');
       const cont = document.getElementById(`menu-${sec}`);
       cont.style.display = 'block';
       const nombreSec = sec[0].toUpperCase()+sec.slice(1);
@@ -749,12 +780,10 @@
     const envioInput=document.querySelector('input[name=envio]:checked');
     const segmented = document.querySelector('.segmented');
 
-    // 👉 Validación de selección de retiro/envío con aviso visible y resaltado
     if(!envioInput){
       const wrap = document.getElementById('toastWrap');
-      // Reposicionar el toast si el sheet está abierto para que no quede tapado
-      wrap.style.bottom = sheetOpen ? 'calc(100vh - 76vh)' : '84px'; // 76vh ≈ alto típico del sheet
-      showToast('📦 Por favor, seleccioná si es con Retiro o con Envío', 'error');
+      wrap.style.bottom = sheetOpen ? 'calc(100vh - 76vh)' : '84px';
+      showToast('📦 Seleccioná Retiro o Envío', 'error');
       if(segmented){
         segmented.style.boxShadow = '0 0 0 3px rgba(255, 204, 0, 0.6)';
         segmented.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -773,7 +802,7 @@
     if((itemsPorSeccion.rotiseria>0 && seccionCerradaAhora('rotiseria')) ||
        (itemsPorSeccion.bebidas>0   && seccionCerradaAhora('bebidas'))){
       actualizarResumen();
-      showToast('No se puede enviar: hay productos de una sección cerrada.','error');
+      showToast('Hay productos de una sección cerrada.','error');
       return;
     }
 
