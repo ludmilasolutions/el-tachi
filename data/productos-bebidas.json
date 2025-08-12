@@ -24,7 +24,6 @@
         { "nombre": "Pritty x 3L", "precio": 2800 },
         { "nombre": "Doble Cola x 3L", "precio": 2100 },
         { "nombre": "Secco x 3L", "precio": 1700 },
-        { "nombre": "Lata Schneider 710cc", "precio": 3000 }
       ]
     },
     {
@@ -35,7 +34,8 @@
         { "nombre": "Santa Fe", "precio": 1700 },
         { "nombre": "1890", "precio": 1500 },
         { "nombre": "361", "precio": 1300 },
-        { "nombre": "Isenbeck", "precio": 1500 }
+        { "nombre": "Isenbeck", "precio": 1500 },
+        { "nombre": "Lata Schneider 710cc", "precio": 3000 }
       ]
     },
     {
@@ -60,7 +60,8 @@
         { "nombre": "Casoni", "precio": 1100 },
         { "nombre": "Soda", "precio": 1300 },
         { "nombre": "Baggio Fresh", "precio": 1300 },
-        { "nombre": "Saborizada chica y agua chica", "precio": 650 },
+        { "nombre": "Saborizada 500cc", "precio": 650 },
+        { "nombre": "Agua 500cc", "precio": 650 },
         { "nombre": "Agua x 2L", "precio": 1100 },
         { "nombre": "Agua x 1,5L", "precio": 1000 }
       ]
@@ -71,11 +72,6 @@
         { "nombre": "Baggio x 1L", "precio": 1700 },
         { "nombre": "Baggio chico", "precio": 500 },
         { "nombre": "Cepita", "precio": 3200 }
-      ]
-    },
-    {
-      "categoria": "🥤 Gatorade",
-      "productos": [
         { "nombre": "Gatorade x 500cc", "precio": 1400 }
       ]
     },
