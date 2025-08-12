@@ -3,7 +3,7 @@
   "shipping": 1000,
   "horarios": {
     "rotiseria": {
-      "cerrado": true,
+      "cerrado": false,
       "dias": [
         4,
         5,
