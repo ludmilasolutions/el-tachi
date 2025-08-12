@@ -43,28 +43,28 @@
     {
       "categoria": "🍔 Hamburguesas o Bifes Chorizos (con papas)",
       "productos": [
-        { "nombre": "Común", "precio": 6500, "desc": "Pan, carne, lechuga, tomate y aderezo" },
-        { "nombre": "Especial", "precio": 7500, "desc": "Pan, carne, jamón, queso, huevo, lechuga, tomate y aderezo" }
+        { "nombre": "Hamburguesa Común", "precio": 6500, "desc": "Pan, carne, lechuga, tomate y aderezo" },
+        { "nombre": "Hamburguesa Especial", "precio": 7500, "desc": "Pan, carne, jamón, queso, huevo, lechuga, tomate y aderezo" }
       ]
     },
     {
       "categoria": "🥪 Torpedos (con papas)",
       "productos": [
-        { "nombre": "Especial Hamburguesa (2)", "precio": 10900 },
-        { "nombre": "Especial Hamburguesa (3)", "precio": 12000 },
-        { "nombre": "Primavera", "precio": 7500 },
-        { "nombre": "Vegetariano", "precio": 7500 },
-        { "nombre": "Especial Suprema", "precio": 11000 },
-        { "nombre": "Especial Milanesa", "precio": 12500 }
+        { "nombre": "Torpedo Especial Hamburguesa (2)", "precio": 10900 },
+        { "nombre": "Torpedo Especial Hamburguesa (3)", "precio": 12000 },
+        { "nombre": "Torpedo Primavera", "precio": 7500 },
+        { "nombre": "Torpedo Vegetariano", "precio": 7500 },
+        { "nombre": "Torpedo Especial Suprema", "precio": 11000 },
+        { "nombre": "Torpedo Especial Milanesa", "precio": 12500 }
       ]
     },
     {
       "categoria": "🍔 Familiares (con papas)",
       "productos": [
-        { "nombre": "Especial Suprema", "precio": 6500 },
-        { "nombre": "Especial Milanesa", "precio": 7500 },
-        { "nombre": "Común Suprema", "precio": 6000 },
-        { "nombre": "Común Milanesa", "precio": 6500 }
+        { "nombre": "Familiar Especial Suprema", "precio": 6500 },
+        { "nombre": "Familiar Especial Milanesa", "precio": 7500 },
+        { "nombre": "Familiar Común Suprema", "precio": 6000 },
+        { "nombre": "Familiar Común Milanesa", "precio": 6500 }
       ]
     },
     {
@@ -78,35 +78,35 @@
     {
       "categoria": "🍽️ Pizzanesa para 3 Personas",
       "productos": [
-        { "nombre": "Carne Especial", "precio": 24000 },
-        { "nombre": "Carne Napolitana", "precio": 24000 },
-        { "nombre": "Carne Salame", "precio": 24000 },
-        { "nombre": "Carne Muzzarella", "precio": 22000 },
-        { "nombre": "Carne Roquefort", "precio": 25000 },
-        { "nombre": "Carne Bomba", "precio": 25000 },
-        { "nombre": "Pollo Especial", "precio": 23000 },
-        { "nombre": "Pollo Napolitana", "precio": 23000 },
-        { "nombre": "Pollo Salame", "precio": 23000 },
-        { "nombre": "Pollo Muzzarella", "precio": 21000 },
-        { "nombre": "Pollo Roquefort", "precio": 24000 },
-        { "nombre": "Pollo Bomba", "precio": 24000 }
+        { "nombre": "Pizzanesa Carne Especial", "precio": 24000 },
+        { "nombre": "Pizzanesa Carne Napolitana", "precio": 24000 },
+        { "nombre": "Pizzanesa Carne Salame", "precio": 24000 },
+        { "nombre": "Pizzanesa Carne Muzzarella", "precio": 22000 },
+        { "nombre": "Pizzanesa Carne Roquefort", "precio": 25000 },
+        { "nombre": "Pizzanesa Carne Bomba", "precio": 25000 },
+        { "nombre": "Pizzanesa Pollo Especial", "precio": 23000 },
+        { "nombre": "Pizzanesa Pollo Napolitana", "precio": 23000 },
+        { "nombre": "Pizzanesa Pollo Salame", "precio": 23000 },
+        { "nombre": "Pizzanesa Pollo Muzzarella", "precio": 21000 },
+        { "nombre": "Pizzanesa Pollo Roquefort", "precio": 24000 },
+        { "nombre": "Pizzanesa Pollo Bomba", "precio": 24000 }
       ]
     },
     {
       "categoria": "🍽️ Pizzanesa para 2 Personas",
       "productos": [
-        { "nombre": "Carne Especial", "precio": 16500 },
-        { "nombre": "Carne Napolitana", "precio": 16500 },
-        { "nombre": "Carne Salame", "precio": 16500 },
-        { "nombre": "Carne Muzzarella", "precio": 15000 },
-        { "nombre": "Carne Roquefort", "precio": 17000 },
-        { "nombre": "Carne Bomba", "precio": 17000 },
-        { "nombre": "Pollo Especial", "precio": 15500 },
-        { "nombre": "Pollo Napolitana", "precio": 15500 },
-        { "nombre": "Pollo Salame", "precio": 15500 },
-        { "nombre": "Pollo Muzzarella", "precio": 14000 },
-        { "nombre": "Pollo Roquefort", "precio": 16500 },
-        { "nombre": "Pollo Bomba", "precio": 16500 }
+        { "nombre": "Pizzanesa Carne Especial", "precio": 16500 },
+        { "nombre": "Pizzanesa Carne Napolitana", "precio": 16500 },
+        { "nombre": "Pizzanesa Carne Salame", "precio": 16500 },
+        { "nombre": "Pizzanesa Carne Muzzarella", "precio": 15000 },
+        { "nombre": "Pizzanesa Carne Roquefort", "precio": 17000 },
+        { "nombre": "Pizzanesa Carne Bomba", "precio": 17000 },
+        { "nombre": "Pizzanesa Pollo Especial", "precio": 15500 },
+        { "nombre": "Pizzanesa Pollo Napolitana", "precio": 15500 },
+        { "nombre": "Pizzanesa Pollo Salame", "precio": 15500 },
+        { "nombre": "Pizzanesa Pollo Muzzarella", "precio": 14000 },
+        { "nombre": "Pizzanesa Pollo Roquefort", "precio": 16500 },
+        { "nombre": "Pizzanesa Pollo Bomba", "precio": 16500 }
       ]
     },
     {
