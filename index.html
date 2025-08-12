@@ -246,10 +246,7 @@
     .dialog-actions .btn{flex:1 1 120px}
 
     /* ——— PASOS EN SHEET ——— */
-    .steps {
-      display:flex; gap:.5rem; align-items:center;
-      font-weight:800; font-size:.9rem; color:#64748b; white-space:nowrap;
-    }
+    .steps {display:flex; gap:.5rem; align-items:center; font-weight:800; font-size:.9rem; color:#64748b; white-space:nowrap;}
     .step {display:flex; align-items:center; gap:.4rem}
     .step .dot {width:10px; height:10px; border-radius:999px; background:#cbd5e1}
     .step.active {color:#0b376d}
@@ -424,16 +421,14 @@
         const blob=new Blob([JSON.stringify(payload)],{type:'application/json'});
         sent=navigator.sendBeacon(ANALYTICS_WEBHOOK, blob);
       }
-    }catch(e){ /* ignore */ }
+    }catch(e){}
     if(!sent){
       try{
         fetch(ANALYTICS_WEBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-      }catch(e){ /* ignore */ }
+      }catch(e){}
     }
-    // limpiamos el buffer local
     saveEvents([]);
   }
-
   window.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden'){ flushEvents('hidden'); }});
   window.addEventListener('beforeunload',()=>{ flushEvents('unload'); });
   setInterval(()=>flushEvents('interval'), 20000);
@@ -564,16 +559,14 @@
     }
   }
 
-  /* ======= Estado DOM ======= */
-  const cantidades={}, listaEl=document.getElementById('lista'),
-        subtotalEl=document.getElementById('subtotal'), totalEl=document.getElementById('total'),
-        envioLineEl=document.getElementById('envioLine'), envioCostoEl=document.getElementById('envioCosto'),
-        emptyMsg=document.getElementById('emptyMsg'), btnWA=document.getElementById('btn-whatsapp'),
-        nombreEl=document.getElementById('nombre');
-
-  const fab=document.getElementById('cartFab'), fabCount=document.getElementById('fabCount'), fabTotal=document.getElementById('fabTotal');
-  const sheet=document.getElementById('cartSheet'), sheetClose=document.getElementById('sheetClose'), backdrop=document.getElementById('sheetBackdrop');
-  let sheetOpen=false, METRICS_TOTAL=0,METRICS_COUNT=0,METRICS_ENVIO='';
+  /* ======= Helpers de dinero e hidratación (definidos ANTES de usar) ======= */
+  const formatARS=n=>new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n);
+  const hydrateCart=()=>Object.entries(loadCart()).forEach(([id,q])=>{if(q>0){cantidades[id]=q;const el=document.getElementById(`cantidad-${id}`);if(el)el.textContent=q}});
+  function hydrateClient(){
+    const c=loadClient();
+    if(c.name)document.getElementById('nombre').value=c.name;
+    if(c.address)document.getElementById('direccion').value=c.address;
+  }
 
   /* ======= Render productos (con soporte de Promos) ======= */
   function renderProductos(contId,data){
@@ -666,16 +659,8 @@
   }
   cargarProductos();
 
-  /* ======= Hydration ======= */
-  const formatARS=n=>new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n);
-  const hydrateCart=()=>Object.entries(loadCart()).forEach(([id,q])=>{if(q>0){cantidades[id]=q;const el=document.getElementById(`cantidad-${id}`);if(el)el.textContent=q}});
-  function hydrateClient(){
-    const c=loadClient();
-    if(c.name)nombreEl.value=c.name;
-    if(c.address)document.getElementById('direccion').value=c.address;
-  }
-
   /* ======= Carrito ======= */
+  const nombreEl=document.getElementById('nombre');
   function cambiarCantidad(id,delta,btn){
     const sec = seccionDeId(id);
     if(delta > 0 && seccionCerradaAhora(sec)){
@@ -699,6 +684,7 @@
     saveCart(cantidades);actualizarResumen();
   }
   const countItems=()=>Object.values(cantidades).reduce((a,b)=>a+(b||0),0);
+  const fab=document.getElementById('cartFab'), fabCount=document.getElementById('fabCount'), fabTotal=document.getElementById('fabTotal');
   function setFabVisible(v){
     if(!fab)return;
     if(v){ fab.removeAttribute('hidden'); requestAnimationFrame(()=>fab.classList.remove('hide')); }
@@ -706,6 +692,13 @@
   }
 
   /* ======= Totales + validación por horario ======= */
+  const listaEl=document.getElementById('lista'),
+        subtotalEl=document.getElementById('subtotal'), totalEl=document.getElementById('total'),
+        envioLineEl=document.getElementById('envioLine'), envioCostoEl=document.getElementById('envioCosto'),
+        emptyMsg=document.getElementById('emptyMsg'), btnWA=document.getElementById('btn-whatsapp');
+  const sheet=document.getElementById('cartSheet'), sheetClose=document.getElementById('sheetClose'), backdrop=document.getElementById('sheetBackdrop');
+  let sheetOpen=false, METRICS_TOTAL=0,METRICS_COUNT=0,METRICS_ENVIO='';
+
   function actualizarResumen(){
     listaEl.innerHTML='';let subtotal=0,count=0;
     const tiene = { rotiseria:0, bebidas:0 };
@@ -744,7 +737,7 @@
     estado.textContent = puedePedir ? '' : motivos.join(' ');
 
     // 🔧 Importante: NO deshabilitar por falta de selección de envío/retiro
-    btnWA.disabled = !(count>0 && nombreEl.value.trim().length>0 && puedePedir);
+    btnWA.disabled = !(count>0 && document.getElementById('nombre').value.trim().length>0 && puedePedir);
 
     METRICS_TOTAL=subtotal+envioCosto;METRICS_COUNT=count;METRICS_ENVIO=envioSel||'';
 
@@ -806,7 +799,8 @@
 
   /* ======= WhatsApp ======= */
   function enviarPedido(){
-    const name=nombreEl.value.trim(),addr=document.getElementById('direccion').value.trim();
+    const name=document.getElementById('nombre').value.trim(),
+          addr=document.getElementById('direccion').value.trim();
     const envioInput=document.querySelector('input[name=envio]:checked');
     const segmented = document.querySelector('.segmented');
 
@@ -868,7 +862,7 @@
   /* ======= Sheet ======= */
   function trapFocus(e){
     if(!sheetOpen||e.key!=='Tab')return;
-    const f=sheet.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])`);
+    const f=sheet.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
     if(!f.length)return;const first=f[0],last=f[f.length-1];
     if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
     else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
@@ -896,7 +890,7 @@
     const steps = document.querySelectorAll('#checkoutSteps .step');
     if(!steps.length) return;
     const envioInput = document.querySelector('input[name=envio]:checked');
-    const datosOk = nombreEl.value.trim().length>0 && !!envioInput &&
+    const datosOk = document.getElementById('nombre').value.trim().length>0 && !!envioInput &&
                     (envioInput.value==='retiro' || document.getElementById('direccion').value.trim().length>0);
     const hayItems = countItems()>0;
     let activo = 1; if(datosOk) activo = 2; if(datosOk && hayItems) activo = 3;
