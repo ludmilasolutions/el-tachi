@@ -15,11 +15,11 @@
       ],
       "rangos": [
         {
-          "desde": "19:30",
-          "hasta": "00:00"
+          "desde": "00:00",
+          "hasta": "23:59"
         }
       ],
-      "mensaje_cierre": "Por vacaciones"
+      "mensaje_cierre": ""
     },
     "bebidas": {
       "cerrado": true,
