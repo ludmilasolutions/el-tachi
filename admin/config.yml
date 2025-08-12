@@ -53,13 +53,13 @@ collections:
               - { label: "Descripción", name: "desc", widget: "string", required: false }
               - { label: "Vigencia hasta", name: "vigencia_hasta", widget: "date", format: "YYYY-MM-DD", required: false }
 
-  # ===== ALMACÉN =====
-  - name: "almacen"
-    label: "Productos Almacén"
+  # ===== BEBIDAS =====
+  - name: "bebidas"
+    label: "Productos Bebidas"
     files:
-      - file: "data/productos-almacen.json"
-        label: "Lista de productos Almacén"
-        name: "productos_almacen"
+      - file: "data/productos-bebidas.json"
+        label: "Lista de productos Bebidas"
+        name: "productos_bebidas"
         format: "json"
         fields:
           - label: "Categorías"
@@ -75,12 +75,12 @@ collections:
                   - { label: "Precio", name: "precio", widget: "number", value_type: "int" }
                   - { label: "Descripción", name: "desc", widget: "string", required: false }
 
-  - name: "promos_almacen"
-    label: "Promos Almacén"
+  - name: "promos_bebidas"
+    label: "Promos Bebidas"
     files:
-      - file: "data/promos-almacen.json"
-        label: "Listado de Promos (Almacén)"
-        name: "promos_almacen_file"
+      - file: "data/promos-bebidas.json"
+        label: "Listado de Promos (Bebidas)"
+        name: "promos_bebidas_file"
         format: "json"
         fields:
           - label: "Promos"
@@ -152,9 +152,9 @@ collections:
                       - { label: "Desde (HH:MM)", name: "desde", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"] }
                       - { label: "Hasta (HH:MM)", name: "hasta", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"] }
 
-              # -------- Almacén --------
-              - label: "Almacén"
-                name: "almacen"
+              # -------- Bebidas --------
+              - label: "Bebidas"
+                name: "bebidas"
                 widget: "object"
                 fields:
                   - label: "Cerrado forzado"
