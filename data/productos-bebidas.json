@@ -4,15 +4,20 @@
       "categoria": "🥤 Gaseosas – Retornables",
       "productos": [
         { "nombre": "Coca x 2L", "precio": 2900 },
-        { "nombre": "Fanta / Sprite x 2L", "precio": 2900 }
+        { "nombre": "Fanta x 2L", "precio": 2900 },
+        { "nombre": "Sprite x 2L", "precio": 2900 }
       ]
     },
     {
       "categoria": "Gaseosas – Descartables",
       "productos": [
-        { "nombre": "Coca / Fanta / Sprite x 1,5L", "precio": 3500 },
+        { "nombre": "Coca x 1,5L", "precio": 3500 },
+        { "nombre": "Sprite x 1,5L", "precio": 3500 },
+        { "nombre": "Fanta x 1,5L", "precio": 3500 },
         { "nombre": "Coca x 2,5L", "precio": 4500 },
-        { "nombre": "Coca / Fanta / Sprite x 1/2L", "precio": 1500 },
+        { "nombre": "Coca x 500cc", "precio": 1500 },
+        { "nombre": "Sprite x 500cc", "precio": 1500 },
+        { "nombre": "Fanta x 500cc", "precio": 1500 },
         { "nombre": "Coca lata", "precio": 1400 },
         { "nombre": "Coca vidrio chica", "precio": 1000 }
       ]
@@ -41,7 +46,8 @@
     {
       "categoria": "Cervezas – Botellas",
       "productos": [
-        { "nombre": "Quilmes / Brahma", "precio": 2900 },
+        { "nombre": "Quilmes", "precio": 2900 },
+        { "nombre": "Brahma", "precio": 2900 },
         { "nombre": "Iguana", "precio": 2400 },
         { "nombre": "361 descartable", "precio": 2000 }
       ]
