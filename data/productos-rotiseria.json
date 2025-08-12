@@ -70,9 +70,12 @@
     {
       "categoria": "🥟 Empanadas",
       "productos": [
-        { "nombre": "Docena", "precio": 13000 },
-        { "nombre": "1/2 Docena", "precio": 6500 },
-        { "nombre": "Unidad", "precio": 1100 }
+        { "nombre": "Docena de Empanadas", "precio": 13000 },
+        { "nombre": "1/2 Docena de Empanadas", "precio": 6500 },
+        { "nombre": "Empanada de Carne", "precio": 1100 }
+        { "nombre": "Empanada de Pollo", "precio": 1100 }
+        { "nombre": "Empanada de J y Q", "precio": 1100 }
+        { "nombre": "Empanada de Verdura", "precio": 1100 }
       ]
     },
     {
