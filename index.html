@@ -149,7 +149,8 @@
 
     /* ---------- Toasts ---------- */
     .toast-wrap{
-      position:fixed;left:50%;bottom:84px;transform:translateX(-50%);z-index:200;
+      position:fixed;left:50%;bottom:84px;transform:translateX(-50%);
+      z-index:200;
       display:flex;flex-direction:column;gap:.5rem;pointer-events:none
     }
     .toast{
@@ -246,7 +247,10 @@
     .dialog-actions .btn{flex:1 1 120px}
 
     /* ——— PASOS EN SHEET ——— */
-    .steps {display:flex; gap:.5rem; align-items:center; font-weight:800; font-size:.9rem; color:#64748b; white-space:nowrap;}
+    .steps {
+      display:flex; gap:.5rem; align-items:center;
+      font-weight:800; font-size:.9rem; color:#64748b; white-space:nowrap;
+    }
     .step {display:flex; align-items:center; gap:.4rem}
     .step .dot {width:10px; height:10px; border-radius:999px; background:#cbd5e1}
     .step.active {color:#0b376d}
@@ -418,16 +422,21 @@
     let sent=false;
     try{
       if(navigator.sendBeacon){
-        const blob=new Blob([JSON.stringify(payload)],{type:'application/json'});
+        const blob=new Blob([JSON.stringify(payload)],{type:'text/plain;charset=UTF-8'});
         sent=navigator.sendBeacon(ANALYTICS_WEBHOOK, blob);
       }
-    }catch(e){}
+    }catch(e){ /* ignore */ }
     if(!sent){
       try{
-        fetch(ANALYTICS_WEBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-      }catch(e){}
+        fetch(ANALYTICS_WEBHOOK,{
+          method:'POST',
+          mode:'no-cors',                         // evita CORS
+          headers:{'Content-Type':'text/plain'},  // simple header para no preflight
+          body:JSON.stringify(payload)
+        });
+      }catch(e){ /* ignore */ }
     }
-    saveEvents([]);
+    saveEvents([]); // limpiar buffer
   }
   window.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden'){ flushEvents('hidden'); }});
   window.addEventListener('beforeunload',()=>{ flushEvents('unload'); });
@@ -448,21 +457,37 @@
   const normalizar=d=>Array.isArray(d?.categorias)?Object.fromEntries(d.categorias.map(c=>[c.categoria,c.productos||[]])):d||{};
 
   // --- Storage con vencimiento (TTL) ---
-  function setWithTTL(key, value, ttlMs){const payload={ v:value, exp:Date.now()+ttlMs }; localStorage.setItem(key, JSON.stringify(payload));}
+  function setWithTTL(key, value, ttlMs){
+    const payload = { v: value, exp: Date.now() + ttlMs };
+    localStorage.setItem(key, JSON.stringify(payload));
+  }
   function getWithTTL(key, fallback){
     try{
-      const raw=JSON.parse(localStorage.getItem(key));
-      if(!raw || typeof raw!=='object') return fallback;
-      if(raw.exp && Date.now()>raw.exp){ localStorage.removeItem(key); return fallback; }
-      return (raw.v===undefined?fallback:raw.v);
+      const raw = JSON.parse(localStorage.getItem(key));
+      if(!raw || typeof raw !== 'object') return fallback;
+      if(raw.exp && Date.now() > raw.exp){
+        localStorage.removeItem(key);
+        return fallback;
+      }
+      return (raw.v === undefined ? fallback : raw.v);
     }catch{ return fallback; }
   }
-  function isExpired(key){ try{const raw=JSON.parse(localStorage.getItem(key)); return !!(raw && raw.exp && Date.now()>raw.exp);}catch{ return false; } }
+  function isExpired(key){
+    try{
+      const raw = JSON.parse(localStorage.getItem(key));
+      return !!(raw && raw.exp && Date.now() > raw.exp);
+    }catch{ return false; }
+  }
 
-  const CART_TTL_MS=2*60*60*1000; // 2h
-  const CLIENT_TTL_MS=2*60*60*1000; // 2h
-  const CART_KEY='tachi_cart_v1';
+  const CART_TTL_MS   = 2 * 60 * 60 * 1000; // 2h
+  const CLIENT_TTL_MS = 2 * 60 * 60 * 1000; // 2h
+
+  const CART_KEY  ='tachi_cart_v1';
   const CLIENT_KEY='tachi_client_v1';
+
+  /* ======= Estado APP (¡cantidades primero!) ======= */
+  let cantidades = {}; // <-- Inicializado antes de cualquier uso
+
   const loadCart   = () => getWithTTL(CART_KEY, {});
   const saveCart   = (obj) => setWithTTL(CART_KEY, obj,   CART_TTL_MS);
   const loadClient = () => getWithTTL(CLIENT_KEY, {});
@@ -559,14 +584,16 @@
     }
   }
 
-  /* ======= Helpers de dinero e hidratación (definidos ANTES de usar) ======= */
-  const formatARS=n=>new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n);
-  const hydrateCart=()=>Object.entries(loadCart()).forEach(([id,q])=>{if(q>0){cantidades[id]=q;const el=document.getElementById(`cantidad-${id}`);if(el)el.textContent=q}});
-  function hydrateClient(){
-    const c=loadClient();
-    if(c.name)document.getElementById('nombre').value=c.name;
-    if(c.address)document.getElementById('direccion').value=c.address;
-  }
+  /* ======= Estado DOM ======= */
+  const listaEl=document.getElementById('lista'),
+        subtotalEl=document.getElementById('subtotal'), totalEl=document.getElementById('total'),
+        envioLineEl=document.getElementById('envioLine'), envioCostoEl=document.getElementById('envioCosto'),
+        emptyMsg=document.getElementById('emptyMsg'), btnWA=document.getElementById('btn-whatsapp'),
+        nombreEl=document.getElementById('nombre');
+
+  const fab=document.getElementById('cartFab'), fabCount=document.getElementById('fabCount'), fabTotal=document.getElementById('fabTotal');
+  const sheet=document.getElementById('cartSheet'), sheetClose=document.getElementById('sheetClose'), backdrop=document.getElementById('sheetBackdrop');
+  let sheetOpen=false, METRICS_TOTAL=0,METRICS_COUNT=0,METRICS_ENVIO='';
 
   /* ======= Render productos (con soporte de Promos) ======= */
   function renderProductos(contId,data){
@@ -654,13 +681,20 @@
     hydrateCart();hydrateClient();actualizarResumen();
     actualizarTabsPorHorario();
 
-    // analítica: menús cargados
     logEvent('menus_loaded',{rotiseria_cats:(rMerge.categorias||[]).length,bebidas_cats:(bMerge.categorias||[]).length});
   }
   cargarProductos();
 
+  /* ======= Hydration ======= */
+  const formatARS=n=>new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n);
+  const hydrateCart=()=>Object.entries(loadCart()).forEach(([id,q])=>{if(q>0){cantidades[id]=q;const el=document.getElementById(`cantidad-${id}`);if(el)el.textContent=q}});
+  function hydrateClient(){
+    const c=loadClient();
+    if(c.name)nombreEl.value=c.name;
+    if(c.address)document.getElementById('direccion').value=c.address;
+  }
+
   /* ======= Carrito ======= */
-  const nombreEl=document.getElementById('nombre');
   function cambiarCantidad(id,delta,btn){
     const sec = seccionDeId(id);
     if(delta > 0 && seccionCerradaAhora(sec)){
@@ -674,17 +708,14 @@
       const row=btn.closest('.producto');row.classList.add('row-flash');row.addEventListener('animationend',()=>row.classList.remove('row-flash'),{once:true});
       fab.classList.add('bump');fab.addEventListener('animationend',()=>fab.classList.remove('bump'),{once:true});
     }
-    // analítica de cantidad
     try{
       const row=document.getElementById(`cantidad-${id}`)?.closest('.producto');
       const name=row?.dataset?.nombre||''; const price=parseInt(row?.dataset?.precio||0,10);
       logEvent('qty_change',{id,delta,new_qty:cantidades[id],sec,name,price});
     }catch{}
-
     saveCart(cantidades);actualizarResumen();
   }
   const countItems=()=>Object.values(cantidades).reduce((a,b)=>a+(b||0),0);
-  const fab=document.getElementById('cartFab'), fabCount=document.getElementById('fabCount'), fabTotal=document.getElementById('fabTotal');
   function setFabVisible(v){
     if(!fab)return;
     if(v){ fab.removeAttribute('hidden'); requestAnimationFrame(()=>fab.classList.remove('hide')); }
@@ -692,13 +723,6 @@
   }
 
   /* ======= Totales + validación por horario ======= */
-  const listaEl=document.getElementById('lista'),
-        subtotalEl=document.getElementById('subtotal'), totalEl=document.getElementById('total'),
-        envioLineEl=document.getElementById('envioLine'), envioCostoEl=document.getElementById('envioCosto'),
-        emptyMsg=document.getElementById('emptyMsg'), btnWA=document.getElementById('btn-whatsapp');
-  const sheet=document.getElementById('cartSheet'), sheetClose=document.getElementById('sheetClose'), backdrop=document.getElementById('sheetBackdrop');
-  let sheetOpen=false, METRICS_TOTAL=0,METRICS_COUNT=0,METRICS_ENVIO='';
-
   function actualizarResumen(){
     listaEl.innerHTML='';let subtotal=0,count=0;
     const tiene = { rotiseria:0, bebidas:0 };
@@ -737,7 +761,7 @@
     estado.textContent = puedePedir ? '' : motivos.join(' ');
 
     // 🔧 Importante: NO deshabilitar por falta de selección de envío/retiro
-    btnWA.disabled = !(count>0 && document.getElementById('nombre').value.trim().length>0 && puedePedir);
+    btnWA.disabled = !(count>0 && nombreEl.value.trim().length>0 && puedePedir);
 
     METRICS_TOTAL=subtotal+envioCosto;METRICS_COUNT=count;METRICS_ENVIO=envioSel||'';
 
