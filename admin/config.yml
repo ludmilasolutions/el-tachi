@@ -4,10 +4,8 @@ backend:
 
 logo_url: "/uploads/logo.png"
 site_url: "/"
-
-# Si NO inicializás el CMS manualmente, no uses esta línea:
-# load_config_file: false
-
+locale: "es"
+load_config_file: false
 custom_styles: "/admin/custom.css"
 
 media_folder: "uploads"
@@ -26,16 +24,14 @@ collections:
           - label: "Categorías"
             name: "categorias"
             widget: "list"
-            summary: "{{fields.categoria}} ({{fields.productos.length}} ítems)"
             fields:
               - { label: "Nombre", name: "categoria", widget: "string" }
               - label: "Productos"
                 name: "productos"
                 widget: "list"
-                summary: "{{fields.nombre}} – ${{fields.precio}}"
                 fields:
                   - { label: "Nombre", name: "nombre", widget: "string" }
-                  - { label: "Precio", name: "precio", widget: "number", value_type: "int", min: 0, step: 1 }
+                  - { label: "Precio", name: "precio", widget: "number", value_type: "int" }
                   - { label: "Descripción", name: "desc", widget: "string", required: false }
 
   - name: "promos_rotiseria"
@@ -49,11 +45,10 @@ collections:
           - label: "Promos"
             name: "promos"
             widget: "list"
-            summary: "{{fields.nombre}} – ${{fields.precio}}"
             fields:
               - { label: "Nombre", name: "nombre", widget: "string" }
-              - { label: "Precio promo", name: "precio", widget: "number", value_type: "int", min: 0, step: 1 }
-              - { label: "Precio original (tachado)", name: "precio_original", widget: "number", value_type: "int", required: false, min: 0, step: 1 }
+              - { label: "Precio promo", name: "precio", widget: "number", value_type: "int" }
+              - { label: "Precio original (tachado)", name: "precio_original", widget: "number", value_type: "int", required: false }
               - { label: "Etiqueta (badge)", name: "tag", widget: "string", required: false, hint: "Ej: Combo, 2x1, -20%" }
               - { label: "Descripción", name: "desc", widget: "string", required: false }
               - { label: "Vigencia hasta", name: "vigencia_hasta", widget: "date", format: "YYYY-MM-DD", required: false }
@@ -70,16 +65,14 @@ collections:
           - label: "Categorías"
             name: "categorias"
             widget: "list"
-            summary: "{{fields.categoria}} ({{fields.productos.length}} ítems)"
             fields:
               - { label: "Nombre", name: "categoria", widget: "string" }
               - label: "Productos"
                 name: "productos"
                 widget: "list"
-                summary: "{{fields.nombre}} – ${{fields.precio}}"
                 fields:
                   - { label: "Nombre", name: "nombre", widget: "string" }
-                  - { label: "Precio", name: "precio", widget: "number", value_type: "int", min: 0, step: 1 }
+                  - { label: "Precio", name: "precio", widget: "number", value_type: "int" }
                   - { label: "Descripción", name: "desc", widget: "string", required: false }
 
   - name: "promos_bebidas"
@@ -93,11 +86,10 @@ collections:
           - label: "Promos"
             name: "promos"
             widget: "list"
-            summary: "{{fields.nombre}} – ${{fields.precio}}"
             fields:
               - { label: "Nombre", name: "nombre", widget: "string" }
-              - { label: "Precio promo", name: "precio", widget: "number", value_type: "int", min: 0, step: 1 }
-              - { label: "Precio original (tachado)", name: "precio_original", widget: "number", value_type: "int", required: false, min: 0, step: 1 }
+              - { label: "Precio promo", name: "precio", widget: "number", value_type: "int" }
+              - { label: "Precio original (tachado)", name: "precio_original", widget: "number", value_type: "int", required: false }
               - { label: "Etiqueta (badge)", name: "tag", widget: "string", required: false, hint: "Ej: Pack, -12%" }
               - { label: "Descripción", name: "desc", widget: "string", required: false }
               - { label: "Vigencia hasta", name: "vigencia_hasta", widget: "date", format: "YYYY-MM-DD", required: false }
@@ -114,7 +106,6 @@ collections:
           - label: "WhatsApp (solo números)"
             name: "whatsapp"
             widget: "string"
-            default: ""
             hint: "Sin + ni 0. Ej: 3415923882"
 
           - label: "Costo de envío"
@@ -122,8 +113,6 @@ collections:
             widget: "number"
             value_type: "int"
             default: 1000
-            min: 0
-            step: 1
 
           - label: "Horarios"
             name: "horarios"
@@ -142,29 +131,27 @@ collections:
                     name: "mensaje_cierre"
                     widget: "string"
                     required: false
-                    default: ""
                     hint: "Ej: 'Próximamente', 'Cerrado por mantenimiento', 'Volvemos el jueves'."
                   - label: "Días abiertos"
                     name: "dias"
                     widget: "select"
                     multiple: true
-                    default: [4,5,6,0]
+                    default: ["0","1","2","3","4","5","6"]
                     options:
-                      - { label: "Dom", value: 0 }
-                      - { label: "Lun", value: 1 }
-                      - { label: "Mar", value: 2 }
-                      - { label: "Mié", value: 3 }
-                      - { label: "Jue", value: 4 }
-                      - { label: "Vie", value: 5 }
-                      - { label: "Sáb", value: 6 }
+                      - { label: "Dom", value: "0" }
+                      - { label: "Lun", value: "1" }
+                      - { label: "Mar", value: "2" }
+                      - { label: "Mié", value: "3" }
+                      - { label: "Jue", value: "4" }
+                      - { label: "Vie", value: "5" }
+                      - { label: "Sáb", value: "6" }
                     hint: "0=Dom ... 6=Sáb"
                   - label: "Rangos horarios"
                     name: "rangos"
                     widget: "list"
-                    min: 1
                     fields:
-                      - { label: "Desde (HH:MM)", name: "desde", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"], default: "19:30" }
-                      - { label: "Hasta (HH:MM)", name: "hasta", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"], default: "22:30" }
+                      - { label: "Desde (HH:MM)", name: "desde", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"] }
+                      - { label: "Hasta (HH:MM)", name: "hasta", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"] }
 
               # -------- Bebidas --------
               - label: "Bebidas"
@@ -179,25 +166,23 @@ collections:
                     name: "mensaje_cierre"
                     widget: "string"
                     required: false
-                    default: ""
                     hint: "Ej: 'Próximamente', 'Cerrado momentáneamente', etc."
                   - label: "Días abiertos"
                     name: "dias"
                     widget: "select"
                     multiple: true
-                    default: [0,1,2,3,4,5,6]
+                    default: ["0","1","2","3","4","5","6"]
                     options:
-                      - { label: "Dom", value: 0 }
-                      - { label: "Lun", value: 1 }
-                      - { label: "Mar", value: 2 }
-                      - { label: "Mié", value: 3 }
-                      - { label: "Jue", value: 4 }
-                      - { label: "Vie", value: 5 }
-                      - { label: "Sáb", value: 6 }
+                      - { label: "Dom", value: "0" }
+                      - { label: "Lun", value: "1" }
+                      - { label: "Mar", value: "2" }
+                      - { label: "Mié", value: "3" }
+                      - { label: "Jue", value: "4" }
+                      - { label: "Vie", value: "5" }
+                      - { label: "Sáb", value: "6" }
                   - label: "Rangos horarios"
                     name: "rangos"
                     widget: "list"
-                    min: 1
                     fields:
-                      - { label: "Desde (HH:MM)", name: "desde", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"], default: "09:00" }
-                      - { label: "Hasta (HH:MM)", name: "hasta", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"], default: "23:59" }
+                      - { label: "Desde (HH:MM)", name: "desde", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"] }
+                      - { label: "Hasta (HH:MM)", name: "hasta", widget: "string", pattern: ["^\\d{2}:\\d{2}$", "Formato HH:MM"] }
