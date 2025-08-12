@@ -22,7 +22,7 @@
       "mensaje_cierre": ""
     },
     "bebidas": {
-      "cerrado": true,
+      "cerrado": false,
       "dias": [
         0,
         1,
@@ -34,11 +34,11 @@
       ],
       "rangos": [
         {
-          "desde": "09:00",
+          "desde": "00:00",
           "hasta": "23:59"
         }
       ],
-      "mensaje_cierre": "Próximamente Disponible"
+      "mensaje_cierre": ""
     }
   }
 }
