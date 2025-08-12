@@ -78,18 +78,18 @@
     {
       "categoria": "🍽️ Pizzanesa para 3 Personas",
       "productos": [
-        { "nombre": "Pizzanesa Carne Especial", "precio": 24000 },
-        { "nombre": "Pizzanesa Carne Napolitana", "precio": 24000 },
-        { "nombre": "Pizzanesa Carne Salame", "precio": 24000 },
-        { "nombre": "Pizzanesa Carne Muzzarella", "precio": 22000 },
-        { "nombre": "Pizzanesa Carne Roquefort", "precio": 25000 },
-        { "nombre": "Pizzanesa Carne Bomba", "precio": 25000 },
-        { "nombre": "Pizzanesa Pollo Especial", "precio": 23000 },
-        { "nombre": "Pizzanesa Pollo Napolitana", "precio": 23000 },
-        { "nombre": "Pizzanesa Pollo Salame", "precio": 23000 },
-        { "nombre": "Pizzanesa Pollo Muzzarella", "precio": 21000 },
-        { "nombre": "Pizzanesa Pollo Roquefort", "precio": 24000 },
-        { "nombre": "Pizzanesa Pollo Bomba", "precio": 24000 }
+        { "nombre": "Pizzanesa Carne Especial (3)", "precio": 24000 },
+        { "nombre": "Pizzanesa Carne Napolitana (3)", "precio": 24000 },
+        { "nombre": "Pizzanesa Carne Salame (3)", "precio": 24000 },
+        { "nombre": "Pizzanesa Carne Muzzarella (3)", "precio": 22000 },
+        { "nombre": "Pizzanesa Carne Roquefort (3)", "precio": 25000 },
+        { "nombre": "Pizzanesa Carne Bomba (3)", "precio": 25000 },
+        { "nombre": "Pizzanesa Pollo Especial (3)", "precio": 23000 },
+        { "nombre": "Pizzanesa Pollo Napolitana (3)", "precio": 23000 },
+        { "nombre": "Pizzanesa Pollo Salame (3)", "precio": 23000 },
+        { "nombre": "Pizzanesa Pollo Muzzarella (3)", "precio": 21000 },
+        { "nombre": "Pizzanesa Pollo Roquefort (3)", "precio": 24000 },
+        { "nombre": "Pizzanesa Pollo Bomba (3)", "precio": 24000 }
       ]
     },
     {
