@@ -149,8 +149,7 @@
 
     /* ---------- Toasts ---------- */
     .toast-wrap{
-      position:fixed;left:50%;bottom:84px;transform:translateX(-50%);
-      z-index:200;
+      position:fixed;left:50%;bottom:84px;transform:translateX(-50%);z-index:200;
       display:flex;flex-direction:column;gap:.5rem;pointer-events:none
     }
     .toast{
@@ -211,10 +210,7 @@
       padding:.6rem .8rem .4rem;
       padding-right:56px;
     }
-    .sheet-handle{
-      width:36px;height:4px;border-radius:999px;background:#d7d7d7;
-      margin:.2rem auto;position:absolute;left:50%;transform:translateX(-50%);top:6px
-    }
+    .sheet-handle{width:36px;height:4px;border-radius:999px;background:#d7d7d7;margin:.2rem auto;position:absolute;left:50%;transform:translateX(-50%);top:6px}
     .sheet-title{margin:0 0 .35rem;font-size:1.05rem;font-weight:800;color:#0b376d}
     .sheet-close{
       position:absolute; right:8px; top:6px;
@@ -222,8 +218,7 @@
       background:#ffffffcc; backdrop-filter:saturate(1.2) blur(2px);
       border:1px solid #d7d7d7; border-radius:12px;
       font-size:28px; line-height:1; color:var(--azul);
-      cursor:pointer; z-index:6;
-      -webkit-tap-highlight-color:transparent;
+      cursor:pointer; z-index:6; -webkit-tap-highlight-color:transparent;
     }
     .sheet-close:active{transform:scale(.98)}
     .sheet-body{overflow:auto;padding:.8rem .9rem 1rem}
@@ -247,10 +242,7 @@
     .dialog-actions .btn{flex:1 1 120px}
 
     /* ——— PASOS EN SHEET ——— */
-    .steps {
-      display:flex; gap:.5rem; align-items:center;
-      font-weight:800; font-size:.9rem; color:#64748b; white-space:nowrap;
-    }
+    .steps {display:flex; gap:.5rem; align-items:center; font-weight:800; font-size:.9rem; color:#64748b; white-space:nowrap;}
     .step {display:flex; align-items:center; gap:.4rem}
     .step .dot {width:10px; height:10px; border-radius:999px; background:#cbd5e1}
     .step.active {color:#0b376d}
@@ -331,7 +323,6 @@
       <span class="sheet-handle" aria-hidden="true"></span>
       <h3 id="sheetTitle" class="sheet-title">Tu pedido</h3>
 
-      <!-- PASOS -->
       <div class="steps" id="checkoutSteps" aria-label="Progreso">
         <div class="step" data-step="1"><span class="dot"></span><span>Datos</span></div>
         <span>→</span>
@@ -345,7 +336,6 @@
 
     <div id="sheetBody" class="sheet-body" tabindex="0">
       <section id="checkout">
-        <!-- Segmented control (reemplaza radios) -->
         <div class="segmented" role="tablist" aria-label="Entrega">
           <input id="opt-ret" type="radio" name="envio" value="retiro">
           <label for="opt-ret">Retiro</label>
@@ -405,9 +395,10 @@
   let SHIPPING = 1000;
   let WSP_NUMBER = '3415923882';
 
-  /* ======= Analytics ======= */
+  /* ======= Analytics (envía a tu hoja "Pedidos") ======= */
   const ANALYTICS_KEY='tachi_events_v1';
   const ANALYTICS_WEBHOOK='https://script.google.com/macros/s/AKfycbztFnAcPkOfcAuL3b5irzDVSKeM1EZuC3BZQS8ILWElFo1gZK8KokJnwmKBS-RYzdH0/exec';
+
   function getEvents(){try{return JSON.parse(localStorage.getItem(ANALYTICS_KEY)||'[]')}catch{return[]}}
   function saveEvents(l){localStorage.setItem(ANALYTICS_KEY,JSON.stringify(l))}
   function logEvent(type,data={}){const e={type,ts:new Date().toISOString(),path:location.pathname+location.search,...data};const l=getEvents();l.push(e);saveEvents(l); scheduleFlush();}
@@ -422,19 +413,14 @@
     let sent=false;
     try{
       if(navigator.sendBeacon){
-        const blob=new Blob([JSON.stringify(payload)],{type:'text/plain;charset=UTF-8'});
+        const blob=new Blob([JSON.stringify(payload)],{type:'application/json'});
         sent=navigator.sendBeacon(ANALYTICS_WEBHOOK, blob);
       }
-    }catch(e){ /* ignore */ }
+    }catch(e){}
     if(!sent){
       try{
-        fetch(ANALYTICS_WEBHOOK,{
-          method:'POST',
-          mode:'no-cors',                         // evita CORS
-          headers:{'Content-Type':'text/plain'},  // simple header para no preflight
-          body:JSON.stringify(payload)
-        });
-      }catch(e){ /* ignore */ }
+        fetch(ANALYTICS_WEBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      }catch(e){}
     }
     saveEvents([]); // limpiar buffer
   }
@@ -442,9 +428,9 @@
   window.addEventListener('beforeunload',()=>{ flushEvents('unload'); });
   setInterval(()=>flushEvents('interval'), 20000);
 
-  /* ======= CSV ======= */
+  /* ======= CSV helper (por si querés exportar) ======= */
   const SEP=Intl.NumberFormat().format(1.1).includes(',')?';':',';
-  const csvEscape=v=>v==null?'':(/[\"\\n\\r]/.test(v)||String(v).includes(SEP))?`\"${String(v).replace(/\"/g,'\"\"')}\"`:v;
+  const csvEscape=v=>v==null?'':(/["\n\r]/.test(v)||String(v).includes(SEP))?`"${String(v).replace(/"/g,'""')}"`:v;
   function downloadCSV(name,headers,rows){
     const lines=[headers.join(SEP),...rows.map(r=>headers.map(h=>csvEscape(r[h])).join(SEP))];
     const blob=new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8;'});
@@ -456,38 +442,22 @@
   const asset=p=>location.hostname.endsWith('github.io')?`/${location.pathname.split('/').filter(Boolean)[0]}/${p}`:`/${p}`;
   const normalizar=d=>Array.isArray(d?.categorias)?Object.fromEntries(d.categorias.map(c=>[c.categoria,c.productos||[]])):d||{};
 
-  // --- Storage con vencimiento (TTL) ---
-  function setWithTTL(key, value, ttlMs){
-    const payload = { v: value, exp: Date.now() + ttlMs };
-    localStorage.setItem(key, JSON.stringify(payload));
-  }
+  // Storage con vencimiento (TTL)
+  function setWithTTL(key, value, ttlMs){const payload={ v:value, exp:Date.now()+ttlMs }; localStorage.setItem(key, JSON.stringify(payload));}
   function getWithTTL(key, fallback){
     try{
-      const raw = JSON.parse(localStorage.getItem(key));
-      if(!raw || typeof raw !== 'object') return fallback;
-      if(raw.exp && Date.now() > raw.exp){
-        localStorage.removeItem(key);
-        return fallback;
-      }
-      return (raw.v === undefined ? fallback : raw.v);
+      const raw=JSON.parse(localStorage.getItem(key));
+      if(!raw || typeof raw!=='object') return fallback;
+      if(raw.exp && Date.now()>raw.exp){ localStorage.removeItem(key); return fallback; }
+      return (raw.v===undefined?fallback:raw.v);
     }catch{ return fallback; }
   }
-  function isExpired(key){
-    try{
-      const raw = JSON.parse(localStorage.getItem(key));
-      return !!(raw && raw.exp && Date.now() > raw.exp);
-    }catch{ return false; }
-  }
+  function isExpired(key){ try{const raw=JSON.parse(localStorage.getItem(key)); return !!(raw && raw.exp && Date.now()>raw.exp);}catch{ return false; } }
 
-  const CART_TTL_MS   = 2 * 60 * 60 * 1000; // 2h
-  const CLIENT_TTL_MS = 2 * 60 * 60 * 1000; // 2h
-
-  const CART_KEY  ='tachi_cart_v1';
+  const CART_TTL_MS=2*60*60*1000; // 2h
+  const CLIENT_TTL_MS=2*60*60*1000; // 2h
+  const CART_KEY='tachi_cart_v1';
   const CLIENT_KEY='tachi_client_v1';
-
-  /* ======= Estado APP (¡cantidades primero!) ======= */
-  let cantidades = {}; // <-- Inicializado antes de cualquier uso
-
   const loadCart   = () => getWithTTL(CART_KEY, {});
   const saveCart   = (obj) => setWithTTL(CART_KEY, obj,   CART_TTL_MS);
   const loadClient = () => getWithTTL(CLIENT_KEY, {});
@@ -560,7 +530,7 @@
     });
   }
 
-  /* ======= AJUSTES ======= */
+  /* ======= AJUSTES / CARGA PRODUCTOS ======= */
   async function cargarAjustes(){
     try{
       const r = await fetch(asset('data/ajustes.json'));
@@ -584,18 +554,8 @@
     }
   }
 
-  /* ======= Estado DOM ======= */
-  const listaEl=document.getElementById('lista'),
-        subtotalEl=document.getElementById('subtotal'), totalEl=document.getElementById('total'),
-        envioLineEl=document.getElementById('envioLine'), envioCostoEl=document.getElementById('envioCosto'),
-        emptyMsg=document.getElementById('emptyMsg'), btnWA=document.getElementById('btn-whatsapp'),
-        nombreEl=document.getElementById('nombre');
+  const cantidades = {}; // <— importante: declarar antes de usar
 
-  const fab=document.getElementById('cartFab'), fabCount=document.getElementById('fabCount'), fabTotal=document.getElementById('fabTotal');
-  const sheet=document.getElementById('cartSheet'), sheetClose=document.getElementById('sheetClose'), backdrop=document.getElementById('sheetBackdrop');
-  let sheetOpen=false, METRICS_TOTAL=0,METRICS_COUNT=0,METRICS_ENVIO='';
-
-  /* ======= Render productos (con soporte de Promos) ======= */
   function renderProductos(contId,data){
     const cont=document.getElementById(contId);cont.innerHTML='';
     const norm=normalizar(data);
@@ -635,7 +595,6 @@
     }
   }
 
-  /* ======= Mezclar Promos arriba ======= */
   function mergePromos(baseData, promosData){
     const out = baseData && Array.isArray(baseData.categorias) ? { categorias:[...baseData.categorias] } : { categorias:[] };
     const promos = (promosData && Array.isArray(promosData.promos)) ? promosData.promos : [];
@@ -658,16 +617,14 @@
     return out;
   }
 
-  /* ======= Cargar JSON ======= */
   async function cargarProductos(){
     await cargarAjustes();
 
-    // limpiar si expiró (sin mostrar avisos)
     if(isExpired(CART_KEY))   localStorage.removeItem(CART_KEY);
     if(isExpired(CLIENT_KEY)) localStorage.removeItem(CLIENT_KEY);
 
-    const rotiseria = fetch(asset('data/productos-rotiseria.json')).then(r=>r.json()).catch(()=>{ return {categorias:[]} });
-    const bebidas   = fetch(asset('data/productos-bebidas.json')).then(r=>r.json()).catch(()=>{ return {categorias:[]} });
+    const rotiseria = fetch(asset('data/productos-rotiseria.json')).then(r=>r.json()).catch(()=>({categorias:[]}));
+    const bebidas   = fetch(asset('data/productos-bebidas.json')).then(r=>r.json()).catch(()=>({categorias:[]}));
     const promosR   = fetch(asset('data/promos-rotiseria.json')).then(r=>r.json()).catch(()=>({}));
     const promosB   = fetch(asset('data/promos-bebidas.json')).then(r=>r.json()).catch(()=>({}));
 
@@ -690,7 +647,7 @@
   const hydrateCart=()=>Object.entries(loadCart()).forEach(([id,q])=>{if(q>0){cantidades[id]=q;const el=document.getElementById(`cantidad-${id}`);if(el)el.textContent=q}});
   function hydrateClient(){
     const c=loadClient();
-    if(c.name)nombreEl.value=c.name;
+    if(c.name)document.getElementById('nombre').value=c.name;
     if(c.address)document.getElementById('direccion').value=c.address;
   }
 
@@ -706,7 +663,7 @@
     if(delta>0&&btn){
       btn.classList.add('btn-pop');btn.addEventListener('animationend',()=>btn.classList.remove('btn-pop'),{once:true});
       const row=btn.closest('.producto');row.classList.add('row-flash');row.addEventListener('animationend',()=>row.classList.remove('row-flash'),{once:true});
-      fab.classList.add('bump');fab.addEventListener('animationend',()=>fab.classList.remove('bump'),{once:true});
+      const fab=document.getElementById('cartFab');fab.classList.add('bump');fab.addEventListener('animationend',()=>fab.classList.remove('bump'),{once:true});
     }
     try{
       const row=document.getElementById(`cantidad-${id}`)?.closest('.producto');
@@ -717,13 +674,23 @@
   }
   const countItems=()=>Object.values(cantidades).reduce((a,b)=>a+(b||0),0);
   function setFabVisible(v){
-    if(!fab)return;
+    const fab=document.getElementById('cartFab'); if(!fab)return;
     if(v){ fab.removeAttribute('hidden'); requestAnimationFrame(()=>fab.classList.remove('hide')); }
     else{ fab.classList.add('hide'); setTimeout(()=>fab.setAttribute('hidden',''),200); }
   }
 
   /* ======= Totales + validación por horario ======= */
   function actualizarResumen(){
+    const listaEl=document.getElementById('lista'),
+          subtotalEl=document.getElementById('subtotal'),
+          totalEl=document.getElementById('total'),
+          envioLineEl=document.getElementById('envioLine'),
+          envioCostoEl=document.getElementById('envioCosto'),
+          emptyMsg=document.getElementById('emptyMsg'),
+          btnWA=document.getElementById('btn-whatsapp'),
+          nombreEl=document.getElementById('nombre');
+    const fabCount=document.getElementById('fabCount'), fabTotal=document.getElementById('fabTotal');
+
     listaEl.innerHTML='';let subtotal=0,count=0;
     const tiene = { rotiseria:0, bebidas:0 };
 
@@ -746,7 +713,7 @@
     totalEl.textContent=formatARS(subtotal+envioCosto);
 
     emptyMsg.hidden=count>0; fabCount.textContent=count; fabTotal.textContent=formatARS(subtotal+envioCosto);
-    setFabVisible(count>0&&!sheetOpen);
+    setFabVisible(count>0&&!window.sheetOpen);
 
     // Validación por horarios
     let puedePedir = true; let motivos = [];
@@ -760,16 +727,16 @@
     })();
     estado.textContent = puedePedir ? '' : motivos.join(' ');
 
-    // 🔧 Importante: NO deshabilitar por falta de selección de envío/retiro
     btnWA.disabled = !(count>0 && nombreEl.value.trim().length>0 && puedePedir);
 
-    METRICS_TOTAL=subtotal+envioCosto;METRICS_COUNT=count;METRICS_ENVIO=envioSel||'';
+    window.METRICS_TOTAL=subtotal+envioCosto;window.METRICS_COUNT=count;window.METRICS_ENVIO=envioSel||'';
 
     actualizarPasos();
   }
 
   /* ======= Guardar inputs cliente + analíticas ======= */
-  nombreEl.addEventListener('input',()=>{
+  document.getElementById('nombre').addEventListener('input',()=>{
+    const nombreEl=document.getElementById('nombre');
     saveClient({...loadClient(),name:nombreEl.value.trim()});
     logEvent('name_input',{len:nombreEl.value.trim().length});
     actualizarResumen(); actualizarPasos();
@@ -821,16 +788,16 @@
     document.getElementById('btn-bebidas').classList.toggle('active', sec==='bebidas');
   }
 
-  /* ======= WhatsApp ======= */
+  /* ======= WhatsApp (y registrar en hoja) ======= */
   function enviarPedido(){
-    const name=document.getElementById('nombre').value.trim(),
-          addr=document.getElementById('direccion').value.trim();
+    const nombreEl=document.getElementById('nombre');
+    const name=nombreEl.value.trim(),addr=document.getElementById('direccion').value.trim();
     const envioInput=document.querySelector('input[name=envio]:checked');
     const segmented = document.querySelector('.segmented');
 
     if(!envioInput){
       const wrap = document.getElementById('toastWrap');
-      wrap.style.bottom = sheetOpen ? 'calc(100vh - 76vh)' : '84px';
+      wrap.style.bottom = window.sheetOpen ? 'calc(100vh - 76vh)' : '84px';
       showToast('📦 Seleccioná Retiro o Envío', 'error');
       if(segmented){
         segmented.style.boxShadow = '0 0 0 3px rgba(255, 204, 0, 0.6)';
@@ -874,25 +841,28 @@
     msg+=envio==='envio'?`Envío a domicilio a: ${addr} (+${formatARS(SHIPPING)})\n`:'Retiro en el local\n';
     msg+=`Total: ${formatARS(total)}`;
 
-    logEvent('order_wsp',{ order_id, shipping:envio, shipping_cost, subtotal, total, items });
+    // Registrar en Apps Script -> Hoja "Pedidos"
+    logEvent('order_wsp',{ order_id, shipping:envio, shipping_cost, subtotal, total, name, address:addr, items });
 
-    // Disparar envío inmediato de analíticas (no bloquea)
+    // Enviar analíticas inmediatamente (no bloquea)
     flushEvents('order');
 
     window.open(`https://wa.me/${WSP_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank');
     showToast('Abriendo WhatsApp...','ok');
   }
 
-  /* ======= Sheet ======= */
+  /* ======= Sheet (abrir/cerrar con focus trap) ======= */
+  const sheet=document.getElementById('cartSheet'), sheetClose=document.getElementById('sheetClose'), backdrop=document.getElementById('sheetBackdrop');
+  window.sheetOpen=false;
   function trapFocus(e){
-    if(!sheetOpen||e.key!=='Tab')return;
+    if(!window.sheetOpen||e.key!=='Tab')return;
     const f=sheet.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
     if(!f.length)return;const first=f[0],last=f[f.length-1];
     if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
     else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
   }
   function openSheet(){
-    if(sheetOpen)return;sheetOpen=true;document.body.style.overflow='hidden';
+    if(window.sheetOpen)return;window.sheetOpen=true;document.body.style.overflow='hidden';
     sheet.classList.add('open');backdrop.classList.add('open');setFabVisible(false);
     setTimeout(()=>sheetClose.focus(),10);
     document.addEventListener('keydown',trapFocus);
@@ -900,7 +870,7 @@
     logEvent('sheet_open');
   }
   function closeSheet(){
-    if(!sheetOpen)return;sheetOpen=false;document.body.style.overflow='';
+    if(!window.sheetOpen)return;window.sheetOpen=false;document.body.style.overflow='';
     sheet.classList.remove('open');backdrop.classList.remove('open');
     actualizarResumen();document.removeEventListener('keydown',trapFocus);
     logEvent('sheet_close');
@@ -929,7 +899,7 @@
       entries.forEach(entry=>{
         if(entry.isIntersecting){ document.getElementById('cartFab').classList.add('hide'); }
         else{
-          if(countItems()>0 && !sheetOpen){
+          if(countItems()>0 && !window.sheetOpen){
             const f=document.getElementById('cartFab');
             f.removeAttribute('hidden'); f.classList.remove('hide');
           }
