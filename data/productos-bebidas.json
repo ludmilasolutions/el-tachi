@@ -36,7 +36,7 @@
       "productos": [
         { "nombre": "Lata Schneider", "precio": 1700 },
         { "nombre": "Lata Quilmes", "precio": 1600 },
-        { "nombre": "Lata Brahma", "precio": 1600 }
+        { "nombre": "Lata Brahma", "precio": 1600 },
         { "nombre": "Lata Santa Fe", "precio": 1700 },
         { "nombre": "Lata 1890", "precio": 1500 },
         { "nombre": "Lata 361", "precio": 1300 },
