@@ -19,7 +19,7 @@
       "mensaje_cierre": "Por vacaciones"
     },
     "almacen": {
-      "cerrado": false,
+      "cerrado": true,
       "dias": [
         0,
         1,
