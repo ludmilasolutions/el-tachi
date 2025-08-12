@@ -12,14 +12,14 @@
       ],
       "rangos": [
         {
-          "desde": "18:00",
+          "desde": "19:30",
           "hasta": "22:30"
         }
       ],
       "mensaje_cierre": "Por vacaciones"
     },
     "almacen": {
-      "cerrado": true,
+      "cerrado": false,
       "dias": [
         0,
         1,
