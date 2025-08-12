@@ -1,20 +1,4 @@
 {
   "promos": [
-    {
-      "nombre": "Pack Yerba + Azúcar",
-      "precio": 3800,
-      "precio_original": 4300,
-      "tag": "Pack",
-      "desc": "Yerba 1kg + Azúcar 1kg",
-      "vigencia_hasta": "2025-12-31"
-    },
-    {
-      "nombre": "2x Gaseosa 2.25L",
-      "precio": 4600,
-      "precio_original": 5000,
-      "tag": "Promo",
-      "desc": "Cualquier sabor",
-      "vigencia_hasta": "2025-12-31"
-    }
-  ]
+
 }
