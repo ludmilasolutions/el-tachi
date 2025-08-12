@@ -192,81 +192,6 @@
     .btn:hover{transform:translateY(-1px)}
     .btn-primary{background:var(--amarillo);color:#001122;border-color:var(--amarillo)}
     .promo-note{font-size:.9rem;opacity:.9}
-
-    /* ---------- Sheet ---------- */
-    .sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.32);opacity:0;pointer-events:none;transition:opacity .22s ease;z-index:98}
-    .sheet-backdrop.open{opacity:1;pointer-events:auto}
-    .sheet{
-      position:fixed;left:0;right:0;bottom:0;transform:translateY(100%);
-      background:var(--card);border-top-left-radius:16px;border-top-right-radius:16px;
-      box-shadow:var(--shadow);transition:transform .28s ease-out;max-height:92vh;
-      display:grid;grid-template-rows:auto 1fr;z-index:99
-    }
-    .sheet.open{transform:translateY(0)}
-    .sheet-header{
-      position:sticky; top:0; background:var(--card);
-      border-bottom:1px solid #e8e8e8;
-      border-top-left-radius:16px;border-top-right-radius:16px;
-      z-index:5;
-      padding:.6rem .8rem .4rem;
-      padding-right:56px;
-    }
-    .sheet-handle{
-      width:36px;height:4px;border-radius:999px;background:#d7d7d7;
-      margin:.2rem auto;position:absolute;left:50%;transform:translateX(-50%);top:6px
-    }
-    .sheet-title{margin:0 0 .35rem;font-size:1.05rem;font-weight:800;color:#0b376d}
-    .sheet-close{
-      position:absolute; right:8px; top:6px;
-      width:44px; height:44px; display:grid; place-items:center;
-      background:#ffffffcc; backdrop-filter:saturate(1.2) blur(2px);
-      border:1px solid #d7d7d7; border-radius:12px;
-      font-size:28px; line-height:1; color:var(--azul);
-      cursor:pointer; z-index:6;
-      -webkit-tap-highlight-color:transparent;
-    }
-    .sheet-close:active{transform:scale(.98)}
-    .sheet-body{overflow:auto;padding:.8rem .9rem 1rem}
-    @media(min-width:800px){
-      .sheet{left:50%;right:auto;transform:translate(-50%,100%);width:720px;border-radius:16px}
-      .sheet.open{transform:translate(-50%,0)}
-    }
-
-    /* ---------- Modal ---------- */
-    .dialog-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;place-items:center;z-index:101}
-    .dialog-backdrop.open{display:grid}
-    .dialog{
-      background:#fff;border-radius:14px;width:90%;max-width:340px;
-      box-shadow:0 16px 32px rgba(0,0,0,.28);padding:1.4rem 1.2rem;text-align:center;
-      animation:popin .24s ease-out
-    }
-    @keyframes popin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-    .dialog h3{margin:.2rem 0 1rem;font-size:1.25rem;color:#0b376d}
-    .dialog p{margin:0 0 1.2rem}
-    .dialog-actions{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap}
-    .dialog-actions .btn{flex:1 1 120px}
-
-    /* ——— PASOS EN SHEET ——— */
-    .steps {
-      display:flex; gap:.5rem; align-items:center;
-      font-weight:800; font-size:.9rem; color:#64748b; white-space:nowrap;
-    }
-    .step {display:flex; align-items:center; gap:.4rem}
-    .step .dot {width:10px; height:10px; border-radius:999px; background:#cbd5e1}
-    .step.active {color:#0b376d}
-    .step.active .dot {background:var(--amarillo)}
-
-    /* ——— SEGMENTED CONTROL ENVÍO/RETIRO ——— */
-    .segmented {display:flex; gap:.5rem; margin:.6rem 0}
-    .segmented input{display:none}
-    .segmented label{
-      flex:1; text-align:center; padding:.7rem 1rem; border:1px solid #cfd3dc;
-      border-radius:12px; cursor:pointer; font-weight:800; background:#fff; transition:.15s;
-    }
-    .segmented input:checked + label{
-      background:var(--azul); color:var(--amarillo); border-color:var(--azul);
-      box-shadow:0 6px 16px rgba(0,0,0,.12);
-    }
   </style>
 </head>
 <body>
@@ -405,11 +330,13 @@
   let SHIPPING = 1000;
   let WSP_NUMBER = '3415923882';
 
-  /* ======= Analytics ======= */
+  /* ======= Analytics (local + webhook) ======= */
   const ANALYTICS_KEY='tachi_events_v1';
   function getEvents(){try{return JSON.parse(localStorage.getItem(ANALYTICS_KEY)||'[]')}catch{return[]}}
   function saveEvents(l){localStorage.setItem(ANALYTICS_KEY,JSON.stringify(l))}
   function logEvent(t,d={}){const e={type:t,ts:new Date().toISOString(),path:location.pathname+location.search,...d};const l=getEvents();l.push(e);saveEvents(l)}
+  // ← pegamos tu webhook de Google Apps Script:
+  const ANALYTICS_WEBHOOK = 'https://script.google.com/macros/s/AKfycbztFnAcPkOfcAuL3b5irzDVSKeM1EZuC3BZQS8ILWElFo1gZK8KokJnwmKBS-RYzdH0/exec';
 
   /* ======= CSV ======= */
   const SEP=Intl.NumberFormat().format(1.1).includes(',')?';':',';
@@ -827,6 +754,31 @@
     msg+=`Total: ${formatARS(total)}`;
 
     logEvent('order_wsp',{ order_id, shipping:envio, shipping_cost, subtotal, total, items });
+
+    // ===== Enviar a Google Sheet (no-cors: fire-and-forget) =====
+    (function sendAnalyticsOrder(){
+      const payload = {
+        ts: new Date().toISOString(),
+        order_id,
+        name,
+        shipping: envio,
+        address: addr,
+        subtotal,
+        shipping_cost,
+        total,
+        items,
+        source: 'web',
+        ua: navigator.userAgent
+      };
+      try {
+        fetch(ANALYTICS_WEBHOOK, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify(payload)
+        });
+      } catch(e) {}
+    })();
 
     window.open(`https://wa.me/${WSP_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank');
     showToast('Abriendo WhatsApp...','ok');
