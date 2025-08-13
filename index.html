@@ -399,7 +399,7 @@
   const ANALYTICS_KEY='tachi_events_v1';
 
   // ⬇️⬇️⬇️ REEMPLAZAR por la URL de tu Web App de Apps Script (Deploy > New deployment > Web app)
-  const ANALYTICS_WEBHOOK='TU_URL_WEB_APP_DE_APPS_SCRIPT_AQUI';
+  const ANALYTICS_WEBHOOK='https://script.google.com/macros/s/AKfycbxSvUsopEvQQ_3manPudE2k3979ojfxwZoOFE5Re0vblwH9Q7UX0eUjSsH17-CzUrFZ/exec';
   // ⬆️⬆️⬆️
 
   function getEvents(){try{return JSON.parse(localStorage.getItem(ANALYTICS_KEY)||'[]')}catch{return[]}}
