@@ -3,7 +3,7 @@
     {
       "categoria": "🥤 Gaseosas – Retornables",
       "productos": [
-        { "nombre": "Coca x 2L", "precio": 2900 },
+        { "nombre": "Coca x 2L", "precio": 3000 },
         { "nombre": "Fanta x 2L", "precio": 2900 },
         { "nombre": "Sprite x 2L", "precio": 2900 }
       ]
@@ -19,6 +19,8 @@
         { "nombre": "Sprite x 500cc", "precio": 1500 },
         { "nombre": "Fanta x 500cc", "precio": 1500 },
         { "nombre": "Coca lata", "precio": 1400 },
+        { "nombre": "Sprite lata", "precio": 1400 },
+        { "nombre": "Fanta lata", "precio": 1400 },
         { "nombre": "Coca vidrio chica", "precio": 1000 }
       ]
     },
