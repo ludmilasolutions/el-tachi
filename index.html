@@ -398,7 +398,7 @@
   /* ======= Analytics (envía a tu hoja "Pedidos") ======= */
   const ANALYTICS_KEY='tachi_events_v1';
   // 👉 Tu Apps Script (nuevo)
-  const ANALYTICS_WEBHOOK='https://script.google.com/macros/s/AKfycbzgLh_khnZwSTJo09clNz4M3ZD5q75rquPGkCdC8fFpXSWc-yGs2TWtXW-Hq8SOmP88/exec';
+  const ANALYTICS_WEBHOOK='https://script.google.com/macros/s/AKfycbwqKmsAlphSNPSf694pP4ymXqaASu-AJt6pMYjIy8ebxwWKaYv7IWNjPkQIXf76P9En/exec';
 
   function getEvents(){try{return JSON.parse(localStorage.getItem(ANALYTICS_KEY)||'[]')}catch{return[]}}
   function saveEvents(l){localStorage.setItem(ANALYTICS_KEY,JSON.stringify(l))}
