@@ -397,8 +397,10 @@
 
   /* ======= Analytics (envía a tu hoja "Pedidos") ======= */
   const ANALYTICS_KEY='tachi_events_v1';
-  // 👉 Tu Apps Script (nuevo)
-  const ANALYTICS_WEBHOOK='https://script.google.com/macros/s/AKfycbzWUzc8g7dcG2fZhpddLFBhMyf5T_pznypfGXcXOOI9zCyolq8ycmb0nhNZFDFI5iGS/exec';
+
+  // ⬇️⬇️⬇️ REEMPLAZAR por la URL de tu Web App de Apps Script (Deploy > New deployment > Web app)
+  const ANALYTICS_WEBHOOK='TU_URL_WEB_APP_DE_APPS_SCRIPT_AQUI';
+  // ⬆️⬆️⬆️
 
   function getEvents(){try{return JSON.parse(localStorage.getItem(ANALYTICS_KEY)||'[]')}catch{return[]}}
   function saveEvents(l){localStorage.setItem(ANALYTICS_KEY,JSON.stringify(l))}
@@ -428,6 +430,7 @@
   }
   window.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden'){ flushEvents('hidden'); }});
   window.addEventListener('beforeunload',()=>{ flushEvents('unload'); });
+  window.addEventListener('online',()=>scheduleFlush(250));
   setInterval(()=>flushEvents('interval'), 20000);
 
   /* ======= CSV helper (por si querés exportar) ======= */
@@ -757,7 +760,7 @@
   const dlgBackdrop=document.getElementById('dlgClearBackdrop'),
         dlgYes=document.getElementById('dlgClearYes'),
         dlgNo=document.getElementById('dlgClearNo');
-  function abrirDialogoVaciar(){dlgBackdrop.classList.add('open');dlgYes.focus()}
+  function abrirDialogoVaciar(){dlgBackdrop.classList.add('open');dlgYes.focus())}
   function cerrarDialogoVaciar(){dlgBackdrop.classList.remove('open')}
   dlgNo.addEventListener('click',cerrarDialogoVaciar);
   dlgBackdrop.addEventListener('click',e=>{if(e.target===dlgBackdrop)cerrarDialogoVaciar()});
@@ -844,6 +847,7 @@
     msg+=`Total: ${formatARS(total)}`;
 
     // Registrar en Apps Script -> Hoja "Pedidos"
+    // ⚠️ Este evento es el que consume tu normalizePayload (type: 'order_wsp')
     logEvent('order_wsp',{ order_id, shipping:envio, shipping_cost, subtotal, total, name, address:addr, items });
 
     // Enviar analíticas inmediatamente (no bloquea)
