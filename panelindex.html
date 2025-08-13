@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Panel de Pedidos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <style>
+    :root{
+      --bg:#0b1220; --card:#0f172a; --muted:#94a3b8; --text:#e2e8f0;
+      --yellow:#facc15; --green:#22c55e; --orange:#fb923c; --gray:#334155;
+      --border: #1f2937; --badge:#111827;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text)}
+    header{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:12px 16px;border-bottom:1px solid var(--border);background:#0b1220;position:sticky;top:0;z-index:10}
+    header h1{font-size:1.1rem;margin:0;font-weight:800;letter-spacing:.2px}
+    .toolbar{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+    .search{display:flex;align-items:center;gap:.5rem;background:#0b1328;border:1px solid var(--border);border-radius:10px;padding:8px 10px;min-width:240px}
+    .search input{background:transparent;border:0;outline:0;color:var(--text);width:180px}
+    .refresh{border:1px solid var(--border);background:#0b1328;color:var(--text);padding:8px 12px;border-radius:10px;cursor:pointer}
+    .columns{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:12px}
+    @media(max-width:1100px){.columns{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:640px){.columns{grid-template-columns:1fr}}
+    .col{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;min-height:220px}
+    .col header{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(255,255,255,.04),transparent);border-bottom:1px solid var(--border);padding:10px 12px}
+    .col h2{margin:0;font-size:.95rem;letter-spacing:.3px}
+    .badge{display:inline-flex;align-items:center;gap:.4rem;background:#111827;color:#e5e7eb;border:1px solid #1f2937;border-radius:999px;padding:.15rem .55rem;font-size:.75rem}
+    .list{padding:10px;display:grid;gap:10px;overflow:auto}
+    .card{background:#0b1328;border:1px solid var(--border);border-radius:12px;padding:10px;display:grid;gap:8px}
+    .row{display:flex;justify-content:space-between;gap:8px;align-items:center}
+    .name{font-weight:800}
+    .muted{color:var(--muted)}
+    .items{white-space:pre-wrap;border-top:1px dashed var(--border);padding-top:6px;font-size:.95rem;line-height:1.35}
+    .chips{display:flex;flex-wrap:wrap;gap:6px}
+    .chip{background:#111827;border:1px solid #1f2937;color:#e5e7eb;border-radius:999px;padding:.15rem .55rem;font-size:.75rem}
+    .total{font-weight:900}
+    .actions{display:flex;gap:6px;flex-wrap:wrap}
+    .btn{border:1px solid var(--border);background:#111827;color:#e5e7eb;border-radius:10px;padding:7px 10px;cursor:pointer}
+    .btn:hover{transform:translateY(-1px)}
+    .btn-prep{background:#1f2937}
+    .btn-listo{background:#133015;border-color:#234d1d}
+    .btn-entregado{background:#27272a}
+    .btn-ticket{background:#0b1220}
+    .pill{font-weight:800;color:#0ea5e9}
+    .pill.envio{color:#f97316}
+    .pill.retiro{color:#22c55e}
+    .empty{padding:16px;color:#94a3b8;font-style:italic}
+    footer{padding:10px 12px;border-top:1px solid var(--border);font-size:.85rem;color:#9aa4b2}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📦 Panel de Pedidos</h1>
+    <div class="toolbar">
+      <div class="search">
+        🔎
+        <input id="q" type="search" placeholder="Buscar por nombre, dirección..." oninput="render()"/>
+      </div>
+      <button class="refresh" onclick="manualRefresh()">Actualizar</button>
+      <span class="muted" id="lastSync"></span>
+    </div>
+  </header>
+
+  <section class="columns">
+    <div class="col" id="col-Nuevo">
+      <header><h2>Nuevo</h2><span class="badge" id="cnt-Nuevo">0</span></header>
+      <div class="list" id="list-Nuevo"></div>
+    </div>
+    <div class="col" id="col-En preparación">
+      <header><h2>En preparación</h2><span class="badge" id="cnt-En preparación">0</span></header>
+      <div class="list" id="list-En preparación"></div>
+    </div>
+    <div class="col" id="col-Listo">
+      <header><h2>Listo</h2><span class="badge" id="cnt-Listo">0</span></header>
+      <div class="list" id="list-Listo"></div>
+    </div>
+    <div class="col" id="col-Entregado">
+      <header><h2>Entregado</h2><span class="badge" id="cnt-Entregado">0</span></header>
+      <div class="list" id="list-Entregado"></div>
+    </div>
+  </section>
+
+  <footer>
+    Sugerencia: abrí este panel en una tablet cerca de la cocina. Se actualiza solo cada 5s y suena cuando entra un pedido nuevo.
+  </footer>
+
+  <audio id="ding" preload="auto">
+    <source src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" type="audio/ogg">
+  </audio>
+
+  <script>
+    let DATA = [];
+    let LAST_COUNT = 0;
+    let TIMER = null;
+
+    function fmtMoney(n){ try{return new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(Number(n||0))}catch{return '$'+(n||0)} }
+    function nowStr(){ const d=new Date(); return d.toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit', second:'2-digit'}) }
+
+    function manualRefresh(){
+      document.getElementById('lastSync').textContent = 'Actualizando...';
+      fetchData();
+    }
+
+    function fetchData(){
+      google.script.run.withSuccessHandler(rows=>{
+        const prev = LAST_COUNT;
+        DATA = Array.isArray(rows)? rows : [];
+        LAST_COUNT = DATA.length;
+        render();
+        document.getElementById('lastSync').textContent = 'Actualizado ' + nowStr();
+
+        if (LAST_COUNT > prev) {
+          // suena si hay nuevos
+          const ding = document.getElementById('ding');
+          ding && ding.play().catch(()=>{});
+        }
+      }).getPedidosData();
+    }
+
+    function render(){
+      const q = (document.getElementById('q').value||'').toLowerCase().trim();
+      const buckets = {'Nuevo':[], 'En preparación':[], 'Listo':[], 'Entregado':[]};
+
+      DATA.forEach(p=>{
+        const texto = [p.name, p.address, p.items, p.method, p.estado].join(' ').toLowerCase();
+        if (!q || texto.includes(q)) {
+          const estado = p.estado || 'Nuevo';
+          (buckets[estado] || (buckets[estado]=[])).push(p);
+        }
+      });
+
+      ['Nuevo','En preparación','Listo','Entregado'].forEach(k=>{
+        const cont = document.getElementById('list-'+k);
+        const cnt = document.getElementById('cnt-'+k);
+        cont.innerHTML = '';
+        const arr = buckets[k] || [];
+        cnt.textContent = arr.length;
+
+        if (!arr.length){
+          cont.innerHTML = '<div class="empty">Sin pedidos.</div>';
+          return;
+        }
+
+        arr.forEach(p=>{
+          const method = (p.method||'').toLowerCase();
+          const pillClass = method==='envio' ? 'pill envio' : 'pill retiro';
+          const itemsTxt = String(p.items||'').trim() || '(sin items)';
+          const html = `
+            <div class="card">
+              <div class="row">
+                <div>
+                  <div class="name">${p.name||'-'}</div>
+                  <div class="muted" title="${p.ts_str||''}">${p.ts_str||''}</div>
+                </div>
+                <div class="chips">
+                  <span class="${pillClass}">${method==='envio'?'Envío':'Retiro'}</span>
+                  <span class="chip">Items: ${p.items_count||0}</span>
+                </div>
+              </div>
+
+              <div class="muted">${(p.address && method==='envio')? ('📍 '+p.address) : ''}</div>
+
+              <div class="items">${itemsTxt}</div>
+
+              <div class="row">
+                <div class="muted">Subt: <b>${fmtMoney(p.subtotal_num)}</b> &nbsp;·&nbsp; Env: <b>${fmtMoney(p.shipping_num)}</b></div>
+                <div class="total">${fmtMoney(p.total_num)}</div>
+              </div>
+
+              <div class="actions">
+                ${p.estado!=='En preparación'?`<button class="btn btn-prep" onclick="setEstado('${encodeURIComponent(p.ts_str)}','En preparación')">En prep.</button>`:''}
+                ${p.estado!=='Listo'?`<button class="btn btn-listo" onclick="setEstado('${encodeURIComponent(p.ts_str)}','Listo')">Listo</button>`:''}
+                ${p.estado!=='Entregado'?`<button class="btn btn-entregado" onclick="setEstado('${encodeURIComponent(p.ts_str)}','Entregado')">Entregado</button>`:''}
+                <button class="btn btn-ticket" onclick="printTicket(${encodeURIComponent(JSON.stringify(p))})">Ticket</button>
+              </div>
+            </div>`;
+          const wrapper = document.createElement('div');
+          wrapper.innerHTML = html;
+          cont.appendChild(wrapper.firstElementChild);
+        });
+      });
+    }
+
+    function setEstado(tsEnc, estado){
+      const ts = decodeURIComponent(tsEnc);
+      google.script.run.withSuccessHandler(fetchData).updateEstadoPedido(ts, estado);
+    }
+
+    function printTicket(pJson){
+      const p = JSON.parse(decodeURIComponent(pJson));
+      const win = window.open('', '_blank', 'width=420,height=620');
+      const items = (String(p.items||'').split('\n').map(l=>`<li>${l.replace(/^•\s?/, '')}</li>`).join('')) || '<li>–</li>';
+      win.document.write(`
+        <html><head><meta charset="utf-8"><title>Ticket</title>
+          <style>
+            body{font-family:ui-monospace, SFMono-Regular, Menlo, monospace; padding:12px}
+            h2{margin:0 0 4px 0}
+            .muted{color:#555}
+            ul{margin:6px 0 0 18px; padding:0}
+            .row{display:flex; justify-content:space-between; margin-top:6px}
+            .tot{font-weight:800}
+            hr{border:none;border-top:1px dashed #ccc;margin:8px 0}
+          </style>
+        </head>
+        <body onload="setTimeout(()=>print(),200)">
+          <h2>Rotisería El Tachi</h2>
+          <div class="muted">${p.ts_str||''}</div>
+          <div><b>Cliente:</b> ${p.name||'-'}</div>
+          <div><b>Método:</b> ${p.method||'-'}</div>
+          ${p.method==='envio' && p.address ? `<div><b>Dirección:</b> ${p.address}</div>`:''}
+          <hr/>
+          <div><b>Ítems</b></div>
+          <ul>${items}</ul>
+          <hr/>
+          <div class="row"><span>Subtotal</span><span>${fmtMoney(p.subtotal_num)}</span></div>
+          <div class="row"><span>Envío</span><span>${fmtMoney(p.shipping_num)}</span></div>
+          <div class="row tot"><span>Total</span><span>${fmtMoney(p.total_num)}</span></div>
+        </body></html>
+      `);
+      win.document.close();
+    }
+
+    // auto refresh
+    fetchData();
+    TIMER = setInterval(fetchData, 5000);
+  </script>
+</body>
+</html>
