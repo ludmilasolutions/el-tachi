@@ -5,14 +5,12 @@
     "rotiseria": {
       "cerrado": false,
       "dias": [
-        "4",
-        "5",
-        "6",
-        "0"
+        "3",
+        "4"
       ],
       "rangos": [
         {
-          "desde": "19:30",
+          "desde": "18:00",
           "hasta": "22:30"
         }
       ],
