@@ -398,7 +398,7 @@
   /* ======= Analytics (envía a tu hoja "Pedidos") ======= */
   const ANALYTICS_KEY='tachi_events_v1';
 
-  // ⬇️⬇️⬇️ REEMPLAZAR por la URL de tu Web App de Apps Script (Deploy > New deployment > Web app)
+  // ⬇️⬇️⬇️ REEMPLAZAR por la URL de tu Web App de Apps Script
   const ANALYTICS_WEBHOOK='https://script.google.com/macros/s/AKfycbz_pZVIydPyLn98VfzaeSzMRbrJ5BsyfTDlCTU_dBm8qy8gV2lYrobcKqJCU5OhPhyn/exec';
   // ⬆️⬆️⬆️
 
@@ -416,17 +416,16 @@
     let sent=false;
     try{
       if(navigator.sendBeacon){
-        const blob=new Blob([JSON.stringify(payload)],{type:'text/plain'}); // simple content-type → sin preflight
+        const blob=new Blob([JSON.stringify(payload)],{type:'text/plain'});
         sent=navigator.sendBeacon(ANALYTICS_WEBHOOK, blob);
       }
     }catch(e){}
     if(!sent){
       try{
-        // Fallback sin headers personalizados para evitar preflight CORS
         fetch(ANALYTICS_WEBHOOK,{method:'POST',mode:'no-cors',keepalive:true,body:JSON.stringify(payload)});
       }catch(e){}
     }
-    saveEvents([]); // limpiar buffer
+    saveEvents([]);
   }
   window.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden'){ flushEvents('hidden'); }});
   window.addEventListener('beforeunload',()=>{ flushEvents('unload'); });
@@ -847,14 +846,26 @@
     msg+=`Total: ${formatARS(total)}`;
 
     // Registrar en Apps Script -> Hoja "Pedidos"
-    // ⚠️ Este evento es el que consume tu normalizePayload (type: 'order_wsp')
     logEvent('order_wsp',{ order_id, shipping:envio, shipping_cost, subtotal, total, name, address:addr, items });
+
+    // Guardar “último pedido” para seguimiento opcional
+    try{ localStorage.setItem('tachi_last_order', order_id); }catch{}
 
     // Enviar analíticas inmediatamente (no bloquea)
     flushEvents('order');
 
+    // Abrir WhatsApp
     window.open(`https://wa.me/${WSP_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank');
     showToast('Abriendo WhatsApp...','ok');
+
+    // ⬇️⬇️⬇️ Vaciar carrito tras enviar
+    Object.keys(cantidades).forEach(k=>cantidades[k]=0);
+    document.querySelectorAll('[id^="cantidad-"]').forEach(el=>el.textContent='0');
+    saveCart(cantidades);
+    actualizarResumen();
+    closeSheet(); // cerrar el sheet del carrito
+    showToast('Pedido enviado. Carrito vaciado ✅','ok',2000);
+    // ⬆️⬆️⬆️
   }
 
   /* ======= Sheet (abrir/cerrar con focus trap) ======= */
