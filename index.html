@@ -397,7 +397,7 @@
 
   /* ======= Analytics (envía a tu hoja "Pedidos") ======= */
   const ANALYTICS_KEY='tachi_events_v1';
-  // 👉 Tu nuevo Apps Script:
+  // 👉 Tu Apps Script (nuevo)
   const ANALYTICS_WEBHOOK='https://script.google.com/macros/s/AKfycbz516cMmEFh-rHXVAS3Af5uY8TACJRcnkmbBo9lPwIblaSKU7_mJQXQikVSBXQlJo4n/exec';
 
   function getEvents(){try{return JSON.parse(localStorage.getItem(ANALYTICS_KEY)||'[]')}catch{return[]}}
@@ -414,13 +414,14 @@
     let sent=false;
     try{
       if(navigator.sendBeacon){
-        const blob=new Blob([JSON.stringify(payload)],{type:'application/json'});
+        const blob=new Blob([JSON.stringify(payload)],{type:'text/plain'}); // simple content-type → sin preflight
         sent=navigator.sendBeacon(ANALYTICS_WEBHOOK, blob);
       }
     }catch(e){}
     if(!sent){
       try{
-        fetch(ANALYTICS_WEBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+        // Fallback sin headers personalizados para evitar preflight CORS
+        fetch(ANALYTICS_WEBHOOK,{method:'POST',mode:'no-cors',keepalive:true,body:JSON.stringify(payload)});
       }catch(e){}
     }
     saveEvents([]); // limpiar buffer
