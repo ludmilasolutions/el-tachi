@@ -13,8 +13,8 @@
       ],
       "rangos": [
         {
-          "desde": "00:00",
-          "hasta": "23:59"
+          "desde": "19:30",
+          "hasta": "22:30"
         }
       ],
       "mensaje_cierre": ""
