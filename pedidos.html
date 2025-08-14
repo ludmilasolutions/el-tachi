@@ -14,7 +14,7 @@
       --azul-2:#001122;
       --azul-3:#004080;
       --amarillo:#ffcc00;
-      --gris-borde:#ccc;
+      --gris-borde:#cbd5e1;
       --bg:#f8f9fa;
       --text:#333;
       --card:#fff;
@@ -38,7 +38,7 @@
     main{padding:1rem 1rem 112px;max-width:900px;margin:auto}
 
     /* ---------- Tabs ---------- */
-    .tabs{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;margin-bottom:.5rem}
+    .tabs{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;margin-bottom:1rem}
     .tabs button{
       padding:.8rem 1.8rem;font-size:1.1rem;border:none;border-radius:30px;
       background:var(--azul-3);color:var(--amarillo);font-weight:bold;
@@ -46,14 +46,6 @@
     }
     .tabs button:hover{background:#0055aa}
     .tabs button.active{background:var(--azul-2);border-color:var(--amarillo);box-shadow:0 4px 12px rgba(0,0,0,.3)}
-
-    /* Enlace de seguimiento, discreto */
-    .track-inline{display:block;text-align:center;margin:.25rem 0 1rem}
-    .linklike{
-      background:none;border:none;color:#004c99;text-decoration:underline;cursor:pointer;
-      font-weight:800;padding:.25rem .4rem;border-radius:8px
-    }
-    .linklike:hover{text-decoration:none}
 
     /* --- Estado sección cerrada --- */
     .tab-closed{opacity:.55; cursor:not-allowed; filter:grayscale(60%)}
@@ -104,7 +96,7 @@
     #resumen{background:var(--resumen-bg);border:1px solid var(--resumen-borde);border-radius:8px;padding:1rem}
     #resumen h3{margin-top:0}
     .resumen-empty{margin:.25rem 0 .5rem;opacity:.8}
-    .resumen-list{list-style:none;padding:0;margin:.5rem 0 1rem;display:grid;gap:.35rem}
+    .resumen-list{list-style:none;padding:0;margin:.5rem 0 .75rem;display:grid;gap:.35rem}
     .resumen-item{
       display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:.6rem;
       background:#fff;border:1px solid var(--gris-borde);border-radius:8px;padding:.5rem .6rem
@@ -112,6 +104,31 @@
     .resumen-name{font-weight:700;color:#0b376d}
     .resumen-qty{opacity:.85;min-width:42px;text-align:right}
     .resumen-line{font-weight:700;min-width:88px;text-align:right}
+
+    /* ---------- Seguimiento (debajo del listado) ---------- */
+    .track-card{
+      display:flex; align-items:center; justify-content:space-between; gap:.75rem;
+      background:#fff; border:1px dashed var(--gris-borde); border-radius:12px;
+      padding:.8rem .9rem; margin:.35rem 0 1rem;
+    }
+    .track-left{display:flex; align-items:center; gap:.7rem}
+    .track-emoji{font-size:1.25rem}
+    .track-title{font-weight:800; color:#0b376d}
+    .track-id{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-weight:800; letter-spacing:.2px}
+    .track-actions{display:flex; gap:.5rem; flex-wrap:wrap}
+    .btn-mini{
+      display:inline-flex; align-items:center; gap:.4rem;
+      background:#fff; color:#0b376d; border:1px solid var(--gris-borde);
+      border-radius:8px; padding:.45rem .7rem; font-weight:800; text-decoration:none; cursor:pointer;
+    }
+    .status-pill{
+      padding:.2rem .55rem; border-radius:999px; font-weight:800; font-size:.85rem; border:1px solid transparent;
+    }
+    .s-nuevo{ background:#eef2ff; color:#1e3a8a; border-color:#c7d2fe}
+    .s-prep{  background:#fff7ed; color:#9a3412; border-color:#fed7aa}
+    .s-listo{ background:#ecfdf5; color:#065f46; border-color:#a7f3d0; box-shadow:0 0 0 0 rgba(16,185,129,.7); animation:readyPulse 1.2s ease-out infinite}
+    @keyframes readyPulse{ 0%{box-shadow:0 0 0 0 rgba(16,185,129,.6)} 70%{box-shadow:0 0 0 12px rgba(16,185,129,0)} 100%{box-shadow:0 0 0 0 rgba(16,185,129,0)} }
+
     .totales{display:grid;gap:.25rem;margin-top:.5rem}
     .tot-line{display:flex;justify-content:space-between;align-items:center;padding:.35rem .2rem}
     .tot-line.total{font-size:1.1rem;font-weight:800;border-top:1px dashed #d6d6d6;margin-top:.25rem;padding-top:.5rem}
@@ -126,7 +143,7 @@
     /* ---------- Inputs ---------- */
     label{display:block;margin-top:1rem;font-weight:700}
     label input[type="text"],input[type="email"],input[type="tel"]{
-      width:100%;padding:.95rem 1rem;font-size:1.05rem;border:1px solid var(--gris-borde);
+      width:100%;padding:.95rem 1rem;font-size:1.05rem;border:1px solid #d9dee7;
       border-radius:12px;outline:none;background:#fff;transition:box-shadow .15s,border-color .15s
     }
     label input[type="text"]:focus{border-color:#7aa2ff;box-shadow:0 0 0 3px rgba(122,162,255,.25)}
@@ -239,19 +256,34 @@
     .dialog-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;place-items:center;z-index:101}
     .dialog-backdrop.open{display:grid}
     .dialog{
-      background:#fff;border-radius:14px;width:90%;max-width:360px;
-      box-shadow:0 16px 32px rgba(0,0,0,.28);padding:1.2rem 1rem;text-align:center;
+      background:#fff;border-radius:14px;width:90%;max-width:340px;
+      box-shadow:0 16px 32px rgba(0,0,0,.28);padding:1.4rem 1.2rem;text-align:center;
       animation:popin .24s ease-out
     }
     @keyframes popin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
     .dialog h3{margin:.2rem 0 1rem;font-size:1.25rem;color:#0b376d}
-    .dialog p{margin:0 0 .8rem}
-    .dialog-actions{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap}
+    .dialog p{margin:0 0 1.2rem}
+    .dialog-actions{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap}
     .dialog-actions .btn{flex:1 1 120px}
-    .dialog .field{margin:.6rem 0}
-    .dialog .field label{display:block;margin:.25rem 0;font-weight:800}
-    .dialog .field input{width:100%;padding:.7rem .8rem;border:1px solid #d7d7d7;border-radius:10px}
-    .pill{display:inline-flex;gap:.4rem;align-items:center;border:1px solid #e5e7eb;background:#f8fafc;padding:.25rem .5rem;border-radius:999px;font-size:.85rem}
+
+    /* ——— PASOS EN SHEET ——— */
+    .steps {display:flex; gap:.5rem; align-items:center; font-weight:800; font-size:.9rem; color:#64748b; white-space:nowrap;}
+    .step {display:flex; align-items:center; gap:.4rem}
+    .step .dot {width:10px; height:10px; border-radius:999px; background:#cbd5e1}
+    .step.active {color:#0b376d}
+    .step.active .dot {background:var(--amarillo)}
+
+    /* ——— SEGMENTED CONTROL ENVÍO/RETIRO ——— */
+    .segmented {display:flex; gap:.5rem; margin:.6rem 0}
+    .segmented input{display:none}
+    .segmented label{
+      flex:1; text-align:center; padding:.7rem 1rem; border:1px solid #cfd3dc;
+      border-radius:12px; cursor:pointer; font-weight:800; background:#fff; transition:.15s;
+    }
+    .segmented input:checked + label{
+      background:var(--azul); color:var(--amarillo); border-color:var(--azul);
+      box-shadow:0 6px 16px rgba(0,0,0,.12);
+    }
   </style>
 </head>
 <body>
@@ -267,11 +299,6 @@
       <button id="btn-rotiseria" class="active" onclick="mostrar('rotiseria')">🍕 Rotisería</button>
       <button id="btn-bebidas"  onclick="mostrar('bebidas')">🥤 Bebidas</button>
     </div>
-
-    <!-- Enlace de seguimiento (reemplaza el botón del header) -->
-    <p class="track-inline">
-      <button id="trackInline" class="linklike" type="button">📦 Ver estado de mi pedido</button>
-    </p>
 
     <div id="menu-rotiseria"></div>
     <div id="menu-bebidas" style="display:none"></div>
@@ -334,6 +361,7 @@
 
     <div id="sheetBody" class="sheet-body" tabindex="0">
       <section id="checkout">
+        <!-- Retiro / Envío (SIN cambios de UX) -->
         <div class="segmented" role="tablist" aria-label="Entrega">
           <input id="opt-ret" type="radio" name="envio" value="retiro">
           <label for="opt-ret">Retiro</label>
@@ -353,6 +381,22 @@
           <h3>Resumen del pedido</h3>
           <p id="emptyMsg" class="resumen-empty">Aún no agregaste productos.</p>
           <ul id="lista" class="resumen-list"></ul>
+
+          <!-- 🔎 Seguimiento (debajo del listado) -->
+          <div id="trackBox" class="track-card" hidden>
+            <div class="track-left">
+              <div class="track-emoji">📦</div>
+              <div>
+                <div class="track-title">Seguimiento de tu pedido</div>
+                <div style="font-size:.92rem;opacity:.9">ID: <span id="trackId" class="track-id"></span></div>
+              </div>
+            </div>
+            <div class="track-actions">
+              <span id="trackEstado" class="status-pill s-nuevo">Nuevo</span>
+              <button id="trackRefresh" type="button" class="btn-mini">Refrescar</button>
+              <a id="trackOpen" class="btn-mini" target="_blank" rel="noopener">Ver estado</a>
+            </div>
+          </div>
 
           <div class="totales" aria-live="polite">
             <div class="tot-line"><span>Subtotal</span><span id="subtotal">$ 0</span></div>
@@ -381,23 +425,6 @@
     </div>
   </div>
 
-  <!-- Modal Seguimiento (simplificado por nombre) -->
-  <div id="trackBackdrop" class="dialog-backdrop" aria-hidden="true">
-    <div role="dialog" aria-modal="true" class="dialog" id="trackDialog">
-      <h3>📦 Seguimiento de mi pedido</h3>
-      <div class="field">
-        <label for="trackName">Tu nombre (tal como lo escribiste)</label>
-        <input id="trackName" type="text" placeholder="Ej: Ana Pérez">
-      </div>
-      <div class="dialog-actions">
-        <button class="btn btn-primary" type="button" id="btnConsultar">Consultar</button>
-        <button class="btn" type="button" id="btnCerrarTrack">Cerrar</button>
-      </div>
-      <div id="trackResult" style="margin-top:.8rem"></div>
-      <small id="trackHint" style="display:block;margin-top:.6rem"></small>
-    </div>
-  </div>
-
   <!-- ============   SCRIPTS   ============ -->
   <script>
   /* ======= Variables editables por CMS (defaults) ======= */
@@ -410,14 +437,13 @@
   let SHIPPING = 1000;
   let WSP_NUMBER = '3415923882';
 
-  /* ======= Analytics (envía a tu hoja "Pedidos") ======= */
+  /* ======= Analytics / Webhook Apps Script ======= */
   const ANALYTICS_KEY='tachi_events_v1';
-
   // ⬇️⬇️⬇️ REEMPLAZAR por la URL de tu Web App de Apps Script
   const ANALYTICS_WEBHOOK='https://script.google.com/macros/s/AKfycbz_pZVIydPyLn98VfzaeSzMRbrJ5BsyfTDlCTU_dBm8qy8gV2lYrobcKqJCU5OhPhyn/exec';
-  // JSON público para seguimiento (tu mismo endpoint con ?view=json)
-  const TRACKING_JSON = ANALYTICS_WEBHOOK + '?view=json';
   // ⬆️⬆️⬆️
+  const TRACK_PANEL_URL = ANALYTICS_WEBHOOK + '?view=panel';
+  const TRACK_JSON_URL  = ANALYTICS_WEBHOOK + '?view=json';
 
   function getEvents(){try{return JSON.parse(localStorage.getItem(ANALYTICS_KEY)||'[]')}catch{return[]}}
   function saveEvents(l){localStorage.setItem(ANALYTICS_KEY,JSON.stringify(l))}
@@ -449,16 +475,6 @@
   window.addEventListener('online',()=>scheduleFlush(250));
   setInterval(()=>flushEvents('interval'), 20000);
 
-  /* ======= CSV helper (por si querés exportar) ======= */
-  const SEP=Intl.NumberFormat().format(1.1).includes(',')?';':',';
-  const csvEscape=v=>v==null?'':(/["\n\r]/.test(v)||String(v).includes(SEP))?`"${String(v).replace(/"/g,'""')}"`:v;
-  function downloadCSV(name,headers,rows){
-    const lines=[headers.join(SEP),...rows.map(r=>headers.map(h=>csvEscape(r[h])).join(SEP))];
-    const blob=new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8;'});
-    const url=URL.createObjectURL(blob);const a=document.createElement('a');
-    a.href=url;a.download=name;document.body.appendChild(a);a.click();URL.revokeObjectURL(url);a.remove();
-  }
-
   /* ======= Helpers + TTL (2 horas) ======= */
   const asset=p=>location.hostname.endsWith('github.io')?`/${location.pathname.split('/').filter(Boolean)[0]}/${p}`:`/${p}`;
   const normalizar=d=>Array.isArray(d?.categorias)?Object.fromEntries(d.categorias.map(c=>[c.categoria,c.productos||[]])):d||{};
@@ -479,6 +495,7 @@
   const CLIENT_TTL_MS=2*60*60*1000; // 2h
   const CART_KEY='tachi_cart_v1';
   const CLIENT_KEY='tachi_client_v1';
+  const LAST_TRACK_KEY='tachi_last_track_v1'; // {order_id,name,first_item,created_at}
   const loadCart   = () => getWithTTL(CART_KEY, {});
   const saveCart   = (obj) => setWithTTL(CART_KEY, obj,   CART_TTL_MS);
   const loadClient = () => getWithTTL(CLIENT_KEY, {});
@@ -579,7 +596,6 @@
 
   function renderProductos(contId,data){
     const cont=document.getElementById(contId);cont.innerHTML='';
-    turn=0;
     const norm=normalizar(data);
     for(const cat in norm){
       const items=norm[cat]||[];const det=document.createElement('details');
@@ -611,7 +627,10 @@
             <span id="cantidad-${id}">0</span>
             <button onclick="cambiarCantidad('${id}',1,this)">+</button>
           </div>`;
-        div.dataset.nombre=prod.nombre;div.dataset.precio=prod.precio;det.appendChild(div);
+        div.dataset.nombre=prod.nombre;
+        div.dataset.precio=prod.precio;
+        div.dataset.pid = prod.id ? String(prod.id) : id;  // ← product_id
+        det.appendChild(div);
       });
       cont.appendChild(det);
     }
@@ -627,6 +646,7 @@
         {
           categoria: '⭐ Promos',
           productos: vigentes.map(p => ({
+            id: p.id || null,
             nombre: p.nombre,
             precio: p.precio,
             desc: p.desc || '',
@@ -777,7 +797,7 @@
   const dlgBackdrop=document.getElementById('dlgClearBackdrop'),
         dlgYes=document.getElementById('dlgClearYes'),
         dlgNo=document.getElementById('dlgClearNo');
-  function abrirDialogoVaciar(){dlgBackdrop.classList.add('open');dlgYes.focus()}
+  function abrirDialogoVaciar(){dlgBackdrop.classList.add('open');dlgYes.focus())}
   function cerrarDialogoVaciar(){dlgBackdrop.classList.remove('open')}
   dlgNo.addEventListener('click',cerrarDialogoVaciar);
   dlgBackdrop.addEventListener('click',e=>{if(e.target===dlgBackdrop)cerrarDialogoVaciar()});
@@ -790,7 +810,7 @@
   });
   const vaciarCarrito=abrirDialogoVaciar;
 
-  /* ======= Tabs (con analítica) ======= */
+  /* ======= Tabs ======= */
   function mostrar(sec){
     const otra = sec==='bebidas' ? 'rotiseria' : 'bebidas';
     logEvent('tab_show',{sec});
@@ -809,6 +829,94 @@
     document.getElementById('btn-rotiseria').classList.toggle('active', sec==='rotiseria');
     document.getElementById('btn-bebidas').classList.toggle('active', sec==='bebidas');
   }
+
+  /* ======= Seguimiento del pedido (cliente) ======= */
+  let TRACK_TIMER=null;
+  function saveLastTrack(obj){ localStorage.setItem(LAST_TRACK_KEY, JSON.stringify(obj)); }
+  function getLastTrack(){ try{ return JSON.parse(localStorage.getItem(LAST_TRACK_KEY)||'null'); }catch{ return null; } }
+  function clearLastTrack(){
+    localStorage.removeItem(LAST_TRACK_KEY);
+    const box=document.getElementById('trackBox');
+    if(box){ box.hidden=true; }
+  }
+
+  function setEstadoPill(estado){
+    const pill=document.getElementById('trackEstado');
+    if(!pill) return;
+    const e=(estado||'Nuevo').toString();
+    pill.textContent=e;
+    pill.classList.remove('s-nuevo','s-prep','s-listo');
+    if(e==='Listo') pill.classList.add('s-listo');
+    else if(e==='En preparación') pill.classList.add('s-prep');
+    else pill.classList.add('s-nuevo');
+  }
+
+  function sameDayToday(tsStr){
+    // intenta parsear dd/MM/yyyy ...
+    try{
+      const m=String(tsStr).match(/(\d{2})\/(\d{2})\/(\d{4})/);
+      if(!m) return true; // si no hay ts, no filtramos
+      const d=new Date(Number(m[3]), Number(m[2])-1, Number(m[1]));
+      const t=new Date();
+      return d.getFullYear()===t.getFullYear() && d.getMonth()===t.getMonth() && d.getDate()===t.getDate();
+    }catch{ return true; }
+  }
+
+  async function fetchTrackAndRender(){
+    const info=getLastTrack(); if(!info) return;
+    try{
+      const r = await fetch(TRACK_JSON_URL, {credentials:'omit'}); // si CORS bloquea, luego ajustamos en Apps Script
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      const rows = await r.json();
+      if(!Array.isArray(rows) || !rows.length) return;
+
+      // Heurística: último pedido de HOY con ese nombre (y si podemos, que contenga el primer ítem)
+      const candidates = rows.filter(p =>
+        String(p.name||'').trim().toLowerCase() === String(info.name||'').trim().toLowerCase()
+        && sameDayToday(p.ts_str||p.ts)
+      );
+      if(!candidates.length) return;
+
+      // El más reciente (el JSON viene reverse() en el server, por si acaso ordenamos)
+      candidates.sort((a,b)=> (String(b.ts_str||'')>String(a.ts_str||''))?1:-1);
+      let found = candidates[0];
+
+      if(info.first_item){
+        const hit = candidates.find(p => String(p.items||'').includes(info.first_item));
+        if(hit) found=hit;
+      }
+
+      const estado = (found && typeof found.estado!=='undefined' && found.estado!==null) ? String(found.estado) : 'Nuevo';
+      setEstadoPill(estado);
+
+      if(estado==='Entregado'){
+        showToast('¡Tu pedido fue entregado! 🎉','ok');
+        clearLastTrack(); // se oculta para el cliente
+        stopTracking();
+      }
+    }catch(err){
+      // silencioso, puede ser CORS
+      // console.warn('track error', err);
+    }
+  }
+
+  function startTracking(){
+    const info=getLastTrack();
+    const box=document.getElementById('trackBox');
+    const idEl=document.getElementById('trackId');
+    const openEl=document.getElementById('trackOpen');
+    const btnRef=document.getElementById('trackRefresh');
+    if(!info || !box || !idEl || !openEl) return;
+    idEl.textContent=info.order_id || '—';
+    openEl.href = TRACK_PANEL_URL; // abre el panel (admin); si preferís, después creamos vista pública
+    setEstadoPill('Nuevo');
+    box.hidden=false;
+    if(btnRef){ btnRef.onclick = fetchTrackAndRender; }
+    stopTracking();
+    TRACK_TIMER = setInterval(fetchTrackAndRender, 7000);
+    fetchTrackAndRender();
+  }
+  function stopTracking(){ if(TRACK_TIMER){ clearInterval(TRACK_TIMER); TRACK_TIMER=null; } }
 
   /* ======= WhatsApp (y registrar en hoja) ======= */
   function enviarPedido(){
@@ -845,28 +953,32 @@
 
     let msg=`Hola, soy ${name}. Quiero hacer un pedido:\n`;
     const items=[];
+    let firstItemName='';
     Object.entries(cantidades).forEach(([id,qty])=>{
       if(qty>0){
         const span=document.getElementById(`cantidad-${id}`); if(!span) return;
         const row=span.closest('.producto');
         const n=row.dataset.nombre, p=parseInt(row.dataset.precio,10), line=p*qty;
+        const pid=row.dataset.pid || id; // ← product_id
+        if(!firstItemName) firstItemName=n;
         msg+=`- ${n} x${qty} - ${formatARS(line)}\n`;
-        items.push({ name:n, qty, unit_price:p, line_total:line });
+        items.push({ product_id: pid, name:n, qty, unit_price:p, line_total:line });
       }
     });
 
     const subtotal = items.reduce((a,i)=>a+i.line_total,0);
     const shipping_cost = envio==='envio'?SHIPPING:0;
     const total = subtotal + shipping_cost;
+    const order_id = 'W'+new Date().toISOString().replace(/[-:.TZ]/g,'').slice(0,14);
 
     msg+=envio==='envio'?`Envío a domicilio a: ${addr} (+${formatARS(SHIPPING)})\n`:'Retiro en el local\n';
     msg+=`Total: ${formatARS(total)}`;
 
     // Registrar en Apps Script -> Hoja "Pedidos"
-    logEvent('order_wsp',{ shipping:envio, shipping_cost, subtotal, total, name, address:addr, items });
+    logEvent('order_wsp',{ order_id, shipping:envio, shipping_cost, subtotal, total, name, address:addr, items });
 
-    // Guardar nombre para autocompletar seguimiento
-    try{ localStorage.setItem('tachi_last_name', name); }catch{}
+    // Guardar “último pedido” para seguimiento
+    try{ saveLastTrack({ order_id, name, first_item:firstItemName, created_at:Date.now() }); }catch{}
 
     // Enviar analíticas inmediatamente (no bloquea)
     flushEvents('order');
@@ -882,6 +994,9 @@
     actualizarResumen();
     closeSheet(); // cerrar el sheet del carrito
     showToast('Pedido enviado. Carrito vaciado ✅','ok',2000);
+
+    // Mostrar el box de seguimiento (debajo del listado)
+    startTracking();
   }
 
   /* ======= Sheet (abrir/cerrar con focus trap) ======= */
@@ -953,121 +1068,12 @@
     }
   })();
 
-  // ====== Seguimiento (UI + fetch JSON) ======
-  const trackBackdrop=document.getElementById('trackBackdrop');
-  const trackInline=document.getElementById('trackInline');
-  const btnConsultar=document.getElementById('btnConsultar');
-  const btnCerrarTrack=document.getElementById('btnCerrarTrack');
-  const trackNameEl=document.getElementById('trackName');
-  const trackResult=document.getElementById('trackResult');
-  const trackHint=document.getElementById('trackHint');
-
-  function openTrack(){
-    const savedName = localStorage.getItem('tachi_last_name') || (loadClient().name||'');
-    trackNameEl.value = savedName || '';
-    trackResult.innerHTML = '';
-    trackHint.textContent = 'Se muestra el último pedido con ese nombre.';
-    trackBackdrop.classList.add('open');
-    trackNameEl.focus();
-  }
-  function closeTrack(){ trackBackdrop.classList.remove('open'); }
-  trackInline.addEventListener('click', openTrack);
-  btnCerrarTrack.addEventListener('click', closeTrack);
-  trackBackdrop.addEventListener('click', e=>{ if(e.target===trackBackdrop) closeTrack(); });
-  document.addEventListener('keydown', e=>{ if(e.key==='Escape'&&trackBackdrop.classList.contains('open')) closeTrack(); });
-
-  btnConsultar.addEventListener('click', consultarSeguimiento);
-
-  function renderStepper(estado){
-    const order = ['Nuevo','En preparación','Listo','Entregado'];
-    const idx = order.indexOf(String(estado||''));
-    return `
-      <div class="steps" style="margin:.25rem 0 .6rem">
-        <div class="step ${idx>=0?'active':''}"><span class="dot"></span><span>Nuevo</span></div>
-        <span>→</span>
-        <div class="step ${idx>=1?'active':''}"><span class="dot"></span><span>En preparación</span></div>
-        <span>→</span>
-        <div class="step ${idx>=2?'active':''}"><span class="dot"></span><span>Listo</span></div>
-        <span>→</span>
-        <div class="step ${idx>=3?'active':''}"><span class="dot"></span><span>Entregado</span></div>
-      </div>
-    `;
-  }
-
-  async function consultarSeguimiento(){
-    const qName = trackNameEl.value.trim().toLowerCase();
-    if(!qName){ trackResult.innerHTML='<p>Ingresá tu nombre.</p>'; return; }
-
-    trackResult.innerHTML = 'Buscando...';
-
-    try{
-      const res = await fetch(TRACKING_JSON, { mode:'cors' });
-      if(!res.ok) throw new Error('HTTP '+res.status);
-      const pedidos = await res.json();
-      if(!Array.isArray(pedidos)) throw new Error('JSON inválido');
-
-      // Tomar el último pedido exacto por nombre (el JSON ya viene reverse())
-      const elegido = pedidos.find(p => String(p.name||'').toLowerCase() === qName);
-
-      if(!elegido){
-        trackResult.innerHTML = `<p>No encontramos pedidos con ese nombre.</p>`;
-        trackHint.textContent = '';
-        return;
-      }
-
-      const estado = String(elegido.estado||'Nuevo');
-      if(estado==='Entregado'){
-        // No mostrar el histórico: “borra” para el cliente
-        try{ localStorage.removeItem('tachi_last_name'); }catch{}
-        trackResult.innerHTML = `<p><b>No tenés pedidos pendientes.</b> Tu último pedido ya fue <b>entregado</b>. ¡Podés hacer uno nuevo! 🎉</p>`;
-        trackHint.textContent = '';
-        showToast('Seguimiento limpiado: último pedido entregado','ok');
-        return;
-      }
-
-      const metodo = elegido.method || '';
-      const addr   = metodo==='envio' ? (elegido.address||'') : '';
-      const total  = (elegido.total_num!=null) ? elegido.total_num : elegido.total;
-
-      trackResult.innerHTML = `
-        ${renderStepper(estado)}
-        <p><b>Estado:</b> ${estado}</p>
-        <p><b>Método:</b> ${metodo || '—'}</p>
-        ${addr?`<p><b>Dirección:</b> ${addr}</p>`:''}
-        <p><b>Total:</b> ${total!=null?formatARS(total):'—'}</p>
-        <p><small>Fecha: ${elegido.ts_str || elegido.ts || '—'}</small></p>
-      `;
-      trackHint.textContent = '';
-    }catch(err){
-      trackResult.innerHTML = `<p>No pudimos leer el estado automáticamente.</p>`;
-      trackHint.textContent = 'Tip: alojá este sitio como Web App de Apps Script o habilitá CORS en tu endpoint para permitir lecturas desde tu dominio.';
-      console.warn('Seguimiento error:', err);
-    }
-  }
-
-  // Chequeo automático: si el nombre guardado ya tiene “Entregado”, limpiar
-  async function autoClearIfDelivered(){
-    const saved = localStorage.getItem('tachi_last_name');
-    if(!saved) return;
-    try{
-      const res = await fetch(TRACKING_JSON, { mode:'cors' });
-      if(!res.ok) return;
-      const pedidos = await res.json();
-      if(!Array.isArray(pedidos)) return;
-      const p = pedidos.find(x => String(x.name||'').toLowerCase() === saved.toLowerCase());
-      if(p && String(p.estado||'')==='Entregado'){
-        localStorage.removeItem('tachi_last_name');
-        showToast('Tu último pedido ya fue entregado. Seguimiento limpiado.','ok');
-      }
-    }catch(_){}
-  }
-
-  // Refrescar tabs cada minuto por cambios de horario + page_view
+  // Refrescar tabs cada minuto por cambios de horario + page_view + reiniciar tracking si existe
   window.addEventListener('DOMContentLoaded', ()=>{
     actualizarTabsPorHorario();
     setInterval(actualizarTabsPorHorario, 60*1000);
     logEvent('page_view',{title:document.title});
-    autoClearIfDelivered(); // ← limpia seguimiento si corresponde
+    if(getLastTrack()){ startTracking(); }
   });
   </script>
 </body>
