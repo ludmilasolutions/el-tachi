@@ -3,7 +3,7 @@
   "shipping": 1000,
   "horarios": {
     "rotiseria": {
-      "cerrado": true,
+      "cerrado": false,
       "dias": [
         "3",
         "4",
@@ -17,7 +17,7 @@
           "hasta": "22:30"
         }
       ],
-      "mensaje_cierre": "Proximamente disponible"
+      "mensaje_cierre": ""
     },
     "bebidas": {
       "cerrado": false,
