@@ -797,7 +797,11 @@
 
     const estado = document.getElementById('estadoHorarios') || (()=>{
       const p=document.createElement('p'); p.id='estadoHorarios'; p.style.margin='6px 0 0'; p.style.fontSize='.95rem'; p.style.color='#7a4c00';
-      const res=document.getElementById('resumen'); if(res) res.insertBefore(p, res.firstChild.nextSibling);
+      const res=document.getElementById('resumen');
+      if(res){
+        const ref = res.firstChild && res.firstChild.nextSibling ? res.firstChild.nextSibling : null;
+        res.insertBefore(p, ref);
+      }
       return p;
     })();
     if(estado) estado.textContent = puedePedir ? '' : motivos.join(' ');
@@ -959,7 +963,7 @@
   window.sheetOpen=false;
   function trapFocus(e){
     if(!window.sheetOpen||e.key!=='Tab')return;
-    const f=sheet.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"]');
+    const f=sheet.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
     if(!f.length)return;const first=f[0],last=f[f.length-1];
     if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
     else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
@@ -1040,6 +1044,7 @@
 
   function setBadge(el, estado){
     const map = {
+      'recibido': ['Recibido','st-new'],
       'nuevo': ['Nuevo','st-new'],
       'en preparación': ['En preparación','st-prep'],
       'listo': ['Listo','st-ready'],
