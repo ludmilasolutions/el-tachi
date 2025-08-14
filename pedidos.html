@@ -815,7 +815,7 @@
   const dlgBackdrop=document.getElementById('dlgClearBackdrop'),
         dlgYes=document.getElementById('dlgClearYes'),
         dlgNo=document.getElementById('dlgClearNo');
-  function abrirDialogoVaciar(){dlgBackdrop.classList.add('open');dlgYes.focus())}
+  function abrirDialogoVaciar(){dlgBackdrop.classList.add('open');dlgYes.focus()}
   function cerrarDialogoVaciar(){dlgBackdrop.classList.remove('open')}
   dlgNo.addEventListener('click',cerrarDialogoVaciar);
   dlgBackdrop.addEventListener('click',e=>{if(e.target===dlgBackdrop)cerrarDialogoVaciar()});
