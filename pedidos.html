@@ -171,10 +171,20 @@
     .track-header{display:flex;align-items:center;justify-content:space-between}
     .track-title{margin:0;font-size:1.2rem;color:#0b376d;display:flex;align-items:center;gap:.5rem;font-weight:900}
     .track-sub{margin:0;color:#6b7280;font-size:.95rem}
-    .track-grid{display:grid;grid-template-columns:1fr 1fr auto;gap:.5rem;align-items:end}
-    .track-id-row{display:flex;gap:.4rem}
-    .track-btn{background:var(--azul);color:var(--amarillo);border:1px solid var(--azul);border-radius:10px;padding:.6rem .9rem;font-weight:800;cursor:pointer}
-    .track-btn.secondary{background:#fff;color:#0b376d;border-color:#cbd5e1}
+
+    /* Mobile-first: una columna; en desktop → 1fr 1fr auto */
+    .track-grid{display:grid;grid-template-columns:1fr;gap:.6rem;align-items:end}
+    @media(min-width:700px){ .track-grid{grid-template-columns:1fr 1fr auto} }
+
+    .track-btn{
+      background:var(--azul);color:var(--amarillo);border:1px solid var(--azul);
+      border-radius:10px;padding:.8rem 1rem;font-weight:800;cursor:pointer;width:100%;
+    }
+    @media(min-width:700px){ .track-btn{width:auto} }
+
+    /* Inputs del bloque de seguimiento un pelín más grandes */
+    .track label input{padding:1.05rem 1rem;font-size:1.06rem;border-radius:14px}
+
     .track-result{border:1px dashed #d6d6d6;border-radius:12px;padding:.8rem}
     .status-badge{display:inline-flex;align-items:center;font-weight:900;border-radius:999px;padding:.2rem .6rem;font-size:.9rem}
     .st-new{background:#eef2ff;color:#1d4ed8;border:1px solid #c7d2fe}
@@ -304,7 +314,8 @@
   </main>
 
   <!-- Seguimiento (debajo del listado y ANTES del divisor) -->
-  <section id="track" class="track" aria-labelledby="track-title">
+  <!-- Oculto por defecto; se muestra si hay tachi_last_order -->
+  <section id="track" class="track track-hide" aria-labelledby="track-title">
     <div id="trackCard" class="track-card">
       <div class="track-header">
         <h3 id="track-title" class="track-title">📍 Seguimiento de tu pedido</h3>
@@ -317,10 +328,7 @@
         </label>
 
         <label>ID de pedido (opcional)
-          <div class="track-id-row">
-            <input id="trackId" type="text" placeholder="W2024…">
-            <button id="btnCopyId" class="track-btn secondary" type="button">Copiar</button>
-          </div>
+          <input id="trackId" type="text" placeholder="W2024…">
         </label>
 
         <button id="btnTrack" class="track-btn" type="button">Ver estado</button>
@@ -329,7 +337,7 @@
       <div id="trackResult" class="track-result" hidden>
         <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
           <span>Estado:</span>
-          <span id="trackBadge" class="status-badge st-new">Nuevo</span>
+          <span id="trackBadge" class="status-badge st-new">Recibido</span>
         </div>
         <ul style="margin:.6rem 0 0; padding-left:1rem; color:#334155; display:grid; gap:.25rem">
           <li>Total: <strong id="trackTotal">$ 0</strong></li>
@@ -705,7 +713,8 @@
     hydrateCart();hydrateClient();actualizarResumen();
     actualizarTabsPorHorario();
 
-    initTracking(); // ⬅️ listeners del seguimiento, ahora que existe en el DOM
+    initTracking();           // listeners del seguimiento
+    ensureTrackVisibility();  // ⬅️ mostrar/ocultar según último pedido
 
     logEvent('menus_loaded',{rotiseria_cats:(rMerge.categorias||[]).length,bebidas_cats:(bMerge.categorias||[]).length});
   }
@@ -932,14 +941,12 @@
     // Registrar en Apps Script -> Hoja "Pedidos"
     logEvent('order_wsp',{ order_id, shipping:envio, shipping_cost, subtotal, total, name, address:addr, items });
 
-    // Guardar “último pedido” para seguimiento
+    // Guardar “último pedido” y mostrar el bloque de seguimiento
     try{
       localStorage.setItem('tachi_last_order', order_id);
-      // Prellenar UI de seguimiento
-      const trackId=document.getElementById('trackId');
-      if(trackId){ trackId.value=order_id; }
-      const trackName=document.getElementById('trackName');
-      if(trackName && !trackName.value.trim()) trackName.value = name;
+      const trackId=document.getElementById('trackId'); if(trackId){ trackId.value=order_id; }
+      const trackName=document.getElementById('trackName'); if(trackName && !trackName.value.trim()) trackName.value = name;
+      const track = document.getElementById('track'); if(track){ track.classList.remove('track-hide'); } // ⬅️ mostrar
     }catch{}
 
     // Enviar analíticas inmediatamente (no bloquea)
@@ -1028,7 +1035,19 @@
     }
   })();
 
-  // ======= Seguimiento: JSONP al Apps Script =======
+  // ======= Seguimiento =======
+  // Mostrar/ocultar bloque según exista último pedido en storage
+  function ensureTrackVisibility(){
+    const track = document.getElementById('track');
+    if(!track) return;
+    try{
+      const last = localStorage.getItem('tachi_last_order');
+      track.classList.toggle('track-hide', !last);
+    }catch{
+      track.classList.add('track-hide');
+    }
+  }
+
   function statusJSONP(orderId){
     return new Promise((resolve,reject)=>{
       const cb='__tachi_cb_'+Math.random().toString(36).slice(2);
@@ -1060,9 +1079,8 @@
     const nameInput = document.getElementById('trackName');
     const idInput   = document.getElementById('trackId');
     const btnTrack  = document.getElementById('btnTrack');
-    const btnCopy   = document.getElementById('btnCopyId');
 
-    // Prefill desde storage
+    // Prefill desde storage + visibilidad inicial
     try{
       const last = localStorage.getItem('tachi_last_order');
       if(last && idInput && !idInput.value) idInput.value = last;
@@ -1070,15 +1088,7 @@
       if(c.name && nameInput && !nameInput.value) nameInput.value=c.name;
     }catch{}
 
-    if(btnCopy && idInput){
-      btnCopy.addEventListener('click', async ()=>{
-        try{
-          if(!idInput.value.trim()){ showToast('No hay ID para copiar','warn'); return; }
-          await navigator.clipboard.writeText(idInput.value.trim());
-          showToast('ID copiado ✅');
-        }catch{ showToast('No se pudo copiar','error'); }
-      });
-    }
+    ensureTrackVisibility();
 
     if(btnTrack){
       btnTrack.addEventListener('click', async ()=>{
@@ -1132,7 +1142,7 @@
       showToast('🎉 ¡Tu pedido está listo!', 'ok', 2600);
     }
     if(estadoKey==='entregado'){
-      // Limpiar seguimiento y ocultar
+      // Limpiar seguimiento y ocultar persistentemente
       try{ localStorage.removeItem('tachi_last_order'); }catch{}
       showToast('✅ Pedido entregado', 'ok', 2200);
       const track = document.getElementById('track');
@@ -1144,6 +1154,7 @@
   window.addEventListener('DOMContentLoaded', ()=>{
     actualizarTabsPorHorario();
     setInterval(actualizarTabsPorHorario, 60*1000);
+    ensureTrackVisibility(); // ⬅️ al cargar la página
     logEvent('page_view',{title:document.title});
   });
   </script>
