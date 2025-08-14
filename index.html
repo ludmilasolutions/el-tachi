@@ -512,7 +512,7 @@
     a.href=url;a.download=name;document.body.appendChild(a);a.click();URL.revokeObjectURL(url);a.remove();
   }
 
-  /* ======= Helpers + TTL (2 horas para carrito/cliente) ======= */
+  /* ======= Helpers + TTL (2 horas) ======= */
   const asset=p=>location.hostname.endsWith('github.io')?`/${location.pathname.split('/').filter(Boolean)[0]}/${p}`:`/${p}`;
   const normalizar=d=>Array.isArray(d?.categorias)?Object.fromEntries(d.categorias.map(c=>[c.categoria,c.productos||[]])):d||{};
 
@@ -536,27 +536,6 @@
   const saveCart   = (obj) => setWithTTL(CART_KEY, obj,   CART_TTL_MS);
   const loadClient = () => getWithTTL(CLIENT_KEY, {});
   const saveClient = (obj) => setWithTTL(CLIENT_KEY, obj, CLIENT_TTL_MS);
-
-  /* ======= TTL del último pedido (24 horas) ======= */
-  const LAST_KEY='tachi_last_order_v1';
-  const LAST_TTL_MS=24*60*60*1000; // 24 h
-
-  // Lee el último ID de pedido con fallback/migración desde la clave vieja sin TTL
-  function getLastOrderId(){
-    const val = getWithTTL(LAST_KEY, null);
-    if(val && typeof val==='object' && val.id){ return val.id; }
-    if(typeof val==='string' && val){ return val; }
-    // Migración: si existe la vieja, la paso a la nueva con TTL de 24h
-    try{
-      const old = localStorage.getItem('tachi_last_order');
-      if(old){
-        setWithTTL(LAST_KEY, {id: old}, LAST_TTL_MS);
-        localStorage.removeItem('tachi_last_order');
-        return old;
-      }
-    }catch{}
-    return '';
-  }
 
   /* ======= Toast ======= */
   function showToast(msg,type='ok',t=2400){
@@ -962,9 +941,9 @@
     // Registrar en Apps Script -> Hoja "Pedidos"
     logEvent('order_wsp',{ order_id, shipping:envio, shipping_cost, subtotal, total, name, address:addr, items });
 
-    // Guardar “último pedido” con TTL 24h y mostrar el bloque de seguimiento
+    // Guardar “último pedido” y mostrar el bloque de seguimiento
     try{
-      setWithTTL(LAST_KEY, {id: order_id}, LAST_TTL_MS);
+      localStorage.setItem('tachi_last_order', order_id);
       const trackId=document.getElementById('trackId'); if(trackId){ trackId.value=order_id; }
       const trackName=document.getElementById('trackName'); if(trackName && !trackName.value.trim()) trackName.value = name;
       const track = document.getElementById('track'); if(track){ track.classList.remove('track-hide'); } // ⬅️ mostrar
@@ -1057,13 +1036,13 @@
   })();
 
   // ======= Seguimiento =======
-  // Mostrar/ocultar bloque según exista último pedido en storage (con TTL 24h)
+  // Mostrar/ocultar bloque según exista último pedido en storage
   function ensureTrackVisibility(){
     const track = document.getElementById('track');
     if(!track) return;
     try{
-      const lastId = getLastOrderId();
-      track.classList.toggle('track-hide', !lastId);
+      const last = localStorage.getItem('tachi_last_order');
+      track.classList.toggle('track-hide', !last);
     }catch{
       track.classList.add('track-hide');
     }
@@ -1103,8 +1082,8 @@
 
     // Prefill desde storage + visibilidad inicial
     try{
-      const lastId = getLastOrderId();
-      if(lastId && idInput && !idInput.value) idInput.value = lastId;
+      const last = localStorage.getItem('tachi_last_order');
+      if(last && idInput && !idInput.value) idInput.value = last;
       const c = loadClient();
       if(c.name && nameInput && !nameInput.value) nameInput.value=c.name;
     }catch{}
@@ -1113,7 +1092,7 @@
 
     if(btnTrack){
       btnTrack.addEventListener('click', async ()=>{
-        const orderId = (idInput?.value || '').trim() || getLastOrderId() || '';
+        const orderId = (idInput?.value || '').trim() || localStorage.getItem('tachi_last_order') || '';
         if(!orderId){ showToast('Ingresá el ID de pedido','error'); return; }
         try{
           btnTrack.disabled = true;
@@ -1164,10 +1143,7 @@
     }
     if(estadoKey==='entregado'){
       // Limpiar seguimiento y ocultar persistentemente
-      try{
-        localStorage.removeItem(LAST_KEY);
-        localStorage.removeItem('tachi_last_order'); // compat
-      }catch{}
+      try{ localStorage.removeItem('tachi_last_order'); }catch{}
       showToast('✅ Pedido entregado', 'ok', 2200);
       const track = document.getElementById('track');
       if(track) track.classList.add('track-hide');
