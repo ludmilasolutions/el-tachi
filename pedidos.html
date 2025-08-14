@@ -96,7 +96,7 @@
     #resumen{background:var(--resumen-bg);border:1px solid var(--resumen-borde);border-radius:8px;padding:1rem}
     #resumen h3{margin-top:0}
     .resumen-empty{margin:.25rem 0 .5rem;opacity:.8}
-    .resumen-list{list-style:none;padding:0;margin:.5rem 0 .75rem;display:grid;gap:.35rem}
+    .resumen-list{list-style:none;padding:0;margin:.5rem 0 1rem;display:grid;gap:.35rem}
     .resumen-item{
       display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:.6rem;
       background:#fff;border:1px solid var(--gris-borde);border-radius:8px;padding:.5rem .6rem
@@ -104,31 +104,6 @@
     .resumen-name{font-weight:700;color:#0b376d}
     .resumen-qty{opacity:.85;min-width:42px;text-align:right}
     .resumen-line{font-weight:700;min-width:88px;text-align:right}
-
-    /* ---------- Seguimiento (debajo del listado) ---------- */
-    .track-card{
-      display:flex; align-items:center; justify-content:space-between; gap:.75rem;
-      background:#fff; border:1px dashed var(--gris-borde); border-radius:12px;
-      padding:.8rem .9rem; margin:.35rem 0 1rem;
-    }
-    .track-left{display:flex; align-items:center; gap:.7rem}
-    .track-emoji{font-size:1.25rem}
-    .track-title{font-weight:800; color:#0b376d}
-    .track-id{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-weight:800; letter-spacing:.2px}
-    .track-actions{display:flex; gap:.5rem; flex-wrap:wrap}
-    .btn-mini{
-      display:inline-flex; align-items:center; gap:.4rem;
-      background:#fff; color:#0b376d; border:1px solid var(--gris-borde);
-      border-radius:8px; padding:.45rem .7rem; font-weight:800; text-decoration:none; cursor:pointer;
-    }
-    .status-pill{
-      padding:.2rem .55rem; border-radius:999px; font-weight:800; font-size:.85rem; border:1px solid transparent;
-    }
-    .s-nuevo{ background:#eef2ff; color:#1e3a8a; border-color:#c7d2fe}
-    .s-prep{  background:#fff7ed; color:#9a3412; border-color:#fed7aa}
-    .s-listo{ background:#ecfdf5; color:#065f46; border-color:#a7f3d0; box-shadow:0 0 0 0 rgba(16,185,129,.7); animation:readyPulse 1.2s ease-out infinite}
-    @keyframes readyPulse{ 0%{box-shadow:0 0 0 0 rgba(16,185,129,.6)} 70%{box-shadow:0 0 0 12px rgba(16,185,129,0)} 100%{box-shadow:0 0 0 0 rgba(16,185,129,0)} }
-
     .totales{display:grid;gap:.25rem;margin-top:.5rem}
     .tot-line{display:flex;justify-content:space-between;align-items:center;padding:.35rem .2rem}
     .tot-line.total{font-size:1.1rem;font-weight:800;border-top:1px dashed #d6d6d6;margin-top:.25rem;padding-top:.5rem}
@@ -143,7 +118,7 @@
     /* ---------- Inputs ---------- */
     label{display:block;margin-top:1rem;font-weight:700}
     label input[type="text"],input[type="email"],input[type="tel"]{
-      width:100%;padding:.95rem 1rem;font-size:1.05rem;border:1px solid #d9dee7;
+      width:100%;padding:.95rem 1rem;font-size:1.05rem;border:1px solid var(--gris-borde);
       border-radius:12px;outline:none;background:#fff;transition:box-shadow .15s,border-color .15s
     }
     label input[type="text"]:focus{border-color:#7aa2ff;box-shadow:0 0 0 3px rgba(122,162,255,.25)}
@@ -187,9 +162,39 @@
     .toast.warn{border-left-color:#ffb400}
     @keyframes fadeIn{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
 
+    /* ---------- Seguimiento ---------- */
+    .seguimiento-wrap{max-width:900px;margin:1rem auto 0;padding:0 1rem}
+    .seg-card{
+      background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:1rem;box-shadow:0 8px 18px rgba(0,0,0,.05)
+    }
+    .seg-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.6rem}
+    .seg-title{margin:0;font-size:1.15rem;color:#0b376d;font-weight:900}
+    .seg-row{display:grid;grid-template-columns:1fr 1fr auto;gap:.6rem;align-items:end;margin:.5rem 0 .2rem}
+    .seg-row label{margin:0}
+    .seg-actions button{
+      height:42px;padding:.6rem 1rem;border-radius:8px;border:1px solid #d6d6d6;background:#fff;cursor:pointer;font-weight:800
+    }
+    .status-chip{
+      display:inline-flex;align-items:center;gap:.35rem;
+      padding:.25rem .6rem;border-radius:999px;font-size:.9rem;font-weight:800;border:1px solid transparent
+    }
+    .st-nuevo{background:#e0f2fe;border-color:#bae6fd;color:#075985}
+    .st-prep{background:#fff7ed;border-color:#ffedd5;color:#9a3412}
+    .st-listo{background:#dcfce7;border-color:#bbf7d0;color:#166534}
+    .st-entregado{background:#f1f5f9;border-color:#e2e8f0;color:#334155}
+    .seg-result{margin-top:.6rem;font-size:.95rem;color:#475569}
+    .seg-id{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#f8fafc;border:1px dashed #cbd5e1;padding:.25rem .5rem;border-radius:6px}
+    .copy-btn{border:none;background:#f3f4f6;border:1px solid #e5e7eb;padding:.25rem .5rem;border-radius:6px;cursor:pointer}
+    .glow-ready{animation:glow 1.2s ease-out 0s 1}
+    @keyframes glow{
+      0%{box-shadow:0 0 0 rgba(34,197,94,0)}
+      40%{box-shadow:0 0 0 6px rgba(34,197,94,.25)}
+      100%{box-shadow:0 0 0 rgba(34,197,94,0)}
+    }
+
     /* ---------- Divider ---------- */
     .section-divider{
-      margin:2rem auto 0;max-width:900px;padding:0 1rem;height:12px;border-radius:999px;
+      margin:1.2rem auto 0;max-width:900px;padding:0 1rem;height:12px;border-radius:999px;
       background:linear-gradient(to right,rgba(0,0,0,0)0%,#cbd5e1 18%,#94a3b8 50%,#cbd5e1 82%,rgba(0,0,0,0)100%);
       box-shadow:inset 0 2px 6px rgba(0,0,0,.08),0 8px 18px rgba(0,0,0,.06)
     }
@@ -242,7 +247,7 @@
       width:44px; height:44px; display:grid; place-items:center;
       background:#ffffffcc; backdrop-filter:saturate(1.2) blur(2px);
       border:1px solid #d7d7d7; border-radius:12px;
-      font-size:28px; line-height:1; color:var(--azul);
+      font-size:28px; line-height:1; color:#0b376d;
       cursor:pointer; z-index:6; -webkit-tap-highlight-color:transparent;
     }
     .sheet-close:active{transform:scale(.98)}
@@ -304,12 +309,34 @@
     <div id="menu-bebidas" style="display:none"></div>
   </main>
 
-  <!-- FAB -->
-  <button id="cartFab" type="button" class="cart-fab" hidden title="Ver pedido" aria-label="Ver pedido">
-    <span class="cart-icon">🛒</span>
-    <span class="cart-total" id="fabTotal">$ 0</span>
-    <span class="cart-count" id="fabCount">0</span>
-  </button>
+  <!-- ======= SEGUIMIENTO (debajo del listado, antes del divider) ======= -->
+  <section class="seguimiento-wrap">
+    <div id="segCard" class="seg-card" aria-live="polite">
+      <div class="seg-head">
+        <h3 class="seg-title">📍 Seguimiento de tu pedido</h3>
+        <span id="segChip" class="status-chip st-nuevo" title="Estado actual" hidden>—</span>
+      </div>
+
+      <div class="seg-row">
+        <label>Tu nombre
+          <input id="trackName" type="text" placeholder="Ej: Juan Pérez">
+        </label>
+        <label>ID de pedido (opcional)
+          <div style="display:flex;gap:.4rem;align-items:center">
+            <input id="trackId" type="text" placeholder="Ej: W20240101123456" style="flex:1">
+            <button id="copyIdBtn" class="copy-btn" type="button" title="Copiar ID">Copiar</button>
+          </div>
+        </label>
+        <div class="seg-actions">
+          <button id="btnTrack" type="button">Ver estado</button>
+        </div>
+      </div>
+
+      <div id="segResult" class="seg-result">
+        Ingresá tu nombre (y si tenés, el ID). Si tu pedido está <b>Listo</b> lo verás resaltado. Cuando pase a <b>Entregado</b> desaparecerá de acá para que puedas hacer uno nuevo.
+      </div>
+    </div>
+  </section>
 
   <!-- Divider -->
   <div class="section-divider" aria-hidden="true"></div>
@@ -361,7 +388,6 @@
 
     <div id="sheetBody" class="sheet-body" tabindex="0">
       <section id="checkout">
-        <!-- Retiro / Envío (SIN cambios de UX) -->
         <div class="segmented" role="tablist" aria-label="Entrega">
           <input id="opt-ret" type="radio" name="envio" value="retiro">
           <label for="opt-ret">Retiro</label>
@@ -381,22 +407,6 @@
           <h3>Resumen del pedido</h3>
           <p id="emptyMsg" class="resumen-empty">Aún no agregaste productos.</p>
           <ul id="lista" class="resumen-list"></ul>
-
-          <!-- 🔎 Seguimiento (debajo del listado) -->
-          <div id="trackBox" class="track-card" hidden>
-            <div class="track-left">
-              <div class="track-emoji">📦</div>
-              <div>
-                <div class="track-title">Seguimiento de tu pedido</div>
-                <div style="font-size:.92rem;opacity:.9">ID: <span id="trackId" class="track-id"></span></div>
-              </div>
-            </div>
-            <div class="track-actions">
-              <span id="trackEstado" class="status-pill s-nuevo">Nuevo</span>
-              <button id="trackRefresh" type="button" class="btn-mini">Refrescar</button>
-              <a id="trackOpen" class="btn-mini" target="_blank" rel="noopener">Ver estado</a>
-            </div>
-          </div>
 
           <div class="totales" aria-live="polite">
             <div class="tot-line"><span>Subtotal</span><span id="subtotal">$ 0</span></div>
@@ -437,13 +447,12 @@
   let SHIPPING = 1000;
   let WSP_NUMBER = '3415923882';
 
-  /* ======= Analytics / Webhook Apps Script ======= */
+  /* ======= Analytics (envía a tu hoja "Pedidos") ======= */
   const ANALYTICS_KEY='tachi_events_v1';
+
   // ⬇️⬇️⬇️ REEMPLAZAR por la URL de tu Web App de Apps Script
   const ANALYTICS_WEBHOOK='https://script.google.com/macros/s/AKfycbz_pZVIydPyLn98VfzaeSzMRbrJ5BsyfTDlCTU_dBm8qy8gV2lYrobcKqJCU5OhPhyn/exec';
   // ⬆️⬆️⬆️
-  const TRACK_PANEL_URL = ANALYTICS_WEBHOOK + '?view=panel';
-  const TRACK_JSON_URL  = ANALYTICS_WEBHOOK + '?view=json';
 
   function getEvents(){try{return JSON.parse(localStorage.getItem(ANALYTICS_KEY)||'[]')}catch{return[]}}
   function saveEvents(l){localStorage.setItem(ANALYTICS_KEY,JSON.stringify(l))}
@@ -464,9 +473,7 @@
       }
     }catch(e){}
     if(!sent){
-      try{
-        fetch(ANALYTICS_WEBHOOK,{method:'POST',mode:'no-cors',keepalive:true,body:JSON.stringify(payload)});
-      }catch(e){}
+      try{ fetch(ANALYTICS_WEBHOOK,{method:'POST',mode:'no-cors',keepalive:true,body:JSON.stringify(payload)}); }catch(e){}
     }
     saveEvents([]);
   }
@@ -474,6 +481,16 @@
   window.addEventListener('beforeunload',()=>{ flushEvents('unload'); });
   window.addEventListener('online',()=>scheduleFlush(250));
   setInterval(()=>flushEvents('interval'), 20000);
+
+  /* ======= CSV helper (por si querés exportar) ======= */
+  const SEP=Intl.NumberFormat().format(1.1).includes(',')?';':',';
+  const csvEscape=v=>v==null?'':(/["\n\r]/.test(v)||String(v).includes(SEP))?`"${String(v).replace(/"/g,'""')}"`:v;
+  function downloadCSV(name,headers,rows){
+    const lines=[headers.join(SEP),...rows.map(r=>headers.map(h=>csvEscape(r[h])).join(SEP))];
+    const blob=new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8;'});
+    const url=URL.createObjectURL(blob);const a=document.createElement('a');
+    a.href=url;a.download=name;document.body.appendChild(a);a.click();URL.revokeObjectURL(url);a.remove();
+  }
 
   /* ======= Helpers + TTL (2 horas) ======= */
   const asset=p=>location.hostname.endsWith('github.io')?`/${location.pathname.split('/').filter(Boolean)[0]}/${p}`:`/${p}`;
@@ -495,7 +512,6 @@
   const CLIENT_TTL_MS=2*60*60*1000; // 2h
   const CART_KEY='tachi_cart_v1';
   const CLIENT_KEY='tachi_client_v1';
-  const LAST_TRACK_KEY='tachi_last_track_v1'; // {order_id,name,first_item,created_at}
   const loadCart   = () => getWithTTL(CART_KEY, {});
   const saveCart   = (obj) => setWithTTL(CART_KEY, obj,   CART_TTL_MS);
   const loadClient = () => getWithTTL(CLIENT_KEY, {});
@@ -627,10 +643,7 @@
             <span id="cantidad-${id}">0</span>
             <button onclick="cambiarCantidad('${id}',1,this)">+</button>
           </div>`;
-        div.dataset.nombre=prod.nombre;
-        div.dataset.precio=prod.precio;
-        div.dataset.pid = prod.id ? String(prod.id) : id;  // ← product_id
-        det.appendChild(div);
+        div.dataset.nombre=prod.nombre;div.dataset.precio=prod.precio;det.appendChild(div);
       });
       cont.appendChild(det);
     }
@@ -646,7 +659,6 @@
         {
           categoria: '⭐ Promos',
           productos: vigentes.map(p => ({
-            id: p.id || null,
             nombre: p.nombre,
             precio: p.precio,
             desc: p.desc || '',
@@ -691,6 +703,12 @@
     const c=loadClient();
     if(c.name)document.getElementById('nombre').value=c.name;
     if(c.address)document.getElementById('direccion').value=c.address;
+    // Prefill seguimiento
+    const tn=document.getElementById('trackName');
+    if(c.name && tn && !tn.value) tn.value=c.name;
+    const lastId = getLastOrderId();
+    const idInput = document.getElementById('trackId');
+    if(lastId && idInput && !idInput.value) idInput.value=lastId;
   }
 
   /* ======= Carrito ======= */
@@ -797,7 +815,7 @@
   const dlgBackdrop=document.getElementById('dlgClearBackdrop'),
         dlgYes=document.getElementById('dlgClearYes'),
         dlgNo=document.getElementById('dlgClearNo');
-  function abrirDialogoVaciar(){dlgBackdrop.classList.add('open');dlgYes.focus()}
+  function abrirDialogoVaciar(){dlgBackdrop.classList.add('open');dlgYes.focus())}
   function cerrarDialogoVaciar(){dlgBackdrop.classList.remove('open')}
   dlgNo.addEventListener('click',cerrarDialogoVaciar);
   dlgBackdrop.addEventListener('click',e=>{if(e.target===dlgBackdrop)cerrarDialogoVaciar()});
@@ -810,7 +828,7 @@
   });
   const vaciarCarrito=abrirDialogoVaciar;
 
-  /* ======= Tabs ======= */
+  /* ======= Tabs (con analítica) ======= */
   function mostrar(sec){
     const otra = sec==='bebidas' ? 'rotiseria' : 'bebidas';
     logEvent('tab_show',{sec});
@@ -829,94 +847,6 @@
     document.getElementById('btn-rotiseria').classList.toggle('active', sec==='rotiseria');
     document.getElementById('btn-bebidas').classList.toggle('active', sec==='bebidas');
   }
-
-  /* ======= Seguimiento del pedido (cliente) ======= */
-  let TRACK_TIMER=null;
-  function saveLastTrack(obj){ localStorage.setItem(LAST_TRACK_KEY, JSON.stringify(obj)); }
-  function getLastTrack(){ try{ return JSON.parse(localStorage.getItem(LAST_TRACK_KEY)||'null'); }catch{ return null; } }
-  function clearLastTrack(){
-    localStorage.removeItem(LAST_TRACK_KEY);
-    const box=document.getElementById('trackBox');
-    if(box){ box.hidden=true; }
-  }
-
-  function setEstadoPill(estado){
-    const pill=document.getElementById('trackEstado');
-    if(!pill) return;
-    const e=(estado||'Nuevo').toString();
-    pill.textContent=e;
-    pill.classList.remove('s-nuevo','s-prep','s-listo');
-    if(e==='Listo') pill.classList.add('s-listo');
-    else if(e==='En preparación') pill.classList.add('s-prep');
-    else pill.classList.add('s-nuevo');
-  }
-
-  function sameDayToday(tsStr){
-    // intenta parsear dd/MM/yyyy ...
-    try{
-      const m=String(tsStr).match(/(\d{2})\/(\d{2})\/(\d{4})/);
-      if(!m) return true; // si no hay ts, no filtramos
-      const d=new Date(Number(m[3]), Number(m[2])-1, Number(m[1]));
-      const t=new Date();
-      return d.getFullYear()===t.getFullYear() && d.getMonth()===t.getMonth() && d.getDate()===t.getDate();
-    }catch{ return true; }
-  }
-
-  async function fetchTrackAndRender(){
-    const info=getLastTrack(); if(!info) return;
-    try{
-      const r = await fetch(TRACK_JSON_URL, {credentials:'omit'}); // si CORS bloquea, luego ajustamos en Apps Script
-      if(!r.ok) throw new Error('HTTP '+r.status);
-      const rows = await r.json();
-      if(!Array.isArray(rows) || !rows.length) return;
-
-      // Heurística: último pedido de HOY con ese nombre (y si podemos, que contenga el primer ítem)
-      const candidates = rows.filter(p =>
-        String(p.name||'').trim().toLowerCase() === String(info.name||'').trim().toLowerCase()
-        && sameDayToday(p.ts_str||p.ts)
-      );
-      if(!candidates.length) return;
-
-      // El más reciente (el JSON viene reverse() en el server, por si acaso ordenamos)
-      candidates.sort((a,b)=> (String(b.ts_str||'')>String(a.ts_str||''))?1:-1);
-      let found = candidates[0];
-
-      if(info.first_item){
-        const hit = candidates.find(p => String(p.items||'').includes(info.first_item));
-        if(hit) found=hit;
-      }
-
-      const estado = (found && typeof found.estado!=='undefined' && found.estado!==null) ? String(found.estado) : 'Nuevo';
-      setEstadoPill(estado);
-
-      if(estado==='Entregado'){
-        showToast('¡Tu pedido fue entregado! 🎉','ok');
-        clearLastTrack(); // se oculta para el cliente
-        stopTracking();
-      }
-    }catch(err){
-      // silencioso, puede ser CORS
-      // console.warn('track error', err);
-    }
-  }
-
-  function startTracking(){
-    const info=getLastTrack();
-    const box=document.getElementById('trackBox');
-    const idEl=document.getElementById('trackId');
-    const openEl=document.getElementById('trackOpen');
-    const btnRef=document.getElementById('trackRefresh');
-    if(!info || !box || !idEl || !openEl) return;
-    idEl.textContent=info.order_id || '—';
-    openEl.href = TRACK_PANEL_URL; // abre el panel (admin); si preferís, después creamos vista pública
-    setEstadoPill('Nuevo');
-    box.hidden=false;
-    if(btnRef){ btnRef.onclick = fetchTrackAndRender; }
-    stopTracking();
-    TRACK_TIMER = setInterval(fetchTrackAndRender, 7000);
-    fetchTrackAndRender();
-  }
-  function stopTracking(){ if(TRACK_TIMER){ clearInterval(TRACK_TIMER); TRACK_TIMER=null; } }
 
   /* ======= WhatsApp (y registrar en hoja) ======= */
   function enviarPedido(){
@@ -953,16 +883,13 @@
 
     let msg=`Hola, soy ${name}. Quiero hacer un pedido:\n`;
     const items=[];
-    let firstItemName='';
     Object.entries(cantidades).forEach(([id,qty])=>{
       if(qty>0){
         const span=document.getElementById(`cantidad-${id}`); if(!span) return;
         const row=span.closest('.producto');
         const n=row.dataset.nombre, p=parseInt(row.dataset.precio,10), line=p*qty;
-        const pid=row.dataset.pid || id; // ← product_id
-        if(!firstItemName) firstItemName=n;
         msg+=`- ${n} x${qty} - ${formatARS(line)}\n`;
-        items.push({ product_id: pid, name:n, qty, unit_price:p, line_total:line });
+        items.push({ name:n, qty, unit_price:p, line_total:line });
       }
     });
 
@@ -978,7 +905,7 @@
     logEvent('order_wsp',{ order_id, shipping:envio, shipping_cost, subtotal, total, name, address:addr, items });
 
     // Guardar “último pedido” para seguimiento
-    try{ saveLastTrack({ order_id, name, first_item:firstItemName, created_at:Date.now() }); }catch{}
+    try{ localStorage.setItem('tachi_last_order', order_id); }catch{}
 
     // Enviar analíticas inmediatamente (no bloquea)
     flushEvents('order');
@@ -992,11 +919,13 @@
     document.querySelectorAll('[id^="cantidad-"]').forEach(el=>el.textContent='0');
     saveCart(cantidades);
     actualizarResumen();
-    closeSheet(); // cerrar el sheet del carrito
+    closeSheet();
     showToast('Pedido enviado. Carrito vaciado ✅','ok',2000);
 
-    // Mostrar el box de seguimiento (debajo del listado)
-    startTracking();
+    // Prefill seguimiento con ID
+    const idInput = document.getElementById('trackId');
+    if(idInput){ idInput.value = order_id; }
+    startTracking(); // arrancar seguimiento post-envío
   }
 
   /* ======= Sheet (abrir/cerrar con focus trap) ======= */
@@ -1068,12 +997,118 @@
     }
   })();
 
-  // Refrescar tabs cada minuto por cambios de horario + page_view + reiniciar tracking si existe
+  // ======= SEGUIMIENTO: lógica =======
+  function getLastOrderId(){ try{return localStorage.getItem('tachi_last_order')||''}catch{return ''} }
+  function clearLastOrderId(){ try{localStorage.removeItem('tachi_last_order')}catch{} }
+
+  function setSegChip(text, cls){
+    const chip=document.getElementById('segChip');
+    chip.textContent=text; chip.hidden=false;
+    chip.className='status-chip '+cls;
+  }
+
+  function parseARDate(s){
+    // espera formato dd/MM/yyyy HH:mm
+    if(!s || typeof s!=='string') return null;
+    const m=s.match(/^(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})$/);
+    if(!m) return null;
+    const [_,dd,MM,yyyy,hh,mm]=m.map(Number);
+    return new Date(yyyy,MM-1,dd,hh,mm);
+  }
+
+  let TRACK_TIMER=null;
+  function startTracking(){
+    if(TRACK_TIMER){ clearInterval(TRACK_TIMER); TRACK_TIMER=null; }
+    updateTracking();
+    TRACK_TIMER=setInterval(updateTracking, 10000);
+  }
+
+  async function updateTracking(){
+    const name = (document.getElementById('trackName')?.value||'').trim();
+    const id   = (document.getElementById('trackId')?.value||'').trim();
+    const res  = document.getElementById('segResult');
+    const card = document.getElementById('segCard');
+
+    if(!name && !id){
+      setSegChip('—','st-nuevo');
+      res.innerHTML = 'Ingresá tu nombre (y si tenés, el ID) para ver el estado.';
+      return;
+    }
+
+    try{
+      const r = await fetch(ANALYTICS_WEBHOOK+'?view=json', {cache:'no-store'});
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      const rows = await r.json(); // array de pedidos (más recientes primero en nuestro code.gs)
+
+      // TODO: cuando agreguemos order_id a la hoja, buscaremos por ID exacto. Por ahora: por nombre.
+      let match = null;
+      if(name){
+        match = (rows||[]).find(p => String(p.name||'').trim().toLowerCase() === name.toLowerCase());
+      }
+      // Si hay ID y la hoja aún no lo tiene, lo mostramos, pero no filtra por ID.
+      if(!match){
+        setSegChip('—','st-nuevo');
+        res.innerHTML = 'No encontramos un pedido con ese nombre todavía. Probá de nuevo en unos segundos.';
+        return;
+      }
+
+      const estado = String(match.estado||'Nuevo');
+      const cuando = match.ts_str || match.ts || '';
+      const cuandoDate = parseARDate(String(cuando));
+      const cuandoFmt = cuandoDate ? cuandoDate.toLocaleString('es-AR',{weekday:'short', hour:'2-digit', minute:'2-digit'}).replace('.','') : String(cuando);
+
+      if(estado==='Nuevo'){ setSegChip('Nuevo','st-nuevo'); }
+      else if(estado==='En preparación'){ setSegChip('En preparación','st-prep'); }
+      else if(estado==='Listo'){ setSegChip('Listo','st-listo'); card.classList.add('glow-ready'); setTimeout(()=>card.classList.remove('glow-ready'),1200); }
+      else if(estado==='Entregado'){ setSegChip('Entregado','st-entregado'); }
+      else { setSegChip(estado,'st-nuevo'); }
+
+      // Render
+      const lastId = getLastOrderId();
+      const idHtml = (id||lastId) ? `<span class="seg-id">${id||lastId}</span> ` : '';
+      res.innerHTML = `
+        Pedido de <b>${match.name || name}</b> • ${idHtml}
+        <br>Estado: <b>${estado}</b> • Actualizado: <span title="${cuando}">${cuandoFmt||'-'}</span>
+      `;
+
+      // Si fue entregado: limpiar y ocultar tarjeta
+      if(estado==='Entregado'){
+        clearLastOrderId();
+        document.getElementById('trackId').value='';
+        res.innerHTML = `✅ <b>Entregado</b>. ¡Gracias! Ya podés hacer un nuevo pedido.`;
+        // Opcional: ocultar chip y detener tracking
+        if(TRACK_TIMER){ clearInterval(TRACK_TIMER); TRACK_TIMER=null; }
+        setTimeout(()=>{ 
+          document.getElementById('segChip').hidden=true; 
+        }, 1500);
+      }
+    }catch(err){
+      setSegChip('—','st-nuevo');
+      res.textContent = 'No pudimos consultar el estado ahora. Reintentá en unos segundos.';
+      console.warn('track error', err);
+    }
+  }
+
+  // Botones y copy
+  document.getElementById('btnTrack').addEventListener('click',startTracking);
+  document.getElementById('copyIdBtn').addEventListener('click',()=>{
+    const val=(document.getElementById('trackId')?.value||'').trim();
+    if(!val){ showToast('No hay ID para copiar','warn'); return; }
+    navigator.clipboard.writeText(val).then(()=>showToast('ID copiado','ok'),()=>showToast('No se pudo copiar','error'));
+  });
+
+  // Refrescar tabs cada minuto por cambios de horario + page_view + auto tracking si hay datos
   window.addEventListener('DOMContentLoaded', ()=>{
     actualizarTabsPorHorario();
     setInterval(actualizarTabsPorHorario, 60*1000);
     logEvent('page_view',{title:document.title});
-    if(getLastTrack()){ startTracking(); }
+
+    // Prefill seguimiento desde memoria
+    const c=loadClient();
+    if(c.name){ document.getElementById('trackName').value=c.name; }
+    const lastId=getLastOrderId();
+    if(lastId){ document.getElementById('trackId').value=lastId; }
+    if(c.name || lastId){ startTracking(); }
   });
   </script>
 </body>
