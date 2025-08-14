@@ -14,7 +14,7 @@
       --azul-2:#001122;
       --azul-3:#004080;
       --amarillo:#ffcc00;
-      --gris-borde:#cbd5e1;
+      --gris-borde:#ccc;
       --bg:#f8f9fa;
       --text:#333;
       --card:#fff;
@@ -163,38 +163,32 @@
     @keyframes fadeIn{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
 
     /* ---------- Seguimiento ---------- */
-    .seguimiento-wrap{max-width:900px;margin:1rem auto 0;padding:0 1rem}
-    .seg-card{
-      background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:1rem;box-shadow:0 8px 18px rgba(0,0,0,.05)
+    .track{margin:1.2rem auto 0;max-width:900px;padding:1.2rem}
+    .track-card{
+      background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:1rem 1.2rem;
+      box-shadow:0 10px 24px rgba(0,0,0,.08);display:grid;gap:.8rem
     }
-    .seg-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.6rem}
-    .seg-title{margin:0;font-size:1.15rem;color:#0b376d;font-weight:900}
-    .seg-row{display:grid;grid-template-columns:1fr 1fr auto;gap:.6rem;align-items:end;margin:.5rem 0 .2rem}
-    .seg-row label{margin:0}
-    .seg-actions button{
-      height:42px;padding:.6rem 1rem;border-radius:8px;border:1px solid #d6d6d6;background:#fff;cursor:pointer;font-weight:800
-    }
-    .status-chip{
-      display:inline-flex;align-items:center;gap:.35rem;
-      padding:.25rem .6rem;border-radius:999px;font-size:.9rem;font-weight:800;border:1px solid transparent
-    }
-    .st-nuevo{background:#e0f2fe;border-color:#bae6fd;color:#075985}
-    .st-prep{background:#fff7ed;border-color:#ffedd5;color:#9a3412}
-    .st-listo{background:#dcfce7;border-color:#bbf7d0;color:#166534}
-    .st-entregado{background:#f1f5f9;border-color:#e2e8f0;color:#334155}
-    .seg-result{margin-top:.6rem;font-size:.95rem;color:#475569}
-    .seg-id{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#f8fafc;border:1px dashed #cbd5e1;padding:.25rem .5rem;border-radius:6px}
-    .copy-btn{border:none;background:#f3f4f6;border:1px solid #e5e7eb;padding:.25rem .5rem;border-radius:6px;cursor:pointer}
-    .glow-ready{animation:glow 1.2s ease-out 0s 1}
-    @keyframes glow{
-      0%{box-shadow:0 0 0 rgba(34,197,94,0)}
-      40%{box-shadow:0 0 0 6px rgba(34,197,94,.25)}
-      100%{box-shadow:0 0 0 rgba(34,197,94,0)}
-    }
+    .track-header{display:flex;align-items:center;justify-content:space-between}
+    .track-title{margin:0;font-size:1.2rem;color:#0b376d;display:flex;align-items:center;gap:.5rem;font-weight:900}
+    .track-sub{margin:0;color:#6b7280;font-size:.95rem}
+    .track-grid{display:grid;grid-template-columns:1fr 1fr auto;gap:.5rem;align-items:end}
+    .track-id-row{display:flex;gap:.4rem}
+    .track-btn{background:var(--azul);color:var(--amarillo);border:1px solid var(--azul);border-radius:10px;padding:.6rem .9rem;font-weight:800;cursor:pointer}
+    .track-btn.secondary{background:#fff;color:#0b376d;border-color:#cbd5e1}
+    .track-result{border:1px dashed #d6d6d6;border-radius:12px;padding:.8rem}
+    .status-badge{display:inline-flex;align-items:center;font-weight:900;border-radius:999px;padding:.2rem .6rem;font-size:.9rem}
+    .st-new{background:#eef2ff;color:#1d4ed8;border:1px solid #c7d2fe}
+    .st-prep{background:#fff7ed;color:#c2410c;border:1px solid #fed7aa}
+    .st-ready{background:#ecfdf5;color:#047857;border:1px solid #a7f3d0}
+    .st-done{background:#f1f5f9;color:#334155;border:1px solid #e2e8f0}
+    .ready-note{margin:.6rem 0 0;color:#065f46;font-weight:800}
+    .track-card.ready{box-shadow:0 0 0 3px rgba(16,185,129,.25), 0 10px 24px rgba(0,0,0,.08);border-color:#34d399}
+    .track-actions{display:flex;gap:.5rem;flex-wrap:wrap}
+    .track-hide{display:none}
 
     /* ---------- Divider ---------- */
     .section-divider{
-      margin:1.2rem auto 0;max-width:900px;padding:0 1rem;height:12px;border-radius:999px;
+      margin:2rem auto 0;max-width:900px;padding:0 1rem;height:12px;border-radius:999px;
       background:linear-gradient(to right,rgba(0,0,0,0)0%,#cbd5e1 18%,#94a3b8 50%,#cbd5e1 82%,rgba(0,0,0,0)100%);
       box-shadow:inset 0 2px 6px rgba(0,0,0,.08),0 8px 18px rgba(0,0,0,.06)
     }
@@ -247,7 +241,7 @@
       width:44px; height:44px; display:grid; place-items:center;
       background:#ffffffcc; backdrop-filter:saturate(1.2) blur(2px);
       border:1px solid #d7d7d7; border-radius:12px;
-      font-size:28px; line-height:1; color:#0b376d;
+      font-size:28px; line-height:1; color:var(--azul);
       cursor:pointer; z-index:6; -webkit-tap-highlight-color:transparent;
     }
     .sheet-close:active{transform:scale(.98)}
@@ -309,34 +303,50 @@
     <div id="menu-bebidas" style="display:none"></div>
   </main>
 
-  <!-- ======= SEGUIMIENTO (debajo del listado, antes del divider) ======= -->
-  <section class="seguimiento-wrap">
-    <div id="segCard" class="seg-card" aria-live="polite">
-      <div class="seg-head">
-        <h3 class="seg-title">📍 Seguimiento de tu pedido</h3>
-        <span id="segChip" class="status-chip st-nuevo" title="Estado actual" hidden>—</span>
+  <!-- Seguimiento (debajo del listado y ANTES del divisor) -->
+  <section id="track" class="track" aria-labelledby="track-title">
+    <div id="trackCard" class="track-card">
+      <div class="track-header">
+        <h3 id="track-title" class="track-title">📍 Seguimiento de tu pedido</h3>
       </div>
+      <p class="track-sub">Ingresá tu nombre y opcionalmente el ID del pedido. Si está <strong>Listo</strong> lo verás resaltado. Cuando pase a <strong>Entregado</strong> desaparecerá para que hagas uno nuevo.</p>
 
-      <div class="seg-row">
+      <div class="track-grid">
         <label>Tu nombre
-          <input id="trackName" type="text" placeholder="Ej: Juan Pérez">
+          <input id="trackName" type="text" placeholder="Tu nombre">
         </label>
+
         <label>ID de pedido (opcional)
-          <div style="display:flex;gap:.4rem;align-items:center">
-            <input id="trackId" type="text" placeholder="Ej: W20240101123456" style="flex:1">
-            <button id="copyIdBtn" class="copy-btn" type="button" title="Copiar ID">Copiar</button>
+          <div class="track-id-row">
+            <input id="trackId" type="text" placeholder="W2024…">
+            <button id="btnCopyId" class="track-btn secondary" type="button">Copiar</button>
           </div>
         </label>
-        <div class="seg-actions">
-          <button id="btnTrack" type="button">Ver estado</button>
-        </div>
+
+        <button id="btnTrack" class="track-btn" type="button">Ver estado</button>
       </div>
 
-      <div id="segResult" class="seg-result">
-        Ingresá tu nombre (y si tenés, el ID). Si tu pedido está <b>Listo</b> lo verás resaltado. Cuando pase a <b>Entregado</b> desaparecerá de acá para que puedas hacer uno nuevo.
+      <div id="trackResult" class="track-result" hidden>
+        <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
+          <span>Estado:</span>
+          <span id="trackBadge" class="status-badge st-new">Nuevo</span>
+        </div>
+        <ul style="margin:.6rem 0 0; padding-left:1rem; color:#334155; display:grid; gap:.25rem">
+          <li>Total: <strong id="trackTotal">$ 0</strong></li>
+          <li>Entrega: <span id="trackEntrega">-</span></li>
+          <li id="trackAddrLi" class="track-hide">Dirección: <span id="trackAddress">-</span></li>
+        </ul>
+        <p id="trackReadyNote" class="ready-note track-hide">🎉 ¡Tu pedido está listo! Acercate cuando quieras.</p>
       </div>
     </div>
   </section>
+
+  <!-- FAB -->
+  <button id="cartFab" type="button" class="cart-fab" hidden title="Ver pedido" aria-label="Ver pedido">
+    <span class="cart-icon">🛒</span>
+    <span class="cart-total" id="fabTotal">$ 0</span>
+    <span class="cart-count" id="fabCount">0</span>
+  </button>
 
   <!-- Divider -->
   <div class="section-divider" aria-hidden="true"></div>
@@ -451,7 +461,7 @@
   const ANALYTICS_KEY='tachi_events_v1';
 
   // ⬇️⬇️⬇️ REEMPLAZAR por la URL de tu Web App de Apps Script
-  const ANALYTICS_WEBHOOK='https://script.google.com/macros/s/AKfycbxj5G3VyK9LyzV-QOejhrFYAv6JmoUYihk2o-8AVEFiro-V3h2eHZPSuMWETi-hpjzj/exec';
+  const ANALYTICS_WEBHOOK='https://script.google.com/macros/s/AKfycbz_pZVIydPyLn98VfzaeSzMRbrJ5BsyfTDlCTU_dBm8qy8gV2lYrobcKqJCU5OhPhyn/exec';
   // ⬆️⬆️⬆️
 
   function getEvents(){try{return JSON.parse(localStorage.getItem(ANALYTICS_KEY)||'[]')}catch{return[]}}
@@ -473,7 +483,9 @@
       }
     }catch(e){}
     if(!sent){
-      try{ fetch(ANALYTICS_WEBHOOK,{method:'POST',mode:'no-cors',keepalive:true,body:JSON.stringify(payload)}); }catch(e){}
+      try{
+        fetch(ANALYTICS_WEBHOOK,{method:'POST',mode:'no-cors',keepalive:true,body:JSON.stringify(payload)});
+      }catch(e){}
     }
     saveEvents([]);
   }
@@ -520,6 +532,7 @@
   /* ======= Toast ======= */
   function showToast(msg,type='ok',t=2400){
     const wrap=document.getElementById('toastWrap');
+    if(!wrap) return;
     const el=document.createElement('div');
     el.className=`toast ${type==='error'?'err':type==='warn'?'warn':'ok'}`;
     el.textContent=msg;
@@ -608,10 +621,10 @@
     }
   }
 
-  const cantidades = {}; // <— importante: declarar antes de usar
+  const cantidades = {}; // <— importante
 
   function renderProductos(contId,data){
-    const cont=document.getElementById(contId);cont.innerHTML='';
+    const cont=document.getElementById(contId); if(!cont) return; cont.innerHTML='';
     const norm=normalizar(data);
     for(const cat in norm){
       const items=norm[cat]||[];const det=document.createElement('details');
@@ -692,6 +705,8 @@
     hydrateCart();hydrateClient();actualizarResumen();
     actualizarTabsPorHorario();
 
+    initTracking(); // ⬅️ listeners del seguimiento, ahora que existe en el DOM
+
     logEvent('menus_loaded',{rotiseria_cats:(rMerge.categorias||[]).length,bebidas_cats:(bMerge.categorias||[]).length});
   }
   cargarProductos();
@@ -701,14 +716,10 @@
   const hydrateCart=()=>Object.entries(loadCart()).forEach(([id,q])=>{if(q>0){cantidades[id]=q;const el=document.getElementById(`cantidad-${id}`);if(el)el.textContent=q}});
   function hydrateClient(){
     const c=loadClient();
-    if(c.name)document.getElementById('nombre').value=c.name;
-    if(c.address)document.getElementById('direccion').value=c.address;
-    // Prefill seguimiento
-    const tn=document.getElementById('trackName');
-    if(c.name && tn && !tn.value) tn.value=c.name;
-    const lastId = getLastOrderId();
-    const idInput = document.getElementById('trackId');
-    if(lastId && idInput && !idInput.value) idInput.value=lastId;
+    const nombre=document.getElementById('nombre');
+    const direccion=document.getElementById('direccion');
+    if(nombre && c.name) nombre.value=c.name;
+    if(direccion && c.address) direccion.value=c.address;
   }
 
   /* ======= Carrito ======= */
@@ -722,11 +733,12 @@
     const span=document.getElementById(`cantidad-${id}`);if(span)span.textContent=cantidades[id];
     if(delta>0&&btn){
       btn.classList.add('btn-pop');btn.addEventListener('animationend',()=>btn.classList.remove('btn-pop'),{once:true});
-      const row=btn.closest('.producto');row.classList.add('row-flash');row.addEventListener('animationend',()=>row.classList.remove('row-flash'),{once:true});
-      const fab=document.getElementById('cartFab');fab.classList.add('bump');fab.addEventListener('animationend',()=>fab.classList.remove('bump'),{once:true});
+      const row=btn.closest?.('.producto');
+      if(row && row.classList){ row.classList.add('row-flash'); row.addEventListener('animationend',()=>row.classList.remove('row-flash'),{once:true}); }
+      const fab=document.getElementById('cartFab'); if(fab){ fab.classList.add('bump'); fab.addEventListener('animationend',()=>fab.classList.remove('bump'),{once:true}); }
     }
     try{
-      const row=document.getElementById(`cantidad-${id}`)?.closest('.producto');
+      const row=document.getElementById(`cantidad-${id}`)?.closest?.('.producto');
       const name=row?.dataset?.nombre||''; const price=parseInt(row?.dataset?.precio||0,10);
       logEvent('qty_change',{id,delta,new_qty:cantidades[id],sec,name,price});
     }catch{}
@@ -751,7 +763,8 @@
           nombreEl=document.getElementById('nombre');
     const fabCount=document.getElementById('fabCount'), fabTotal=document.getElementById('fabTotal');
 
-    listaEl.innerHTML='';let subtotal=0,count=0;
+    if(listaEl) listaEl.innerHTML='';
+    let subtotal=0,count=0;
     const tiene = { rotiseria:0, bebidas:0 };
 
     for(const id in cantidades){
@@ -760,19 +773,21 @@
       const row=span.closest('.producto');const name=row?.dataset?.nombre;const price=parseInt(row?.dataset?.precio||0,10);
       const li=document.createElement('li');li.className='resumen-item';
       li.innerHTML=`<span class="resumen-name">${name||'-'}</span><span class="resumen-qty">x${qty}</span><span class="resumen-line">${formatARS(price*qty)}</span>`;
-      listaEl.appendChild(li);subtotal+=price*qty;count+=qty;
+      listaEl && listaEl.appendChild(li);subtotal+=price*qty;count+=qty;
       const sec = seccionDeId(id); tiene[sec]+=qty;
     }
     const envioInput=document.querySelector('input[name=envio]:checked');
     const envioSel=envioInput?envioInput.value:null;
     const envioCosto=envioSel==='envio'?SHIPPING:0;
 
-    subtotalEl.textContent=formatARS(subtotal);
-    if(envioCosto>0){ envioCostoEl.textContent=formatARS(envioCosto); envioLineEl.hidden=false; }
-    else{ envioLineEl.hidden=true; envioCostoEl.textContent=''; }
-    totalEl.textContent=formatARS(subtotal+envioCosto);
+    if(subtotalEl) subtotalEl.textContent=formatARS(subtotal);
+    if(envioCosto>0){ if(envioCostoEl) envioCostoEl.textContent=formatARS(envioCosto); if(envioLineEl) envioLineEl.hidden=false; }
+    else{ if(envioLineEl) envioLineEl.hidden=true; if(envioCostoEl) envioCostoEl.textContent=''; }
+    if(totalEl) totalEl.textContent=formatARS(subtotal+envioCosto);
 
-    emptyMsg.hidden=count>0; fabCount.textContent=count; fabTotal.textContent=formatARS(subtotal+envioCosto);
+    if(emptyMsg) emptyMsg.hidden=count>0;
+    if(fabCount) fabCount.textContent=count;
+    if(fabTotal) fabTotal.textContent=formatARS(subtotal+envioCosto);
     setFabVisible(count>0&&!window.sheetOpen);
 
     // Validación por horarios
@@ -782,12 +797,12 @@
 
     const estado = document.getElementById('estadoHorarios') || (()=>{
       const p=document.createElement('p'); p.id='estadoHorarios'; p.style.margin='6px 0 0'; p.style.fontSize='.95rem'; p.style.color='#7a4c00';
-      document.getElementById('resumen').insertBefore(p, document.getElementById('resumen').firstChild.nextSibling);
+      const res=document.getElementById('resumen'); if(res) res.insertBefore(p, res.firstChild.nextSibling);
       return p;
     })();
-    estado.textContent = puedePedir ? '' : motivos.join(' ');
+    if(estado) estado.textContent = puedePedir ? '' : motivos.join(' ');
 
-    btnWA.disabled = !(count>0 && nombreEl.value.trim().length>0 && puedePedir);
+    if(btnWA) btnWA.disabled = !(count>0 && nombreEl && nombreEl.value.trim().length>0 && puedePedir);
 
     window.METRICS_TOTAL=subtotal+envioCosto;window.METRICS_COUNT=count;window.METRICS_ENVIO=envioSel||'';
 
@@ -795,17 +810,23 @@
   }
 
   /* ======= Guardar inputs cliente + analíticas ======= */
-  document.getElementById('nombre').addEventListener('input',()=>{
-    const nombreEl=document.getElementById('nombre');
-    saveClient({...loadClient(),name:nombreEl.value.trim()});
-    logEvent('name_input',{len:nombreEl.value.trim().length});
-    actualizarResumen(); actualizarPasos();
-  });
-  document.getElementById('direccion').addEventListener('input',e=>{
-    saveClient({...loadClient(),address:e.target.value.trim()});
-    logEvent('address_input',{len:e.target.value.trim().length});
-    actualizarPasos();
-  });
+  const nombreInputEl=document.getElementById('nombre');
+  if(nombreInputEl){
+    nombreInputEl.addEventListener('input',()=>{
+      const nombreEl=document.getElementById('nombre');
+      saveClient({...loadClient(),name:nombreEl.value.trim()});
+      logEvent('name_input',{len:nombreEl.value.trim().length});
+      actualizarResumen(); actualizarPasos();
+    });
+  }
+  const dirInputEl=document.getElementById('direccion');
+  if(dirInputEl){
+    dirInputEl.addEventListener('input',e=>{
+      saveClient({...loadClient(),address:e.target.value.trim()});
+      logEvent('address_input',{len:e.target.value.trim().length});
+      actualizarPasos();
+    });
+  }
   document.querySelectorAll('input[name=envio]').forEach(r=>r.addEventListener('change',()=>{
     logEvent('envio_select',{value:document.querySelector('input[name=envio]:checked')?.value||''});
     actualizarResumen(); actualizarPasos();
@@ -815,12 +836,12 @@
   const dlgBackdrop=document.getElementById('dlgClearBackdrop'),
         dlgYes=document.getElementById('dlgClearYes'),
         dlgNo=document.getElementById('dlgClearNo');
-  function abrirDialogoVaciar(){dlgBackdrop.classList.add('open');dlgYes.focus()}
-  function cerrarDialogoVaciar(){dlgBackdrop.classList.remove('open')}
-  dlgNo.addEventListener('click',cerrarDialogoVaciar);
-  dlgBackdrop.addEventListener('click',e=>{if(e.target===dlgBackdrop)cerrarDialogoVaciar()});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&dlgBackdrop.classList.contains('open'))cerrarDialogoVaciar()});
-  dlgYes.addEventListener('click',()=>{
+  function abrirDialogoVaciar(){ if(dlgBackdrop && dlgYes){ dlgBackdrop.classList.add('open'); dlgYes.focus(); } }
+  function cerrarDialogoVaciar(){ if(dlgBackdrop){ dlgBackdrop.classList.remove('open'); } }
+  if(dlgNo) dlgNo.addEventListener('click',cerrarDialogoVaciar);
+  if(dlgBackdrop) dlgBackdrop.addEventListener('click',e=>{if(e.target===dlgBackdrop)cerrarDialogoVaciar()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&dlgBackdrop?.classList?.contains('open'))cerrarDialogoVaciar()});
+  if(dlgYes) dlgYes.addEventListener('click',()=>{
     Object.keys(cantidades).forEach(k=>cantidades[k]=0);
     document.querySelectorAll('[id^="cantidad-"]').forEach(el=>el.textContent='0');
     saveCart(cantidades);actualizarResumen();cerrarDialogoVaciar();
@@ -834,30 +855,33 @@
     logEvent('tab_show',{sec});
     if(seccionCerradaAhora(sec)){
       const cont = document.getElementById(`menu-${sec}`);
-      cont.style.display = 'block';
-      const nombreSec = sec[0].toUpperCase()+sec.slice(1);
-      cont.innerHTML = `<div class="seccion-closed-overlay">🚧 ${nombreSec} está cerrada por ahora.<br>${mensajeCierre(sec)}</div>`;
-      document.getElementById(`menu-${otra}`).style.display='none';
-      document.getElementById(`btn-${sec}`).classList.add('active');
-      document.getElementById(`btn-${otra}`).classList.remove('active');
+      if(cont){
+        cont.style.display = 'block';
+        const nombreSec = sec[0].toUpperCase()+sec.slice(1);
+        cont.innerHTML = `<div class="seccion-closed-overlay">🚧 ${nombreSec} está cerrada por ahora.<br>${mensajeCierre(sec)}</div>`;
+      }
+      const contOtra=document.getElementById(`menu-${otra}`); if(contOtra) contOtra.style.display='none';
+      const btnSec=document.getElementById(`btn-${sec}`), btnOtra=document.getElementById(`btn-${otra}`);
+      btnSec?.classList?.add('active'); btnOtra?.classList?.remove('active');
       return;
     }
-    document.getElementById('menu-rotiseria').style.display = (sec==='rotiseria')?'block':'none';
-    document.getElementById('menu-bebidas').style.display    = (sec==='bebidas')?'block':'none';
-    document.getElementById('btn-rotiseria').classList.toggle('active', sec==='rotiseria');
-    document.getElementById('btn-bebidas').classList.toggle('active', sec==='bebidas');
+    const r1=document.getElementById('menu-rotiseria'), r2=document.getElementById('menu-bebidas');
+    if(r1) r1.style.display = (sec==='rotiseria')?'block':'none';
+    if(r2) r2.style.display = (sec==='bebidas')?'block':'none';
+    document.getElementById('btn-rotiseria')?.classList?.toggle('active', sec==='rotiseria');
+    document.getElementById('btn-bebidas')?.classList?.toggle('active', sec==='bebidas');
   }
 
   /* ======= WhatsApp (y registrar en hoja) ======= */
   function enviarPedido(){
     const nombreEl=document.getElementById('nombre');
-    const name=nombreEl.value.trim(),addr=document.getElementById('direccion').value.trim();
+    const name=nombreEl?.value.trim()||'',addr=document.getElementById('direccion')?.value.trim()||'';
     const envioInput=document.querySelector('input[name=envio]:checked');
     const segmented = document.querySelector('.segmented');
 
     if(!envioInput){
       const wrap = document.getElementById('toastWrap');
-      wrap.style.bottom = window.sheetOpen ? 'calc(100vh - 76vh)' : '84px';
+      if(wrap){ wrap.style.bottom = window.sheetOpen ? 'calc(100vh - 76vh)' : '84px'; }
       showToast('📦 Seleccioná Retiro o Envío', 'error');
       if(segmented){
         segmented.style.boxShadow = '0 0 0 3px rgba(255, 204, 0, 0.6)';
@@ -887,7 +911,7 @@
       if(qty>0){
         const span=document.getElementById(`cantidad-${id}`); if(!span) return;
         const row=span.closest('.producto');
-        const n=row.dataset.nombre, p=parseInt(row.dataset.precio,10), line=p*qty;
+        const n=row?.dataset?.nombre||'', p=parseInt(row?.dataset?.precio||0,10), line=p*qty;
         msg+=`- ${n} x${qty} - ${formatARS(line)}\n`;
         items.push({ name:n, qty, unit_price:p, line_total:line });
       }
@@ -905,7 +929,14 @@
     logEvent('order_wsp',{ order_id, shipping:envio, shipping_cost, subtotal, total, name, address:addr, items });
 
     // Guardar “último pedido” para seguimiento
-    try{ localStorage.setItem('tachi_last_order', order_id); }catch{}
+    try{
+      localStorage.setItem('tachi_last_order', order_id);
+      // Prellenar UI de seguimiento
+      const trackId=document.getElementById('trackId');
+      if(trackId){ trackId.value=order_id; }
+      const trackName=document.getElementById('trackName');
+      if(trackName && !trackName.value.trim()) trackName.value = name;
+    }catch{}
 
     // Enviar analíticas inmediatamente (no bloquea)
     flushEvents('order');
@@ -919,13 +950,8 @@
     document.querySelectorAll('[id^="cantidad-"]').forEach(el=>el.textContent='0');
     saveCart(cantidades);
     actualizarResumen();
-    closeSheet();
+    closeSheet(); // cerrar el sheet del carrito
     showToast('Pedido enviado. Carrito vaciado ✅','ok',2000);
-
-    // Prefill seguimiento con ID
-    const idInput = document.getElementById('trackId');
-    if(idInput){ idInput.value = order_id; }
-    startTracking(); // arrancar seguimiento post-envío
   }
 
   /* ======= Sheet (abrir/cerrar con focus trap) ======= */
@@ -941,7 +967,7 @@
   function openSheet(){
     if(window.sheetOpen)return;window.sheetOpen=true;document.body.style.overflow='hidden';
     sheet.classList.add('open');backdrop.classList.add('open');setFabVisible(false);
-    setTimeout(()=>sheetClose.focus(),10);
+    setTimeout(()=>sheetClose?.focus(),10);
     document.addEventListener('keydown',trapFocus);
     actualizarPasos();
     logEvent('sheet_open');
@@ -952,17 +978,18 @@
     actualizarResumen();document.removeEventListener('keydown',trapFocus);
     logEvent('sheet_close');
   }
-  document.getElementById('cartFab').addEventListener('click',e=>{e.preventDefault();openSheet()});
-  sheetClose.addEventListener('click',closeSheet);
-  backdrop.addEventListener('click',closeSheet);
+  const fabBtn=document.getElementById('cartFab');
+  if(fabBtn) fabBtn.addEventListener('click',e=>{e.preventDefault();openSheet()});
+  if(sheetClose) sheetClose.addEventListener('click',closeSheet);
+  if(backdrop) backdrop.addEventListener('click',closeSheet);
 
   /* ======= Pasos (Datos → Resumen → WhatsApp) ======= */
   function actualizarPasos(){
     const steps = document.querySelectorAll('#checkoutSteps .step');
     if(!steps.length) return;
     const envioInput = document.querySelector('input[name=envio]:checked');
-    const datosOk = document.getElementById('nombre').value.trim().length>0 && !!envioInput &&
-                    (envioInput.value==='retiro' || document.getElementById('direccion').value.trim().length>0);
+    const datosOk = (document.getElementById('nombre')?.value.trim().length>0) && !!envioInput &&
+                    (envioInput.value==='retiro' || document.getElementById('direccion')?.value.trim().length>0);
     const hayItems = countItems()>0;
     let activo = 1; if(datosOk) activo = 2; if(datosOk && hayItems) activo = 3;
     steps.forEach(s=>{ s.classList.toggle('active', Number(s.dataset.step)===activo); });
@@ -974,11 +1001,11 @@
     if(!sentinel)return;
     const io=new IntersectionObserver(entries=>{
       entries.forEach(entry=>{
-        if(entry.isIntersecting){ document.getElementById('cartFab').classList.add('hide'); }
+        if(entry.isIntersecting){ document.getElementById('cartFab')?.classList?.add('hide'); }
         else{
           if(countItems()>0 && !window.sheetOpen){
             const f=document.getElementById('cartFab');
-            f.removeAttribute('hidden'); f.classList.remove('hide');
+            if(f){ f.removeAttribute('hidden'); f.classList.remove('hide'); }
           }
         }
       });
@@ -997,118 +1024,122 @@
     }
   })();
 
-  // ======= SEGUIMIENTO: lógica =======
-  function getLastOrderId(){ try{return localStorage.getItem('tachi_last_order')||''}catch{return ''} }
-  function clearLastOrderId(){ try{localStorage.removeItem('tachi_last_order')}catch{} }
-
-  function setSegChip(text, cls){
-    const chip=document.getElementById('segChip');
-    chip.textContent=text; chip.hidden=false;
-    chip.className='status-chip '+cls;
+  // ======= Seguimiento: JSONP al Apps Script =======
+  function statusJSONP(orderId){
+    return new Promise((resolve,reject)=>{
+      const cb='__tachi_cb_'+Math.random().toString(36).slice(2);
+      window[cb]=function(payload){ resolve(payload); cleanup(); };
+      function cleanup(){ try{ delete window[cb]; }catch{}; if(s && s.parentNode){ s.parentNode.removeChild(s); } }
+      const s=document.createElement('script');
+      s.src=`${ANALYTICS_WEBHOOK}?view=status&order_id=${encodeURIComponent(orderId)}&callback=${cb}`;
+      s.onerror=()=>{ reject(new Error('No se pudo consultar el estado')); cleanup(); };
+      document.body.appendChild(s);
+      setTimeout(()=>{ reject(new Error('Timeout')); cleanup(); },8000);
+    });
   }
 
-  function parseARDate(s){
-    // espera formato dd/MM/yyyy HH:mm
-    if(!s || typeof s!=='string') return null;
-    const m=s.match(/^(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})$/);
-    if(!m) return null;
-    const [_,dd,MM,yyyy,hh,mm]=m.map(Number);
-    return new Date(yyyy,MM-1,dd,hh,mm);
+  function setBadge(el, estado){
+    const map = {
+      'nuevo': ['Nuevo','st-new'],
+      'en preparación': ['En preparación','st-prep'],
+      'listo': ['Listo','st-ready'],
+      'entregado': ['Entregado','st-done']
+    };
+    const key = String(estado||'').toLowerCase();
+    const [txt, cls] = map[key] || ['—','st-new'];
+    el.textContent = txt;
+    el.className = 'status-badge '+cls;
   }
 
-  let TRACK_TIMER=null;
-  function startTracking(){
-    if(TRACK_TIMER){ clearInterval(TRACK_TIMER); TRACK_TIMER=null; }
-    updateTracking();
-    TRACK_TIMER=setInterval(updateTracking, 10000);
+  function initTracking(){
+    const nameInput = document.getElementById('trackName');
+    const idInput   = document.getElementById('trackId');
+    const btnTrack  = document.getElementById('btnTrack');
+    const btnCopy   = document.getElementById('btnCopyId');
+
+    // Prefill desde storage
+    try{
+      const last = localStorage.getItem('tachi_last_order');
+      if(last && idInput && !idInput.value) idInput.value = last;
+      const c = loadClient();
+      if(c.name && nameInput && !nameInput.value) nameInput.value=c.name;
+    }catch{}
+
+    if(btnCopy && idInput){
+      btnCopy.addEventListener('click', async ()=>{
+        try{
+          if(!idInput.value.trim()){ showToast('No hay ID para copiar','warn'); return; }
+          await navigator.clipboard.writeText(idInput.value.trim());
+          showToast('ID copiado ✅');
+        }catch{ showToast('No se pudo copiar','error'); }
+      });
+    }
+
+    if(btnTrack){
+      btnTrack.addEventListener('click', async ()=>{
+        const orderId = (idInput?.value || '').trim() || localStorage.getItem('tachi_last_order') || '';
+        if(!orderId){ showToast('Ingresá el ID de pedido','error'); return; }
+        try{
+          btnTrack.disabled = true;
+          const data = await statusJSONP(orderId);
+          renderTrack(data);
+        }catch(e){
+          console.warn(e);
+          showToast('No se pudo obtener el estado','error');
+        }finally{
+          btnTrack.disabled = false;
+        }
+      });
+    }
   }
 
-  async function updateTracking(){
-    const name = (document.getElementById('trackName')?.value||'').trim();
-    const id   = (document.getElementById('trackId')?.value||'').trim();
-    const res  = document.getElementById('segResult');
-    const card = document.getElementById('segCard');
+  function renderTrack(data){
+    const card    = document.getElementById('trackCard');
+    const result  = document.getElementById('trackResult');
+    const badge   = document.getElementById('trackBadge');
+    const totalEl = document.getElementById('trackTotal');
+    const entrega = document.getElementById('trackEntrega');
+    const addrLi  = document.getElementById('trackAddrLi');
+    const addr    = document.getElementById('trackAddress');
+    const ready   = document.getElementById('trackReadyNote');
 
-    if(!name && !id){
-      setSegChip('—','st-nuevo');
-      res.innerHTML = 'Ingresá tu nombre (y si tenés, el ID) para ver el estado.';
+    if(!data || data.ok===false){
+      result && (result.hidden = true);
+      showToast('No encontramos ese pedido','warn');
       return;
     }
 
-    try{
-      const r = await fetch(ANALYTICS_WEBHOOK+'?view=json', {cache:'no-store'});
-      if(!r.ok) throw new Error('HTTP '+r.status);
-      const rows = await r.json(); // array de pedidos (más recientes primero en nuestro code.gs)
+    if(badge) setBadge(badge, data.estado);
+    if(totalEl) totalEl.textContent = formatARS(Number(data.total||0));
+    if(entrega) entrega.textContent = data.method==='envio' ? 'Envío a domicilio' : 'Retiro en el local';
+    if(addrLi) addrLi.classList.toggle('track-hide', data.method!=='envio');
+    if(addr)   addr.textContent = data.address || '-';
+    if(ready)  ready.classList.toggle('track-hide', String(data.estado||'').toLowerCase()!=='listo');
 
-      // TODO: cuando agreguemos order_id a la hoja, buscaremos por ID exacto. Por ahora: por nombre.
-      let match = null;
-      if(name){
-        match = (rows||[]).find(p => String(p.name||'').trim().toLowerCase() === name.toLowerCase());
-      }
-      // Si hay ID y la hoja aún no lo tiene, lo mostramos, pero no filtra por ID.
-      if(!match){
-        setSegChip('—','st-nuevo');
-        res.innerHTML = 'No encontramos un pedido con ese nombre todavía. Probá de nuevo en unos segundos.';
-        return;
-      }
+    if(result) result.hidden = false;
 
-      const estado = String(match.estado||'Nuevo');
-      const cuando = match.ts_str || match.ts || '';
-      const cuandoDate = parseARDate(String(cuando));
-      const cuandoFmt = cuandoDate ? cuandoDate.toLocaleString('es-AR',{weekday:'short', hour:'2-digit', minute:'2-digit'}).replace('.','') : String(cuando);
-
-      if(estado==='Nuevo'){ setSegChip('Nuevo','st-nuevo'); }
-      else if(estado==='En preparación'){ setSegChip('En preparación','st-prep'); }
-      else if(estado==='Listo'){ setSegChip('Listo','st-listo'); card.classList.add('glow-ready'); setTimeout(()=>card.classList.remove('glow-ready'),1200); }
-      else if(estado==='Entregado'){ setSegChip('Entregado','st-entregado'); }
-      else { setSegChip(estado,'st-nuevo'); }
-
-      // Render
-      const lastId = getLastOrderId();
-      const idHtml = (id||lastId) ? `<span class="seg-id">${id||lastId}</span> ` : '';
-      res.innerHTML = `
-        Pedido de <b>${match.name || name}</b> • ${idHtml}
-        <br>Estado: <b>${estado}</b> • Actualizado: <span title="${cuando}">${cuandoFmt||'-'}</span>
-      `;
-
-      // Si fue entregado: limpiar y ocultar tarjeta
-      if(estado==='Entregado'){
-        clearLastOrderId();
-        document.getElementById('trackId').value='';
-        res.innerHTML = `✅ <b>Entregado</b>. ¡Gracias! Ya podés hacer un nuevo pedido.`;
-        // Opcional: ocultar chip y detener tracking
-        if(TRACK_TIMER){ clearInterval(TRACK_TIMER); TRACK_TIMER=null; }
-        setTimeout(()=>{ 
-          document.getElementById('segChip').hidden=true; 
-        }, 1500);
-      }
-    }catch(err){
-      setSegChip('—','st-nuevo');
-      res.textContent = 'No pudimos consultar el estado ahora. Reintentá en unos segundos.';
-      console.warn('track error', err);
+    // Resaltado / limpieza por estado
+    const estadoKey = String(data.estado||'').toLowerCase();
+    if(card){
+      card.classList.toggle('ready', estadoKey==='listo');
+    }
+    if(estadoKey==='listo'){
+      showToast('🎉 ¡Tu pedido está listo!', 'ok', 2600);
+    }
+    if(estadoKey==='entregado'){
+      // Limpiar seguimiento y ocultar
+      try{ localStorage.removeItem('tachi_last_order'); }catch{}
+      showToast('✅ Pedido entregado', 'ok', 2200);
+      const track = document.getElementById('track');
+      if(track) track.classList.add('track-hide');
     }
   }
 
-  // Botones y copy
-  document.getElementById('btnTrack').addEventListener('click',startTracking);
-  document.getElementById('copyIdBtn').addEventListener('click',()=>{
-    const val=(document.getElementById('trackId')?.value||'').trim();
-    if(!val){ showToast('No hay ID para copiar','warn'); return; }
-    navigator.clipboard.writeText(val).then(()=>showToast('ID copiado','ok'),()=>showToast('No se pudo copiar','error'));
-  });
-
-  // Refrescar tabs cada minuto por cambios de horario + page_view + auto tracking si hay datos
+  // Refrescar tabs cada minuto por cambios de horario + page_view
   window.addEventListener('DOMContentLoaded', ()=>{
     actualizarTabsPorHorario();
     setInterval(actualizarTabsPorHorario, 60*1000);
     logEvent('page_view',{title:document.title});
-
-    // Prefill seguimiento desde memoria
-    const c=loadClient();
-    if(c.name){ document.getElementById('trackName').value=c.name; }
-    const lastId=getLastOrderId();
-    if(lastId){ document.getElementById('trackId').value=lastId; }
-    if(c.name || lastId){ startTracking(); }
   });
   </script>
 </body>
