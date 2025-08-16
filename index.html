@@ -417,6 +417,11 @@
           <input type="text" id="nombre" placeholder="Tu nombre">
         </label>
 
+        <!-- NUEVO: WhatsApp del cliente -->
+        <label>WhatsApp:
+          <input type="tel" id="telefono" placeholder="Ej: 3415123456" inputmode="tel">
+        </label>
+
         <label>Dirección:
           <input type="text" id="direccion" placeholder="Calle, número, piso/depto">
         </label>
@@ -726,8 +731,10 @@
   function hydrateClient(){
     const c=loadClient();
     const nombre=document.getElementById('nombre');
+    const telefono=document.getElementById('telefono');
     const direccion=document.getElementById('direccion');
     if(nombre && c.name) nombre.value=c.name;
+    if(telefono && c.phone) telefono.value=c.phone;
     if(direccion && c.address) direccion.value=c.address;
   }
 
@@ -749,7 +756,7 @@
     try{
       const row=document.getElementById(`cantidad-${id}`)?.closest?.('.producto');
       const name=row?.dataset?.nombre||''; const price=parseInt(row?.dataset?.precio||0,10);
-      logEvent('qty_change',{id,delta,new_qty:cantidades[id],sec,name,price});
+      logEvent('qty_change',{id:id,delta:delta,new_qty:cantidades[id],sec:sec,name:name,price:price});
     }catch{}
     saveCart(cantidades);actualizarResumen();
   }
@@ -760,6 +767,8 @@
     else{ fab.classList.add('hide'); setTimeout(()=>fab.setAttribute('hidden',''),200); }
   }
 
+  const phoneDigits = v => String(v||'').replace(/[^\d+]/g,'').replace(/^00/,'+');
+
   /* ======= Totales + validación por horario ======= */
   function actualizarResumen(){
     const listaEl=document.getElementById('lista'),
@@ -769,7 +778,8 @@
           envioCostoEl=document.getElementById('envioCosto'),
           emptyMsg=document.getElementById('emptyMsg'),
           btnWA=document.getElementById('btn-whatsapp'),
-          nombreEl=document.getElementById('nombre');
+          nombreEl=document.getElementById('nombre'),
+          telefonoEl=document.getElementById('telefono');
     const fabCount=document.getElementById('fabCount'), fabTotal=document.getElementById('fabTotal');
 
     if(listaEl) listaEl.innerHTML='';
@@ -815,7 +825,9 @@
     })();
     if(estado) estado.textContent = puedePedir ? '' : motivos.join(' ');
 
-    if(btnWA) btnWA.disabled = !(count>0 && nombreEl && nombreEl.value.trim().length>0 && puedePedir);
+    const telefonoOk = phoneDigits(telefonoEl && telefonoEl.value).length >= 8;
+
+    if(btnWA) btnWA.disabled = !(count>0 && nombreEl && nombreEl.value.trim().length>0 && telefonoOk && puedePedir);
 
     window.METRICS_TOTAL=subtotal+envioCosto;window.METRICS_COUNT=count;window.METRICS_ENVIO=envioSel||'';
 
@@ -829,6 +841,15 @@
       const nombreEl=document.getElementById('nombre');
       saveClient({...loadClient(),name:nombreEl.value.trim()});
       logEvent('name_input',{len:nombreEl.value.trim().length});
+      actualizarResumen(); actualizarPasos();
+    });
+  }
+  const telInputEl=document.getElementById('telefono');
+  if(telInputEl){
+    telInputEl.addEventListener('input',e=>{
+      const digits = phoneDigits(e.target.value);
+      saveClient({...loadClient(),phone:digits});
+      logEvent('phone_input',{len:digits.length});
       actualizarResumen(); actualizarPasos();
     });
   }
@@ -865,7 +886,7 @@
   /* ======= Tabs (con analítica) ======= */
   function mostrar(sec){
     const otra = sec==='bebidas' ? 'rotiseria' : 'bebidas';
-    logEvent('tab_show',{sec});
+    logEvent('tab_show',{sec:sec});
     if(seccionCerradaAhora(sec)){
       const cont = document.getElementById(`menu-${sec}`);
       if(cont){
@@ -889,6 +910,8 @@
   function enviarPedido(){
     const nombreEl=document.getElementById('nombre');
     const name=nombreEl?.value.trim()||'',addr=document.getElementById('direccion')?.value.trim()||'';
+    const phoneEl=document.getElementById('telefono');
+    const phone=phoneDigits(phoneEl && phoneEl.value);
     const envioInput=document.querySelector('input[name=envio]:checked');
     const segmented = document.querySelector('.segmented');
 
@@ -906,6 +929,7 @@
 
     const envio=envioInput.value;
     if(!name){showToast('Ingresá tu nombre','error');return}
+    if(phone.length<8){showToast('Ingresá tu WhatsApp','error');return}
     if(countItems()===0){showToast('Seleccioná al menos un producto','error');return}
     if(envio==='envio'&&!addr){showToast('Ingresá tu dirección para el envío','error');return}
 
@@ -926,7 +950,7 @@
         const row=span.closest('.producto');
         const n=row?.dataset?.nombre||'', p=parseInt(row?.dataset?.precio||0,10), line=p*qty;
         msg+=`- ${n} x${qty} - ${formatARS(line)}\n`;
-        items.push({ name:n, qty, unit_price:p, line_total:line });
+        items.push({ name:n, qty:qty, unit_price:p, line_total:line });
       }
     });
 
@@ -938,8 +962,18 @@
     msg+=envio==='envio'?`Envío a domicilio a: ${addr} (+${formatARS(SHIPPING)})\n`:'Retiro en el local\n';
     msg+=`Total: ${formatARS(total)}`;
 
-    // Registrar en Apps Script -> Hoja "Pedidos"
-    logEvent('order_wsp',{ order_id, shipping:envio, shipping_cost, subtotal, total, name, address:addr, items });
+    // Registrar en Apps Script -> Hoja "Pedidos" (incluye teléfono del cliente)
+    logEvent('order_wsp',{
+      order_id: order_id,
+      phone: phone,
+      shipping: envio,
+      shipping_cost: shipping_cost,
+      subtotal: subtotal,
+      total: total,
+      name: name,
+      address: addr,
+      items: items
+    });
 
     // Guardar “último pedido” y mostrar el bloque de seguimiento
     try{
@@ -999,7 +1033,8 @@
     const steps = document.querySelectorAll('#checkoutSteps .step');
     if(!steps.length) return;
     const envioInput = document.querySelector('input[name=envio]:checked');
-    const datosOk = (document.getElementById('nombre')?.value.trim().length>0) && !!envioInput &&
+    const phoneOk = phoneDigits(document.getElementById('telefono')?.value).length >= 8;
+    const datosOk = (document.getElementById('nombre')?.value.trim().length>0) && phoneOk && !!envioInput &&
                     (envioInput.value==='retiro' || document.getElementById('direccion')?.value.trim().length>0);
     const hayItems = countItems()>0;
     let activo = 1; if(datosOk) activo = 2; if(datosOk && hayItems) activo = 3;
