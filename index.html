@@ -729,9 +729,6 @@
     const direccion=document.getElementById('direccion');
     if(nombre && c.name) nombre.value=c.name;
     if(direccion && c.address) direccion.value=c.address;
-    // ⬇️ NUEVO: hidratar campo teléfono si existe
-    const telefono=document.getElementById('telefono');
-    if(telefono && c.phone) telefono.value=c.phone;
   }
 
   /* ======= Carrito ======= */
@@ -839,20 +836,10 @@
   if(dirInputEl){
     dirInputEl.addEventListener('input',e=>{
       saveClient({...loadClient(),address:e.target.value.trim()});
-      logEvent('address_input',{len=e.target.value.trim().length});
+      logEvent('address_input',{len:e.target.value.trim().length});
       actualizarPasos();
     });
   }
-  // ⬇️ NUEVO: guardar teléfono si existe el input #telefono
-  const telInputEl=document.getElementById('telefono');
-  if(telInputEl){
-    telInputEl.addEventListener('input',e=>{
-      saveClient({...loadClient(),phone:e.target.value.trim()});
-      logEvent('phone_input',{len:e.target.value.trim().length});
-      actualizarResumen(); actualizarPasos();
-    });
-  }
-
   document.querySelectorAll('input[name=envio]').forEach(r=>r.addEventListener('change',()=>{
     logEvent('envio_select',{value:document.querySelector('input[name=envio]:checked')?.value||''});
     actualizarResumen(); actualizarPasos();
@@ -902,10 +889,6 @@
   function enviarPedido(){
     const nombreEl=document.getElementById('nombre');
     const name=nombreEl?.value.trim()||'',addr=document.getElementById('direccion')?.value.trim()||'';
-    // ⬇️ NUEVO: tomar teléfono si existe el input #telefono
-    const telEl=document.getElementById('telefono');
-    const tel=telEl?.value.trim()||'';
-
     const envioInput=document.querySelector('input[name=envio]:checked');
     const segmented = document.querySelector('.segmented');
 
@@ -935,8 +918,7 @@
       return;
     }
 
-    // ⬇️ actualizado: si hay teléfono, se agrega entre paréntesis
-    let msg=`Hola, soy ${name}${tel?` (tel: ${tel})`:''}. Quiero hacer un pedido:\n`;
+    let msg=`Hola, soy ${name}. Quiero hacer un pedido:\n`;
     const items=[];
     Object.entries(cantidades).forEach(([id,qty])=>{
       if(qty>0){
@@ -956,8 +938,8 @@
     msg+=envio==='envio'?`Envío a domicilio a: ${addr} (+${formatARS(SHIPPING)})\n`:'Retiro en el local\n';
     msg+=`Total: ${formatARS(total)}`;
 
-    // Registrar en Apps Script -> Hoja "Pedidos" (incluye phone si existe)
-    logEvent('order_wsp',{ order_id, shipping:envio, shipping_cost, subtotal, total, name, address:addr, phone:tel, items });
+    // Registrar en Apps Script -> Hoja "Pedidos"
+    logEvent('order_wsp',{ order_id, shipping:envio, shipping_cost, subtotal, total, name, address:addr, items });
 
     // Guardar “último pedido” y mostrar el bloque de seguimiento
     try{
