@@ -20,7 +20,7 @@
       "mensaje_cierre": ""
     },
     "bebidas": {
-      "cerrado": true,
+      "cerrado": false,
       "dias": [
         "4",
         "5",
