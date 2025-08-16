@@ -57,7 +57,7 @@
     }
 
     /* ---------- Listados ---------- */
-    details{border:1px solid var(--gris-borde);border-radius:8px;margin-bottom:1rem;overflow:hidden;background:var(--card)}
+    details{border:1px solid var(--gris-borde);border-radius:8px;margin-bottom:1rem;overflow:hidden;background:var(--card')}
     summary{background:var(--azul);color:var(--amarillo);padding:1rem;cursor:pointer;font-weight:bold;font-size:1.1rem;user-select:none;list-style:none}
 
     .producto{
@@ -313,8 +313,7 @@
     <div id="menu-bebidas" style="display:none"></div>
   </main>
 
-  <!-- Seguimiento (debajo del listado y ANTES del divisor) -->
-  <!-- Oculto por defecto; se muestra si hay tachi_last_order -->
+  <!-- Seguimiento -->
   <section id="track" class="track track-hide" aria-labelledby="track-title">
     <div id="trackCard" class="track-card">
       <div class="track-header">
@@ -415,6 +414,10 @@
 
         <label>Nombre:
           <input type="text" id="nombre" placeholder="Tu nombre">
+        </label>
+
+        <label>Teléfono:
+          <input type="tel" id="telefono" placeholder="Ej: 3415 123456">
         </label>
 
         <label>Dirección:
@@ -613,6 +616,11 @@
       const aj = await r.json();
       if(aj.whatsapp) WSP_NUMBER = String(aj.whatsapp).replace(/\D/g,'') || WSP_NUMBER;
       if(typeof aj.shipping === 'number') SHIPPING = aj.shipping;
+
+      // actualizar etiqueta del envío con precio
+      const lblEnv = document.querySelector('label[for="opt-env"]');
+      if(lblEnv){ lblEnv.textContent = `Envío (+${formatARS(SHIPPING)})`; }
+
       const h = aj.horarios || {};
       ['rotiseria','bebidas'].forEach(sec=>{
         const cfg = h[sec] || {};
@@ -714,7 +722,7 @@
     actualizarTabsPorHorario();
 
     initTracking();           // listeners del seguimiento
-    ensureTrackVisibility();  // ⬅️ mostrar/ocultar según último pedido
+    ensureTrackVisibility();  // mostrar/ocultar según último pedido
 
     logEvent('menus_loaded',{rotiseria_cats:(rMerge.categorias||[]).length,bebidas_cats:(bMerge.categorias||[]).length});
   }
@@ -727,8 +735,10 @@
     const c=loadClient();
     const nombre=document.getElementById('nombre');
     const direccion=document.getElementById('direccion');
+    const telefono=document.getElementById('telefono');
     if(nombre && c.name) nombre.value=c.name;
     if(direccion && c.address) direccion.value=c.address;
+    if(telefono && c.phone) telefono.value=c.phone;
   }
 
   /* ======= Carrito ======= */
@@ -815,7 +825,15 @@
     })();
     if(estado) estado.textContent = puedePedir ? '' : motivos.join(' ');
 
-    if(btnWA) btnWA.disabled = !(count>0 && nombreEl && nombreEl.value.trim().length>0 && puedePedir);
+    // Habilitar botón con validación extendida (dirección y teléfono para envío)
+    const telefonoEl=document.getElementById('telefono');
+    let canSend = (count>0 && nombreEl && nombreEl.value.trim().length>0 && puedePedir && !!envioInput);
+    if(envioSel==='envio'){
+      const addrOk = (document.getElementById('direccion')?.value.trim().length>0);
+      const phoneOk= (telefonoEl?.value.trim().length>0);
+      canSend = canSend && addrOk && phoneOk;
+    }
+    if(btnWA) btnWA.disabled = !canSend;
 
     window.METRICS_TOTAL=subtotal+envioCosto;window.METRICS_COUNT=count;window.METRICS_ENVIO=envioSel||'';
 
@@ -838,6 +856,14 @@
       saveClient({...loadClient(),address:e.target.value.trim()});
       logEvent('address_input',{len:e.target.value.trim().length});
       actualizarPasos();
+    });
+  }
+  const telInputEl=document.getElementById('telefono');
+  if(telInputEl){
+    telInputEl.addEventListener('input',e=>{
+      saveClient({...loadClient(),phone:e.target.value.trim()});
+      logEvent('phone_input',{len:e.target.value.trim().length});
+      actualizarResumen(); actualizarPasos();
     });
   }
   document.querySelectorAll('input[name=envio]').forEach(r=>r.addEventListener('change',()=>{
@@ -888,7 +914,11 @@
   /* ======= WhatsApp (y registrar en hoja) ======= */
   function enviarPedido(){
     const nombreEl=document.getElementById('nombre');
-    const name=nombreEl?.value.trim()||'',addr=document.getElementById('direccion')?.value.trim()||'';
+    const telEl=document.getElementById('telefono');
+    const dirEl=document.getElementById('direccion');
+    const name=nombreEl?.value.trim()||'',
+          tel=telEl?.value.trim()||'',
+          addr=dirEl?.value.trim()||'';
     const envioInput=document.querySelector('input[name=envio]:checked');
     const segmented = document.querySelector('.segmented');
 
@@ -908,6 +938,7 @@
     if(!name){showToast('Ingresá tu nombre','error');return}
     if(countItems()===0){showToast('Seleccioná al menos un producto','error');return}
     if(envio==='envio'&&!addr){showToast('Ingresá tu dirección para el envío','error');return}
+    if(envio==='envio'&&!tel){showToast('Ingresá tu teléfono de contacto','error');return}
 
     const itemsPorSeccion = { rotiseria:0, bebidas:0 };
     Object.entries(cantidades).forEach(([id,qty])=>{ if(qty>0) itemsPorSeccion[seccionDeId(id)] += qty; });
@@ -918,7 +949,7 @@
       return;
     }
 
-    let msg=`Hola, soy ${name}. Quiero hacer un pedido:\n`;
+    let msg=`Hola, soy ${name}${tel?` (tel: ${tel})`:''}. Quiero hacer un pedido:\n`;
     const items=[];
     Object.entries(cantidades).forEach(([id,qty])=>{
       if(qty>0){
@@ -935,18 +966,24 @@
     const total = subtotal + shipping_cost;
     const order_id = 'W'+new Date().toISOString().replace(/[-:.TZ]/g,'').slice(0,14);
 
-    msg+=envio==='envio'?`Envío a domicilio a: ${addr} (+${formatARS(SHIPPING)})\n`:'Retiro en el local\n';
+    msg+=envio==='envio'
+      ? `Envío a domicilio a: ${addr} (+${formatARS(SHIPPING)})\n`
+      : 'Retiro en el local\n';
     msg+=`Total: ${formatARS(total)}`;
 
     // Registrar en Apps Script -> Hoja "Pedidos"
-    logEvent('order_wsp',{ order_id, shipping:envio, shipping_cost, subtotal, total, name, address:addr, items });
+    logEvent('order_wsp',{
+      order_id, shipping:envio, shipping_cost, subtotal, total,
+      name, address:addr, phone:tel,
+      items
+    });
 
     // Guardar “último pedido” y mostrar el bloque de seguimiento
     try{
       localStorage.setItem('tachi_last_order', order_id);
       const trackId=document.getElementById('trackId'); if(trackId){ trackId.value=order_id; }
       const trackName=document.getElementById('trackName'); if(trackName && !trackName.value.trim()) trackName.value = name;
-      const track = document.getElementById('track'); if(track){ track.classList.remove('track-hide'); } // ⬅️ mostrar
+      const track = document.getElementById('track'); if(track){ track.classList.remove('track-hide'); }
     }catch{}
 
     // Enviar analíticas inmediatamente (no bloquea)
@@ -961,7 +998,7 @@
     document.querySelectorAll('[id^="cantidad-"]').forEach(el=>el.textContent='0');
     saveCart(cantidades);
     actualizarResumen();
-    closeSheet(); // cerrar el sheet del carrito
+    closeSheet();
     showToast('Pedido enviado. Carrito vaciado ✅','ok',2000);
   }
 
@@ -999,8 +1036,11 @@
     const steps = document.querySelectorAll('#checkoutSteps .step');
     if(!steps.length) return;
     const envioInput = document.querySelector('input[name=envio]:checked');
-    const datosOk = (document.getElementById('nombre')?.value.trim().length>0) && !!envioInput &&
-                    (envioInput.value==='retiro' || document.getElementById('direccion')?.value.trim().length>0);
+    const nombreOK = (document.getElementById('nombre')?.value.trim().length>0);
+    const esRetiro = !!envioInput && envioInput.value==='retiro';
+    const addrOk = esRetiro || (document.getElementById('direccion')?.value.trim().length>0);
+    const telOk  = esRetiro || (document.getElementById('telefono')?.value.trim().length>0);
+    const datosOk = nombreOK && !!envioInput && addrOk && telOk;
     const hayItems = countItems()>0;
     let activo = 1; if(datosOk) activo = 2; if(datosOk && hayItems) activo = 3;
     steps.forEach(s=>{ s.classList.toggle('active', Number(s.dataset.step)===activo); });
@@ -1036,7 +1076,6 @@
   })();
 
   // ======= Seguimiento =======
-  // Mostrar/ocultar bloque según exista último pedido en storage
   function ensureTrackVisibility(){
     const track = document.getElementById('track');
     if(!track) return;
@@ -1133,7 +1172,6 @@
 
     if(result) result.hidden = false;
 
-    // Resaltado / limpieza por estado
     const estadoKey = String(data.estado||'').toLowerCase();
     if(card){
       card.classList.toggle('ready', estadoKey==='listo');
@@ -1142,7 +1180,6 @@
       showToast('🎉 ¡Tu pedido está listo!', 'ok', 2600);
     }
     if(estadoKey==='entregado'){
-      // Limpiar seguimiento y ocultar persistentemente
       try{ localStorage.removeItem('tachi_last_order'); }catch{}
       showToast('✅ Pedido entregado', 'ok', 2200);
       const track = document.getElementById('track');
@@ -1154,7 +1191,7 @@
   window.addEventListener('DOMContentLoaded', ()=>{
     actualizarTabsPorHorario();
     setInterval(actualizarTabsPorHorario, 60*1000);
-    ensureTrackVisibility(); // ⬅️ al cargar la página
+    ensureTrackVisibility();
     logEvent('page_view',{title:document.title});
   });
   </script>
