@@ -3,92 +3,230 @@
     {
       "categoria": "🥤 Gaseosas – Retornables",
       "productos": [
-        { "nombre": "Coca x 2L", "precio": 3000 },
-        { "nombre": "Fanta x 2L", "precio": 2900 },
-        { "nombre": "Sprite x 2L", "precio": 2900 }
+        {
+          "nombre": "Coca x 2L",
+          "precio": 3000
+        },
+        {
+          "nombre": "Fanta x 2L",
+          "precio": 3000
+        },
+        {
+          "nombre": "Sprite x 2L",
+          "precio": 3000
+        }
       ]
     },
     {
       "categoria": "Gaseosas – Descartables",
       "productos": [
-        { "nombre": "Coca x 1,5L", "precio": 3500 },
-        { "nombre": "Sprite x 1,5L", "precio": 3500 },
-        { "nombre": "Fanta x 1,5L", "precio": 3500 },
-        { "nombre": "Coca x 2,5L", "precio": 4500 },
-        { "nombre": "Coca x 500cc", "precio": 1500 },
-        { "nombre": "Sprite x 500cc", "precio": 1500 },
-        { "nombre": "Fanta x 500cc", "precio": 1500 },
-        { "nombre": "Coca lata", "precio": 1400 },
-        { "nombre": "Sprite lata", "precio": 1400 },
-        { "nombre": "Fanta lata", "precio": 1400 },
-        { "nombre": "Coca vidrio chica", "precio": 1000 }
+        {
+          "nombre": "Coca x 1,5L",
+          "precio": 3500
+        },
+        {
+          "nombre": "Sprite x 1,5L",
+          "precio": 3500
+        },
+        {
+          "nombre": "Fanta x 1,5L",
+          "precio": 3500
+        },
+        {
+          "nombre": "Coca x 2,5L",
+          "precio": 4500
+        },
+        {
+          "nombre": "Coca x 500cc",
+          "precio": 1500
+        },
+        {
+          "nombre": "Sprite x 500cc",
+          "precio": 1500
+        },
+        {
+          "nombre": "Fanta x 500cc",
+          "precio": 1500
+        },
+        {
+          "nombre": "Coca lata",
+          "precio": 1400
+        },
+        {
+          "nombre": "Sprite lata",
+          "precio": 1400
+        },
+        {
+          "nombre": "Fanta lata",
+          "precio": 1400
+        },
+        {
+          "nombre": "Coca vidrio chica",
+          "precio": 1000
+        }
       ]
     },
     {
       "categoria": "Otras gaseosas",
       "productos": [
-        { "nombre": "Cunnington", "precio": 1500 },
-        { "nombre": "Pritty x 3L", "precio": 2800 },
-        { "nombre": "Doble Cola x 3L", "precio": 2100 },
-        { "nombre": "Secco x 3L", "precio": 1700 }
+        {
+          "nombre": "Cunnington",
+          "precio": 1500
+        },
+        {
+          "nombre": "Pritty x 3L",
+          "precio": 2800
+        },
+        {
+          "nombre": "Doble Cola x 3L",
+          "precio": 2100
+        },
+        {
+          "nombre": "Secco x 3L",
+          "precio": 1700
+        }
       ]
     },
     {
       "categoria": "🍺 Cervezas – Latas",
       "productos": [
-        { "nombre": "Lata Schneider", "precio": 1700 },
-        { "nombre": "Lata Quilmes", "precio": 1600 },
-        { "nombre": "Lata Brahma", "precio": 1600 },
-        { "nombre": "Lata Santa Fe", "precio": 1700 },
-        { "nombre": "Lata 1890", "precio": 1500 },
-        { "nombre": "Lata 361", "precio": 1300 },
-        { "nombre": "Lata Isenbeck", "precio": 1400 },
-        { "nombre": "Lata Schneider 710cc", "precio": 3000 }
+        {
+          "nombre": "Lata Schneider",
+          "precio": 1700
+        },
+        {
+          "nombre": "Lata Quilmes",
+          "precio": 1600
+        },
+        {
+          "nombre": "Lata Brahma",
+          "precio": 1600
+        },
+        {
+          "nombre": "Lata Santa Fe",
+          "precio": 1700
+        },
+        {
+          "nombre": "Lata 1890",
+          "precio": 1500
+        },
+        {
+          "nombre": "Lata 361",
+          "precio": 1300
+        },
+        {
+          "nombre": "Lata Isenbeck",
+          "precio": 1400
+        },
+        {
+          "nombre": "Lata Schneider 710cc",
+          "precio": 3000
+        }
       ]
     },
     {
       "categoria": "Cervezas – Botellas",
       "productos": [
-        { "nombre": "Quilmes 1L", "precio": 2900 },
-        { "nombre": "Brahma 1L", "precio": 2900 },
-        { "nombre": "Iguana 1L", "precio": 2400 },
-        { "nombre": "361 descartable", "precio": 2000 }
+        {
+          "nombre": "Quilmes 1L",
+          "precio": 2900
+        },
+        {
+          "nombre": "Brahma 1L",
+          "precio": 2900
+        },
+        {
+          "nombre": "Iguana 1L",
+          "precio": 2400
+        },
+        {
+          "nombre": "361 descartable",
+          "precio": 2000
+        }
       ]
     },
     {
       "categoria": "🍷 Vinos caja",
       "productos": [
-        { "nombre": "Termidor Blanco", "precio": 1600 },
-        { "nombre": "Termidor Tinto", "precio": 1900 },
-        { "nombre": "Toro Tinto", "precio": 2300 }
+        {
+          "nombre": "Termidor Blanco",
+          "precio": 1600
+        },
+        {
+          "nombre": "Termidor Tinto",
+          "precio": 1900
+        },
+        {
+          "nombre": "Toro Tinto",
+          "precio": 2300
+        }
       ]
     },
     {
       "categoria": "Otros",
       "productos": [
-        { "nombre": "Casoni", "precio": 1100 },
-        { "nombre": "Soda", "precio": 1300 },
-        { "nombre": "Baggio Fresh", "precio": 1300 },
-        { "nombre": "Saborizada 500cc", "precio": 650 },
-        { "nombre": "Agua 500cc", "precio": 650 },
-        { "nombre": "Agua x 2L", "precio": 1100 },
-        { "nombre": "Agua x 1,5L", "precio": 1000 }
+        {
+          "nombre": "Casoni",
+          "precio": 1100
+        },
+        {
+          "nombre": "Soda",
+          "precio": 1300
+        },
+        {
+          "nombre": "Baggio Fresh",
+          "precio": 1300
+        },
+        {
+          "nombre": "Saborizada 500cc",
+          "precio": 650
+        },
+        {
+          "nombre": "Agua 500cc",
+          "precio": 650
+        },
+        {
+          "nombre": "Agua x 2L",
+          "precio": 1100
+        },
+        {
+          "nombre": "Agua x 1,5L",
+          "precio": 1000
+        }
       ]
     },
     {
       "categoria": "🧃 Jugos",
       "productos": [
-        { "nombre": "Baggio x 1L", "precio": 1700 },
-        { "nombre": "Baggio chico", "precio": 500 },
-        { "nombre": "Cepita", "precio": 3200 },
-        { "nombre": "Gatorade x 500cc", "precio": 1400 }
+        {
+          "nombre": "Baggio x 1L",
+          "precio": 1700
+        },
+        {
+          "nombre": "Baggio chico",
+          "precio": 500
+        },
+        {
+          "nombre": "Cepita",
+          "precio": 3200
+        },
+        {
+          "nombre": "Gatorade x 500cc",
+          "precio": 1400
+        }
       ]
     },
     {
       "categoria": "⚡ Energizantes y otros",
       "productos": [
-        { "nombre": "Speed chico", "precio": 1800 },
-        { "nombre": "Speed grande", "precio": 2500 }
+        {
+          "nombre": "Speed chico",
+          "precio": 1800
+        },
+        {
+          "nombre": "Speed grande",
+          "precio": 2500
+        }
       ]
     }
   ]
