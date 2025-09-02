@@ -346,7 +346,7 @@
       transition: var(--transition);
     }
     .toast.ok{border-left-color:var(--ok)}
-    .toast.err{border-left-color:var(--error)}
+    .toast.err{bortado-left-color:var(--error)}
     .toast.warn{border-left-color:#ffb400}
     @keyframes fadeIn{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
 
@@ -881,6 +881,26 @@
   let todosProductos = []; // Para búsqueda
   let detallesAbiertos = {}; // Para controlar qué detalles están abiertos
 
+  /* ======= FUNCIÓN MEJORADA DE SCROLL ======= */
+  function scrollToElement(targetId, offset = 100) {
+    setTimeout(() => {
+      const element = document.getElementById(targetId);
+      if (element) {
+        const elementRect = element.getBoundingClientRect();
+        const absoluteElementTop = elementRect.top + window.pageYOffset;
+        const middle = absoluteElementTop - (window.innerHeight / 2) + (elementRect.height / 2);
+        
+        // Aplicar offset personalizado
+        const targetPosition = middle - offset;
+        
+        window.scrollTo({
+          top: targetPosition,
+          behavior: 'smooth'
+        });
+      }
+    }, 150); // Tiempo suficiente para renderizar
+  }
+
   function renderProductos(contId,data){
     const cont=document.getElementById(contId); if(!cont) return; cont.innerHTML='';
     const norm=normalizar(data);
@@ -903,20 +923,13 @@
           // Guardar estado
           detallesAbiertos[contId] = this.id;
           
-          // Asegurar que el elemento sea visible
+          // Scroll al primer producto después de abrir (SOLUCIÓN AL PROBLEMA)
           setTimeout(() => {
-            const detailsRect = this.getBoundingClientRect();
-            const absoluteElementTop = detailsRect.top + window.pageYOffset;
-            const middle = absoluteElementTop - (window.innerHeight / 2) + (detailsRect.height / 2);
-            
-            // Solo hacer scroll si el elemento no está completamente visible
-            if (detailsRect.top < 100 || detailsRect.bottom > window.innerHeight - 100) {
-              window.scrollTo({
-                top: middle,
-                behavior: 'smooth'
-              });
+            const firstProduct = this.querySelector('.producto');
+            if (firstProduct) {
+              scrollToElement(firstProduct.id, 80);
             }
-          }, 50);
+          }, 100);
         }
       });
       
@@ -937,6 +950,7 @@
 
         const div=document.createElement('div');
         div.className='producto';
+        div.id = id; // Asegurar que tenga ID para el scroll
         const thumb = prod.img ? asset(prod.img) : asset('logo.png');
         div.innerHTML=`
           <div class="prod-thumb"><img src="${thumb}" alt="${prod.nombre}" loading="lazy"></div>
@@ -1104,7 +1118,7 @@
     try{
       const row=document.getElementById(`cantidad-${id}`)?.closest?.('.producto');
       const name=row?.dataset?.nombre||''; const price=parseInt(row?.dataset?.precio||0,10);
-      logEvent('qty_change',{id:id,delta:delta,new_qty:cantidades[id],sec:sec,name:name,price:price});
+      logEvent('qty_change',{id:id,delta:delta,new_qty:cantidades[id],sec:sec,name:name,price:price);
     }catch{}
     saveCart(cantidades);actualizarResumen();
   }
@@ -1570,7 +1584,7 @@
             <img src="${producto.thumb}" alt="${producto.nombre}">
             <div>
               <div style="font-weight: bold;">${producto.nombre}</div>
-              <div style="font-size: 0.9em; opacity: 0.8;">${producto.categoria}</div>
+              <div style="font-size: 0.9em; opacity: 0.8;">${producto.categoria</div>
               <div style="font-weight: bold; color: var(--azul-3);">${formatARS(producto.precio)}</div>
             </div>
           `;
@@ -1580,7 +1594,7 @@
             const targetTab = producto.contId === 'menu-rotiseria' ? 'rotiseria' : 'bebidas';
             mostrar(targetTab);
             
-            // Esperar a que se renderice el contenido y luego abrir la categoría
+            // Esperar a que se renderice el contenido y luego abrir la categoría (SOLUCIÓN AL PROBLEMA)
             setTimeout(() => {
               // Encontrar y abrir el detalle correspondiente
               const detalleElement = document.getElementById(producto.detalleId);
@@ -1595,7 +1609,9 @@
                 // Encontrar el producto y resaltarlo
                 const productElement = document.querySelector(`[data-id="${producto.id}"]`);
                 if (productElement) {
-                  productElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  // Usar la nueva función de scroll (SOLUCIÓN AL PROBLEMA)
+                  scrollToElement(productElement.id, 120);
+                  
                   productElement.style.boxShadow = '0 0 0 3px var(--amarillo)';
                   productElement.style.transition = 'box-shadow 0.5s ease';
                   
@@ -1605,7 +1621,7 @@
                   }, 2000);
                 }
               }
-            }, 100);
+            }, 300); // Tiempo aumentado para asegurar renderizado
             
             // Cerrar resultados de búsqueda
             searchResults.classList.remove('active');
@@ -1671,76 +1687,11 @@
     });
   }
 
-  // ======= GESTIÓN DE DETALLES (Solo uno abierto a la vez) =======
-  function initDetailsManagement() {
-    // Cerrar otros detalles cuando se abre uno y asegurar visibilidad
-    document.addEventListener('click', function(e) {
-      if (e.target.tagName === 'SUMMARY') {
-        const detailsElement = e.target.parentElement;
-        const contId = detailsElement.closest('[id^="menu-"]').id;
-        
-        // Cerrar otros detalles en el mismo contenedor
-        const allDetails = document.querySelectorAll(`#${contId} details`);
-        allDetails.forEach(detail => {
-          if (detail !== detailsElement && detail.open) {
-            detail.open = false;
-          }
-        });
-        
-        // Si el detalle se está abriendo, asegurar que sea visible
-        if (detailsElement.open) {
-          // Pequeño retraso para permitir que el DOM se actualice
-          setTimeout(() => {
-            const detailsRect = detailsElement.getBoundingClientRect();
-            const absoluteElementTop = detailsRect.top + window.pageYOffset;
-            const middle = absoluteElementTop - (window.innerHeight / 2) + (detailsRect.height / 2);
-            
-            // Solo hacer scroll si el elemento no está completamente visible
-            if (detailsRect.top < 100 || detailsRect.bottom > window.innerHeight - 100) {
-              window.scrollTo({
-                top: middle,
-                behavior: 'smooth'
-              });
-            }
-          }, 50);
-        }
-      }
-    });
-    
-    // También manejar cambios mediante teclado (accesibilidad)
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' || e.key === ' ') {
-        const activeElement = document.activeElement;
-        if (activeElement.tagName === 'SUMMARY') {
-          const detailsElement = activeElement.parentElement;
-          
-          // Pequeño retraso para permitir que el DOM se actualice
-          setTimeout(() => {
-            if (detailsElement.open) {
-              const detailsRect = detailsElement.getBoundingClientRect();
-              const absoluteElementTop = detailsRect.top + window.pageYOffset;
-              const middle = absoluteElementTop - (window.innerHeight / 2) + (detailsRect.height / 2);
-              
-              // Solo hacer scroll si el elemento no está completamente visible
-              if (detailsRect.top < 100 || detailsRect.bottom > window.innerHeight - 100) {
-                window.scrollTo({
-                  top: middle,
-                  behavior: 'smooth'
-                });
-              }
-            }
-          }, 50);
-        }
-      }
-    });
-  }
-
   // Refrescar tabs cada minuto por cambios de horario + page_view
   window.addEventListener('DOMContentLoaded', ()=>{
     actualizarTabsPorHorario();
     setInterval(actualizarTabsPorHorario, 60*1000);
     ensureTrackVisibility(); // ⬅️ al cargar la página
-    initDetailsManagement(); // Inicializar gestión de detalles
     initSearch(); // Inicializar búsqueda
     initThemeToggle(); // Inicializar toggle de tema
     logEvent('page_view',{title:document.title});
