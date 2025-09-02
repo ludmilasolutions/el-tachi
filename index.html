@@ -902,6 +902,21 @@
           
           // Guardar estado
           detallesAbiertos[contId] = this.id;
+          
+          // Asegurar que el elemento sea visible
+          setTimeout(() => {
+            const detailsRect = this.getBoundingClientRect();
+            const absoluteElementTop = detailsRect.top + window.pageYOffset;
+            const middle = absoluteElementTop - (window.innerHeight / 2) + (detailsRect.height / 2);
+            
+            // Solo hacer scroll si el elemento no está completamente visible
+            if (detailsRect.top < 100 || detailsRect.bottom > window.innerHeight - 100) {
+              window.scrollTo({
+                top: middle,
+                behavior: 'smooth'
+              });
+            }
+          }, 50);
         }
       });
       
@@ -1658,7 +1673,7 @@
 
   // ======= GESTIÓN DE DETALLES (Solo uno abierto a la vez) =======
   function initDetailsManagement() {
-    // Cerrar otros detalles cuando se abre uno
+    // Cerrar otros detalles cuando se abre uno y asegurar visibilidad
     document.addEventListener('click', function(e) {
       if (e.target.tagName === 'SUMMARY') {
         const detailsElement = e.target.parentElement;
@@ -1671,6 +1686,51 @@
             detail.open = false;
           }
         });
+        
+        // Si el detalle se está abriendo, asegurar que sea visible
+        if (detailsElement.open) {
+          // Pequeño retraso para permitir que el DOM se actualice
+          setTimeout(() => {
+            const detailsRect = detailsElement.getBoundingClientRect();
+            const absoluteElementTop = detailsRect.top + window.pageYOffset;
+            const middle = absoluteElementTop - (window.innerHeight / 2) + (detailsRect.height / 2);
+            
+            // Solo hacer scroll si el elemento no está completamente visible
+            if (detailsRect.top < 100 || detailsRect.bottom > window.innerHeight - 100) {
+              window.scrollTo({
+                top: middle,
+                behavior: 'smooth'
+              });
+            }
+          }, 50);
+        }
+      }
+    });
+    
+    // También manejar cambios mediante teclado (accesibilidad)
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        const activeElement = document.activeElement;
+        if (activeElement.tagName === 'SUMMARY') {
+          const detailsElement = activeElement.parentElement;
+          
+          // Pequeño retraso para permitir que el DOM se actualice
+          setTimeout(() => {
+            if (detailsElement.open) {
+              const detailsRect = detailsElement.getBoundingClientRect();
+              const absoluteElementTop = detailsRect.top + window.pageYOffset;
+              const middle = absoluteElementTop - (window.innerHeight / 2) + (detailsRect.height / 2);
+              
+              // Solo hacer scroll si el elemento no está completamente visible
+              if (detailsRect.top < 100 || detailsRect.bottom > window.innerHeight - 100) {
+                window.scrollTo({
+                  top: middle,
+                  behavior: 'smooth'
+                });
+              }
+            }
+          }, 50);
+        }
       }
     });
   }
@@ -1681,6 +1741,8 @@
     setInterval(actualizarTabsPorHorario, 60*1000);
     ensureTrackVisibility(); // ⬅️ al cargar la página
     initDetailsManagement(); // Inicializar gestión de detalles
+    initSearch(); // Inicializar búsqueda
+    initThemeToggle(); // Inicializar toggle de tema
     logEvent('page_view',{title:document.title});
   });
   </script>
