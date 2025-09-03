@@ -1658,23 +1658,14 @@
     });
   }
   
- // ======= TOGGLE DE MODO OSCURO/CLARO =======
+// ======= TOGGLE DE MODO OSCURO/CLARO =======
 function initThemeToggle() {
   const themeToggle = document.getElementById('themeToggle');
   if (!themeToggle) return;
   
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const savedTheme = localStorage.getItem('tachi_theme');
-  
-  // Aplicar tema guardado o preferencia del sistema
-  if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-    document.documentElement.setAttribute('data-theme', 'dark');
-    themeToggle.textContent = '☀️';
-  } else {
-    document.documentElement.removeAttribute('data-theme');
-    themeToggle.textContent = '🌙';
-  }
-  
+
   // Alternar tema al hacer clic
   themeToggle.addEventListener('click', () => {
     if (document.documentElement.getAttribute('data-theme') === 'dark') {
