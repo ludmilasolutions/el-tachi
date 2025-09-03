@@ -7,6 +7,20 @@
   <link rel="icon" href="logo.png">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
 
+  <!-- ===== Pre-aplicar tema para evitar flicker ===== -->
+  <script>
+    (function(){
+      try{
+        var saved = localStorage.getItem('tachi_theme');
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = saved ? saved : (prefersDark ? 'dark' : 'light');
+        if(theme === 'dark'){
+          document.documentElement.setAttribute('data-theme','dark');
+        }
+      }catch(_){}
+    })();
+  </script>
+
   <!-- ============  ESTILOS  ============ -->
   <style>
     :root{
@@ -28,8 +42,8 @@
       --transition: all 0.3s ease;
     }
     
-    /* Variables para modo oscuro */
-    [data-theme="dark"] {
+    /* Variables para modo oscuro (aplicadas en <html>) */
+    :root[data-theme="dark"] {
       --azul: #004080;
       --azul-2: #00264d;
       --azul-3: #0059b3;
@@ -52,7 +66,8 @@
       position: relative;
     }
     header img{max-height:180px;margin:0 auto 1rem; transition: var(--transition);}
-    
+
+    /* Botón modo oscuro con z-index alto para que siempre reciba el click */
     .theme-toggle {
       position: absolute;
       top: 1rem;
@@ -69,6 +84,8 @@
       color: var(--amarillo);
       font-size: 1.2rem;
       transition: var(--transition);
+      z-index: 1200;               /* ⬅️ clave */
+      -webkit-tap-highlight-color: transparent;
     }
     .theme-toggle:hover {
       background: rgba(255,255,255,0.3);
@@ -175,7 +192,7 @@
       margin:.5rem 0 1rem; background:#fff8e1; color:#7a4c00;
       font-size:1.05rem; text-align:center; font-weight:600;
     }
-    [data-theme="dark"] .seccion-closed-overlay {
+    :root[data-theme="dark"] .seccion-closed-overlay {
       background: #4a3c00;
       color: #ffd54d;
       border-color: #ffb300;
@@ -190,17 +207,13 @@
       background:var(--card);
       transition: var(--transition);
     }
-    
-    /* Estilo para mantener solo un details abierto a la vez */
     details[open] {
       margin-bottom: 1.5rem;
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
-    
     details[open] summary {
       border-bottom: 1px solid var(--gris-borde);
     }
-    
     summary {
       background:var(--azul);
       color:var(--amarillo);
@@ -213,21 +226,14 @@
       transition: var(--transition);
       position: relative;
     }
-    
-    summary::-webkit-details-marker {
-      display: none;
-    }
-    
+    summary::-webkit-details-marker { display: none; }
     summary:after {
       content: "▼";
       position: absolute;
       right: 1rem;
       transition: transform 0.3s;
     }
-    
-    details[open] summary:after {
-      transform: rotate(180deg);
-    }
+    details[open] summary:after { transform: rotate(180deg); }
 
     .producto{
       display:grid; grid-template-columns:64px 1fr auto; align-items:center; gap:.9rem;
@@ -249,9 +255,7 @@
       font-weight:bold;font-size:1.2rem;cursor:pointer;border-radius:5px;transform-origin:center;
       transition: var(--transition);
     }
-    .contador button:hover {
-      transform: scale(1.1);
-    }
+    .contador button:hover { transform: scale(1.1); }
     @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
     .btn-pop{animation:pop .22s ease-out}
     @keyframes flash{0%,100%{box-shadow:0 0 0 rgba(255,204,0,0)}50%{box-shadow:0 0 0 4px rgba(255,204,0,.35)}}
@@ -263,7 +267,7 @@
       padding:.15rem .45rem;border-radius:999px;font-size:.8rem;font-weight:800;margin-left:.4rem;
       transition: var(--transition);
     }
-    [data-theme="dark"] .promo-badge {
+    :root[data-theme="dark"] .promo-badge {
       background: #665200;
       color: #ffd54d;
       border-color: #997800;
@@ -361,7 +365,6 @@
     .track-title{margin:0;font-size:1.2rem;color:var(--azul-3);display:flex;align-items:center;gap:.5rem;font-weight:900; transition: var(--transition);}
     .track-sub{margin:0;color:#6b7280;font-size:.95rem}
 
-    /* Mobile-first: una columna; en desktop → 1fr 1fr auto */
     .track-grid{display:grid;grid-template-columns:1fr;gap:.6rem;align-items:end}
     @media(min-width:700px){ .track-grid{grid-template-columns:1fr 1fr auto} }
 
@@ -375,8 +378,6 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
     @media(min-width:700px){ .track-btn{width:auto} }
-
-    /* Inputs del bloque de seguimiento un pelín más grandes */
     .track label input{padding:1.05rem 1rem;font-size:1.06rem;border-radius:14px}
 
     .track-result{border:1px dashed var(--gris-borde);border-radius:12px;padding:.8rem; transition: var(--transition);}
@@ -397,7 +398,7 @@
       box-shadow:inset 0 2px 6px rgba(0,0,0,.08),0 8px 18px rgba(0,0,0,.06);
       transition: var(--transition);
     }
-    [data-theme="dark"] .section-divider {
+    :root[data-theme="dark"] .section-divider {
       background:linear-gradient(to right,rgba(0,0,0,0)0%,#4b5563 18%,#6b7280 50%,#4b5563 82%,rgba(0,0,0,0)100%);
     }
 
@@ -425,58 +426,28 @@
     .btn-primary{background:var(--amarillo);color:#001122;border-color:var(--amarillo)}
     .promo-note{font-size:.9rem;opacity:.9}
 
-    /* ---------- Sheet (NUEVO: Carrito lateral) ---------- */
+    /* ---------- Sheet (Carrito lateral) ---------- */
     .sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.32);opacity:0;pointer-events:none;transition:opacity .22s ease;z-index:98}
     .sheet-backdrop.open{opacity:1;pointer-events:auto}
     .sheet{
-      position:fixed;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      width: 90%;
-      max-width: 400px;
-      transform: translateX(100%);
-      background:var(--card);
-      box-shadow:var(--shadow);
-      transition:transform .28s easeout;
-      display:grid;
-      grid-template-rows:auto 1fr;
-      z-index:99
+      position:fixed; top:0; right:0; bottom:0; width:90%; max-width:400px;
+      transform:translateX(100%); background:var(--card); box-shadow:var(--shadow);
+      transition:transform .28s easeout; display:grid; grid-template-rows:auto 1fr; z-index:99
     }
     .sheet.open{transform:translateX(0)}
     .sheet-header{
-      position:sticky; 
-      top: 0; 
-      background:var(--card);
-      border-bottom:1px solid var(--gris-borde);
-      z-index:5;
-      padding:1rem 1rem 0.8rem;
-      padding-right:56px;
+      position:sticky; top:0; background:var(--card);
+      border-bottom:1px solid var(--gris-borde); z-index:5; padding:1rem 1rem .8rem; padding-right:56px;
     }
     .sheet-handle{width:36px;height:4px;border-radius:999px;background:var(--gris-borde);margin:.2rem auto;position:absolute;left:50%;transform:translateX(-50%);top:6px}
     .sheet-title{margin:0 0 .35rem;font-size:1.2rem;font-weight:800;color:var(--azul-3);}
     .sheet-close{
-      position:absolute; 
-      right:16px; 
-      top:16px;
-      width:44px; 
-      height:44px; 
-      display:grid; 
-      place-items:center;
-      background:var(--card);
-      border:1px solid var(--gris-borde); 
-      border-radius:12px;
-      font-size:28px; 
-      line-height:1; 
-      color:var(--azul);
-      cursor:pointer; 
-      z-index:6; 
-      -webkit-tap-highlight-color:transparent;
+      position:absolute; right:16px; top:16px; width:44px; height:44px; display:grid; place-items:center;
+      background:var(--card); border:1px solid var(--gris-borde); border-radius:12px;
+      font-size:28px; line-height:1; color:var(--azul); cursor:pointer; z-index:6; -webkit-tap-highlight-color:transparent;
       transition: var(--transition);
     }
-    .sheet-close:hover {
-      background: var(--card-hover);
-    }
+    .sheet-close:hover { background: var(--card-hover); }
     .sheet-close:active{transform:scale(.98)}
     .sheet-body{overflow:auto;padding:1rem}
     
@@ -486,8 +457,7 @@
     .dialog{
       background:var(--card);border-radius:14px;width:90%;max-width:340px;
       box-shadow:0 16px 32px rgba(0,0,0,.28);padding:1.4rem 1.2rem;text-align:center;
-      animation:popin .24s ease-out;
-      transition: var(--transition);
+      animation:popin .24s ease-out; transition: var(--transition);
     }
     @keyframes popin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
     .dialog h3{margin:.2rem 0 1rem;font-size:1.25rem;color:var(--azul-3)}
@@ -519,7 +489,6 @@
       0% { transform: scale(1); opacity: 1; }
       100% { transform: scale(0.2); opacity: 0; }
     }
-    
     .fly-to-cart {
       position: fixed;
       pointer-events: none;
@@ -556,8 +525,7 @@
     <div id="menu-bebidas" style="display:none"></div>
   </main>
 
-  <!-- Seguimiento (debajo del listado y ANTES del divisor) -->
-  <!-- Oculto por defecto; se muestra si hay tachi_last_order -->
+  <!-- Seguimiento -->
   <section id="track" class="track track-hide" aria-labelledby="track-title">
     <div id="trackCard" class="track-card">
       <div class="track-header">
@@ -629,7 +597,7 @@
   <!-- Toasts -->
   <div id="toastWrap" class="toast-wrap"></div>
 
-  <!-- Bottom-sheet del carrito (NUEVO: ahora es lateral) -->
+  <!-- Carrito lateral -->
   <div id="sheetBackdrop" class="sheet-backdrop" aria-hidden="true"></div>
   <div id="cartSheet" class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" aria-hidden="true">
     <div class="sheet-header">
@@ -660,7 +628,6 @@
           <input type="text" id="nombre" placeholder="Tu nombre">
         </label>
 
-        <!-- NUEVO: WhatsApp del cliente -->
         <label>WhatsApp:
           <input type="tel" id="telefono" placeholder="Ej: 3415123456" inputmode="tel">
         </label>
@@ -713,12 +680,9 @@
   let SHIPPING = 1000;
   let WSP_NUMBER = '3415923882';
 
-  /* ======= Analytics (envía a tu hoja "Pedidos") ======= */
+  /* ======= Analytics ======= */
   const ANALYTICS_KEY='tachi_events_v1';
-
-  // ⬇️⬇️⬇️ REEMPLAZAR por la URL de tu Web App de Apps Script
   const ANALYTICS_WEBHOOK='https://script.google.com/macros/s/AKfycbwVo4cMvk8SmxsI87nF1GigewAo0o_dCVNYAzi0wgRBNGWxDkgur-kYbzb_0xDBkX2a/exec';
-  // ⬆️⬆️⬆️
 
   function getEvents(){try{return JSON.parse(localStorage.getItem(ANALYTICS_KEY)||'[]')}catch{return[]}}
   function saveEvents(l){localStorage.setItem(ANALYTICS_KEY,JSON.stringify(l))}
@@ -726,10 +690,8 @@
 
   let FLUSH_TIMER=null;
   function scheduleFlush(delay=1500){ clearTimeout(FLUSH_TIMER); FLUSH_TIMER=setTimeout(()=>flushEvents('timer'), delay); }
-
   function flushEvents(reason='auto'){
-    const events=getEvents();
-    if(!events.length) return;
+    const events=getEvents(); if(!events.length) return;
     const payload={ kind:'batch', reason, url:location.href, ref:document.referrer||'', tz:Intl.DateTimeFormat().resolvedOptions().timeZone||'', ua:navigator.userAgent, events };
     let sent=false;
     try{
@@ -739,9 +701,7 @@
       }
     }catch(e){}
     if(!sent){
-      try{
-        fetch(ANALYTICS_WEBHOOK,{method:'POST',mode:'no-cors',keepalive:true,body:JSON.stringify(payload)});
-      }catch(e){}
+      try{ fetch(ANALYTICS_WEBHOOK,{method:'POST',mode:'no-cors',keepalive:true,body:JSON.stringify(payload)}); }catch(e){}
     }
     saveEvents([]);
   }
@@ -750,7 +710,7 @@
   window.addEventListener('online',()=>scheduleFlush(250));
   setInterval(()=>flushEvents('interval'), 20000);
 
-  /* ======= CSV helper (por si querés exportar) ======= */
+  /* ======= CSV helper ======= */
   const SEP=Intl.NumberFormat().format(1.1).includes(',')?';':',';
   const csvEscape=v=>v==null?'':(/["\n\r]/.test(v)||String(v).includes(SEP))?`"${String(v).replace(/"/g,'""')}"`:v;
   function downloadCSV(name,headers,rows){
@@ -760,11 +720,10 @@
     a.href=url;a.download=name;document.body.appendChild(a);a.click();URL.revokeObjectURL(url);a.remove();
   }
 
-  /* ======= Helpers + TTL (2 horas) ======= */
+  /* ======= Helpers + TTL ======= */
   const asset=p=>location.hostname.endsWith('github.io')?`/${location.pathname.split('/').filter(Boolean)[0]}/${p}`:`/${p}`;
   const normalizar=d=>Array.isArray(d?.categorias)?Object.fromEntries(d.categorias.map(c=>[c.categoria,c.productos||[]])):d||{};
 
-  // Storage con vencimiento (TTL)
   function setWithTTL(key, value, ttlMs){const payload={ v:value, exp:Date.now()+ttlMs }; localStorage.setItem(key, JSON.stringify(payload));}
   function getWithTTL(key, fallback){
     try{
@@ -877,11 +836,10 @@
     }
   }
 
-  const cantidades = {}; // <— importante
-  let todosProductos = []; // Para búsqueda
-  let detallesAbiertos = {}; // Para controlar qué detalles están abiertos
+  const cantidades = {};
+  let todosProductos = [];
+  let detallesAbiertos = {};
 
-  /* ======= FUNCIÓN MEJORADA DE SCROLL ======= */
   function scrollToElement(targetId, offset = 100) {
     setTimeout(() => {
       const element = document.getElementById(targetId);
@@ -889,16 +847,10 @@
         const elementRect = element.getBoundingClientRect();
         const absoluteElementTop = elementRect.top + window.pageYOffset;
         const middle = absoluteElementTop - (window.innerHeight / 2) + (elementRect.height / 2);
-        
-        // Aplicar offset personalizado
         const targetPosition = middle - offset;
-        
-        window.scrollTo({
-          top: targetPosition,
-          behavior: 'smooth'
-        });
+        window.scrollTo({ top: targetPosition, behavior: 'smooth' });
       }
-    }, 150); // Tiempo suficiente para renderizar
+    }, 150);
   }
 
   function renderProductos(contId,data){
@@ -908,31 +860,17 @@
       const items=norm[cat]||[];
       const det=document.createElement('details');
       det.id = `detalle-${contId}-${cat.replace(/\s+/g, '-').toLowerCase()}`;
-      
-      // Solo permitir un details abierto a la vez
       det.addEventListener('toggle', function() {
         if (this.open) {
-          // Cerrar otros detalles en la misma sección
           const todosDetalles = cont.querySelectorAll('details');
-          todosDetalles.forEach(d => {
-            if (d !== this && d.open) {
-              d.open = false;
-            }
-          });
-          
-          // Guardar estado
+          todosDetalles.forEach(d => { if (d !== this && d.open) d.open = false; });
           detallesAbiertos[contId] = this.id;
-          
-          // Scroll al primer producto después de abrir (SOLUCIÓN AL PROBLEMA)
           setTimeout(() => {
             const firstProduct = this.querySelector('.producto');
-            if (firstProduct) {
-              scrollToElement(firstProduct.id, 80);
-            }
+            if (firstProduct) { scrollToElement(firstProduct.id, 80); }
           }, 100);
         }
       });
-      
       const sum=document.createElement('summary');
       sum.textContent=cat;
       det.appendChild(sum);
@@ -950,7 +888,7 @@
 
         const div=document.createElement('div');
         div.className='producto';
-        div.id = id; // Asegurar que tenga ID para el scroll
+        div.id = id;
         const thumb = prod.img ? asset(prod.img) : asset('logo.png');
         div.innerHTML=`
           <div class="prod-thumb"><img src="${thumb}" alt="${prod.nombre}" loading="lazy"></div>
@@ -974,7 +912,6 @@
         div.dataset.detalleId = det.id;
         det.appendChild(div);
         
-        // Guardar para búsqueda
         todosProductos.push({
           id: id,
           nombre: prod.nombre,
@@ -1035,10 +972,10 @@
     hydrateCart();hydrateClient();actualizarResumen();
     actualizarTabsPorHorario();
 
-    initTracking();           // listeners del seguimiento
-    ensureTrackVisibility();  // ⬅️ mostrar/ocultar según último pedido
-    initSearch();             // inicializar búsqueda
-    initThemeToggle();        // inicializar toggle de tema
+    initTracking();
+    ensureTrackVisibility();
+    initSearch();
+    // initThemeToggle();  ⬅️ ELIMINADO para evitar doble inicialización
 
     logEvent('menus_loaded',{rotiseria_cats:(rMerge.categorias||[]).length,bebidas_cats:(bMerge.categorias||[]).length});
   }
@@ -1071,48 +1008,17 @@
       const row=btn.closest?.('.producto');
       if(row && row.classList){ row.classList.add('row-flash'); row.addEventListener('animationend',()=>row.classList.remove('row-flash'),{once:true}); }
       const fab=document.getElementById('cartFab'); if(fab){ fab.classList.add('bump'); fab.addEventListener('animationend',()=>fab.classList.remove('bump'),{once:true}); }
-      
-      // Animación fly to cart
-      const thumb = row.querySelector('.prod-thumb');
-      if (thumb) {
+      const thumb = row?.querySelector('.prod-thumb');
+      if (thumb && fab) {
         const thumbRect = thumb.getBoundingClientRect();
         const fabRect = fab.getBoundingClientRect();
-        
         const flyer = thumb.cloneNode(true);
-        flyer.style.position = 'fixed';
-        flyer.style.left = `${thumbRect.left}px`;
-        flyer.style.top = `${thumbRect.top}px`;
-        flyer.style.width = `${thumbRect.width}px`;
-        flyer.style.height = `${thumbRect.height}px`;
-        flyer.style.zIndex = '1000';
-        flyer.classList.add('fly-to-cart');
-        
-        document.body.appendChild(flyer);
-        
-        // Posición final (FAB)
-        flyer.animate([
-          { 
-            left: `${thumbRect.left}px`,
-            top: `${thumbRect.top}px`,
-            width: `${thumbRect.width}px`,
-            height: `${thumbRect.height}px`,
-            opacity: 1
-          },
-          { 
-            left: `${fabRect.left}px`,
-            top: `${fabRect.top}px`,
-            width: '10px',
-            height: '10px',
-            opacity: 0.5
-          }
-        ], {
-          duration: 800,
-          easing: 'ease-out'
-        });
-        
-        setTimeout(() => {
-          document.body.removeChild(flyer);
-        }, 800);
+        flyer.style.position='fixed'; flyer.style.left=`${thumbRect.left}px`; flyer.style.top=`${thumbRect.top}px`;
+        flyer.style.width=`${thumbRect.width}px`; flyer.style.height=`${thumbRect.height}px`; flyer.style.zIndex='1000';
+        flyer.classList.add('fly-to-cart'); document.body.appendChild(flyer);
+        flyer.animate([{left:`${thumbRect.left}px`,top:`${thumbRect.top}px`,width:`${thumbRect.width}px`,height:`${thumbRect.height}px`,opacity:1},
+                       {left:`${fabRect.left}px`, top:`${fabRect.top}px`, width:'10px', height:'10px', opacity:0.5}],{duration:800,easing:'ease-out'});
+        setTimeout(()=>{ if(flyer&&flyer.parentNode) flyer.parentNode.removeChild(flyer); },800);
       }
     }
     try{
@@ -1171,7 +1077,6 @@
     if(fabTotal) fabTotal.textContent=formatARS(subtotal+envioCosto);
     setFabVisible(count>0&&!window.sheetOpen);
 
-    // Validación por horarios
     let puedePedir = true; let motivos = [];
     if(tiene.rotiseria>0 && seccionCerradaAhora('rotiseria')){ puedePedir=false; motivos.push(`Rotisería cerrada. ${mensajeCierre('rotiseria')}`); }
     if(tiene.bebidas>0 && seccionCerradaAhora('bebidas')){  puedePedir=false; motivos.push(`Bebidas cerrada. ${mensajeCierre('bebidas')}`); }
@@ -1188,7 +1093,6 @@
     if(estado) estado.textContent = puedePedir ? '' : motivos.join(' ');
 
     const telefonoOk = phoneDigits(telefonoEl && telefonoEl.value).length >= 8;
-
     if(btnWA) btnWA.disabled = !(count>0 && nombreEl && nombreEl.value.trim().length>0 && telefonoOk && puedePedir);
 
     window.METRICS_TOTAL=subtotal+envioCosto;window.METRICS_COUNT=count;window.METRICS_ENVIO=envioSel||'';
@@ -1268,7 +1172,7 @@
     document.getElementById('btn-bebidas')?.classList?.toggle('active', sec==='bebidas');
   }
 
-  /* ======= WhatsApp (y registrar en hoja) ======= */
+  /* ======= WhatsApp ======= */
   function enviarPedido(){
     const nombreEl=document.getElementById('nombre');
     const name=nombreEl?.value.trim()||'',addr=document.getElementById('direccion')?.value.trim()||'';
@@ -1324,7 +1228,6 @@
     msg+=envio==='envio'?`Envío a domicilio a: ${addr} (+${formatARS(SHIPPING)})\n`:'Retiro en el local\n';
     msg+=`Total: ${formatARS(total)}`;
 
-    // Registrar en Apps Script -> Hoja "Pedidos" (incluye teléfono del cliente)
     logEvent('order_wsp',{
       order_id: order_id,
       phone: phone,
@@ -1337,31 +1240,27 @@
       items: items
     });
 
-    // Guardar "último pedido" y mostrar el bloque de seguimiento
     try{
       localStorage.setItem('tachi_last_order', order_id);
       const trackId=document.getElementById('trackId'); if(trackId){ trackId.value=order_id; }
       const trackName=document.getElementById('trackName'); if(trackName && !trackName.value.trim()) trackName.value = name;
-      const track = document.getElementById('track'); if(track){ track.classList.remove('track-hide'); } // ⬅️ mostrar
+      const track = document.getElementById('track'); if(track){ track.classList.remove('track-hide'); }
     }catch{}
 
-    // Enviar analíticas inmediatamente (no bloquea)
     flushEvents('order');
 
-    // Abrir WhatsApp
     window.open(`https://wa.me/${WSP_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank');
     showToast('Abriendo WhatsApp...','ok');
 
-    // Vaciar carrito tras enviar
     Object.keys(cantidades).forEach(k=>cantidades[k]=0);
     document.querySelectorAll('[id^="cantidad-"]').forEach(el=>el.textContent='0');
     saveCart(cantidades);
     actualizarResumen();
-    closeSheet(); // cerrar el sheet del carrito
+    closeSheet();
     showToast('Pedido enviado. Carrito vaciado ✅','ok',2000);
   }
 
-  /* ======= Sheet (abrir/cerrar con focus trap) ======= */
+  /* ======= Sheet ======= */
   const sheet=document.getElementById('cartSheet'), sheetClose=document.getElementById('sheetClose'), backdrop=document.getElementById('sheetBackdrop');
   window.sheetOpen=false;
   function trapFocus(e){
@@ -1390,7 +1289,7 @@
   if(sheetClose) sheetClose.addEventListener('click',closeSheet);
   if(backdrop) backdrop.addEventListener('click',closeSheet);
 
-  /* ======= Pasos (Datos → Resumen → WhatsApp) ======= */
+  /* ======= Pasos ======= */
   function actualizarPasos(){
     const steps = document.querySelectorAll('#checkoutSteps .step');
     if(!steps.length) return;
@@ -1433,7 +1332,6 @@
   })();
 
   // ======= Seguimiento =======
-  // Mostrar/ocultar bloque según exista último pedido en storage
   function ensureTrackVisibility(){
     const track = document.getElementById('track');
     if(!track) return;
@@ -1477,7 +1375,6 @@
     const idInput   = document.getElementById('trackId');
     const btnTrack  = document.getElementById('btnTrack');
 
-    // Prefill desde storage + visibilidad inicial
     try{
       const last = localStorage.getItem('tachi_last_order');
       if(last && idInput && !idInput.value) idInput.value = last;
@@ -1530,7 +1427,6 @@
 
     if(result) result.hidden = false;
 
-    // Resaltado / limpieza por estado
     const estadoKey = String(data.estado||'').toLowerCase();
     if(card){
       card.classList.toggle('ready', estadoKey==='listo');
@@ -1539,7 +1435,6 @@
       showToast('🎉 ¡Tu pedido está listo!', 'ok', 2600);
     }
     if(estadoKey==='entregado'){
-      // Limpiar seguimiento y ocultar persistentemente
       try{ localStorage.removeItem('tachi_last_order'); }catch{}
       showToast('✅ Pedido entregado', 'ok', 2200);
       const track = document.getElementById('track');
@@ -1547,33 +1442,21 @@
     }
   }
 
-  // ======= BÚSQUEDA DE PRODUCTOS MEJORADA =======
+  // ======= BÚSQUEDA =======
   function initSearch() {
     const searchInput = document.getElementById('searchInput');
     const searchButton = document.getElementById('searchButton');
     const searchResults = document.getElementById('searchResults');
-    
     if (!searchInput || !searchResults) return;
-    
-    // Función para realizar búsqueda
     const performSearch = () => {
       const query = searchInput.value.trim().toLowerCase();
-      
-      if (query.length < 2) {
-        searchResults.classList.remove('active');
-        return;
-      }
-      
-      // Filtrar productos
+      if (query.length < 2) { searchResults.classList.remove('active'); return; }
       const results = todosProductos.filter(producto => 
         producto.nombre.toLowerCase().includes(query) || 
         (producto.desc && producto.desc.toLowerCase().includes(query)) ||
         producto.categoria.toLowerCase().includes(query)
       );
-      
-      // Mostrar resultados
       searchResults.innerHTML = '';
-      
       if (results.length === 0) {
         searchResults.innerHTML = '<div class="no-results">No se encontraron productos</div>';
       } else {
@@ -1588,68 +1471,41 @@
               <div style="font-weight: bold; color: var(--azul-3);">${formatARS(producto.precio)}</div>
             </div>
           `;
-          
           item.addEventListener('click', () => {
-            // Cambiar a la pestaña correcta
             const targetTab = producto.contId === 'menu-rotiseria' ? 'rotiseria' : 'bebidas';
             mostrar(targetTab);
-            
-            // Esperar a que se renderice el contenido y luego abrir la categoría (SOLUCIÓN AL PROBLEMA)
             setTimeout(() => {
-              // Encontrar y abrir el detalle correspondiente
               const detalleElement = document.getElementById(producto.detalleId);
               if (detalleElement) {
-                // Cerrar todos los detalles primero
                 const todosDetalles = document.querySelectorAll('details');
                 todosDetalles.forEach(d => d.open = false);
-                
-                // Abrir el detalle específico
                 detalleElement.open = true;
-                
-                // Encontrar el producto y resaltarlo
                 const productElement = document.querySelector(`[data-id="${producto.id}"]`);
                 if (productElement) {
-                  // Usar la nueva función de scroll (SOLUCIÓN AL PROBLEMA)
                   scrollToElement(productElement.id, 120);
-                  
                   productElement.style.boxShadow = '0 0 0 3px var(--amarillo)';
                   productElement.style.transition = 'box-shadow 0.5s ease';
-                  
-                  // Quitar el resaltado después de un tiempo
-                  setTimeout(() => {
-                    productElement.style.boxShadow = '';
-                  }, 2000);
+                  setTimeout(() => { productElement.style.boxShadow = ''; }, 2000);
                 }
               }
-            }, 300); // Tiempo aumentado para asegurar renderizado
-            
-            // Cerrar resultados de búsqueda
+            }, 300);
             searchResults.classList.remove('active');
             searchInput.value = '';
             searchInput.blur();
           });
-          
           searchResults.appendChild(item);
         });
       }
-      
       searchResults.classList.add('active');
     };
-    
-    // Event listeners
     searchInput.addEventListener('input', performSearch);
     searchInput.addEventListener('focus', performSearch);
-    
     searchButton.addEventListener('click', performSearch);
-    
-    // Cerrar resultados al hacer clic fuera
     document.addEventListener('click', (e) => {
       if (!searchInput.contains(e.target) && !searchResults.contains(e.target) && !e.target.closest('.search-item')) {
         searchResults.classList.remove('active');
       }
     });
-    
-    // Tecla Escape para cerrar resultados
     searchInput.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         searchResults.classList.remove('active');
@@ -1658,55 +1514,44 @@
     });
   }
   
-// ======= TOGGLE DE MODO OSCURO/CLARO =======
-function initThemeToggle() {
+  // ======= TOGGLE DE MODO OSCURO/CLARO =======
+  function initThemeToggle() {
     const themeToggle = document.getElementById('themeToggle');
     if (!themeToggle) {
-        console.error('No se encontró el botón themeToggle');
-        return;
+      console.error('No se encontró el botón themeToggle');
+      return;
     }
-    
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     const savedTheme = localStorage.getItem('tachi_theme');
-    
-    // Aplicar tema guardado o preferencia del sistema
     if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        themeToggle.textContent = '☀️';
-        console.log('Modo oscuro activado');
+      document.documentElement.setAttribute('data-theme', 'dark');
+      themeToggle.textContent = '☀️';
     } else {
-        document.documentElement.removeAttribute('data-theme');
-        themeToggle.textContent = '🌙';
-        console.log('Modo claro activado');
+      document.documentElement.removeAttribute('data-theme');
+      themeToggle.textContent = '🌙';
     }
-    
-    // Alternar tema al hacer clic
     themeToggle.addEventListener('click', () => {
-        console.log('Botón de tema clickeado');
-        if (document.documentElement.getAttribute('data-theme') === 'dark') {
-            document.documentElement.removeAttribute('data-theme');
-            localStorage.setItem('tachi_theme', 'light');
-            themeToggle.textContent = '🌙';
-            console.log('Cambiado a modo claro');
-        } else {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            localStorage.setItem('tachi_theme', 'dark');
-            themeToggle.textContent = '☀️';
-            console.log('Cambiado a modo oscuro');
-        }
+      if (document.documentElement.getAttribute('data-theme') === 'dark') {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('tachi_theme', 'light');
+        themeToggle.textContent = '🌙';
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('tachi_theme', 'dark');
+        themeToggle.textContent = '☀️';
+      }
     });
-}
+  }
 
-// Refrescar tabs cada minuto por cambios de horario + page_view
-window.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM completamente cargado');
+  // ======= Ready =======
+  window.addEventListener('DOMContentLoaded', () => {
     actualizarTabsPorHorario();
     setInterval(actualizarTabsPorHorario, 60*1000);
-    ensureTrackVisibility(); // ⬅️ al cargar la página
-    initSearch(); // Inicializar búsqueda
-    initThemeToggle(); // Inicializar toggle de tema
+    ensureTrackVisibility();
+    initSearch();
+    initThemeToggle();   // ⬅️ única inicialización del tema
     logEvent('page_view', {title: document.title});
-});
+  });
   </script>
 </body>
 </html>
