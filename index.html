@@ -28,6 +28,22 @@
       --transition: all 0.3s ease;
     }
     
+    /* Variables para modo oscuro */
+    [data-theme="dark"] {
+      --azul: #004080;
+      --azul-2: #00264d;
+      --azul-3: #0059b3;
+      --bg: #1a1a1a;
+      --text: #f0f0f0;
+      --card: #2d2d2d;
+      --card-hover: #3d3d3d;
+      --gris-borde: #555;
+      --resumen-bg: #4a3c00;
+      --resumen-borde: #665200;
+    }
+    
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Roboto',sans-serif;background:var(--bg);color:var(--text);transition: var(--transition);}
 
     /* ---------- Header ---------- */
     header{
@@ -1642,6 +1658,35 @@
     });
   }
   
+  // ======= TOGGLE DE MODO OSCURO/CLARO =======
+  function initThemeToggle() {
+    const themeToggle = document.getElementById('themeToggle');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const savedTheme = localStorage.getItem('tachi_theme');
+    
+    // Aplicar tema guardado o preferencia del sistema
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      themeToggle.textContent = '☀️';
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      themeToggle.textContent = '🌙';
+    }
+    
+    // Alternar tema al hacer clic
+    themeToggle.addEventListener('click', () => {
+      if (document.documentElement.getAttribute('data-theme') === 'dark') {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('tachi_theme', 'light');
+        themeToggle.textContent = '🌙';
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('tachi_theme', 'dark');
+        themeToggle.textContent = '☀️';
+      }
+    });
+  }
+
   // Refrescar tabs cada minuto por cambios de horario + page_view
   window.addEventListener('DOMContentLoaded', ()=>{
     actualizarTabsPorHorario();
