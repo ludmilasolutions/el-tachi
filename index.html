@@ -1118,7 +1118,7 @@
     try{
       const row=document.getElementById(`cantidad-${id}`)?.closest?.('.producto');
       const name=row?.dataset?.nombre||''; const price=parseInt(row?.dataset?.precio||0,10);
-      logEvent('qty_change',{id:id,delta:delta,new_qty:cantidades[id],sec:sec,name:name,price:price);
+      logEvent('qty_change', { id, delta, new_qty: cantidades?.[id] ?? 0, sec, name, price });
     }catch{}
     saveCart(cantidades);actualizarResumen();
   }
