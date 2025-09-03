@@ -1658,44 +1658,55 @@
     });
   }
   
-  // ======= TOGGLE DE MODO OSCURO/CLARO =======
-  function initThemeToggle() {
+// ======= TOGGLE DE MODO OSCURO/CLARO =======
+function initThemeToggle() {
     const themeToggle = document.getElementById('themeToggle');
+    if (!themeToggle) {
+        console.error('No se encontró el botón themeToggle');
+        return;
+    }
+    
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     const savedTheme = localStorage.getItem('tachi_theme');
     
     // Aplicar tema guardado o preferencia del sistema
     if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-      document.documentElement.setAttribute('data-theme', 'dark');
-      themeToggle.textContent = '☀️';
+        document.documentElement.setAttribute('data-theme', 'dark');
+        themeToggle.textContent = '☀️';
+        console.log('Modo oscuro activado');
     } else {
-      document.documentElement.removeAttribute('data-theme');
-      themeToggle.textContent = '🌙';
+        document.documentElement.removeAttribute('data-theme');
+        themeToggle.textContent = '🌙';
+        console.log('Modo claro activado');
     }
     
     // Alternar tema al hacer clic
     themeToggle.addEventListener('click', () => {
-      if (document.documentElement.getAttribute('data-theme') === 'dark') {
-        document.documentElement.removeAttribute('data-theme');
-        localStorage.setItem('tachi_theme', 'light');
-        themeToggle.textContent = '🌙';
-      } else {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        localStorage.setItem('tachi_theme', 'dark');
-        themeToggle.textContent = '☀️';
-      }
+        console.log('Botón de tema clickeado');
+        if (document.documentElement.getAttribute('data-theme') === 'dark') {
+            document.documentElement.removeAttribute('data-theme');
+            localStorage.setItem('tachi_theme', 'light');
+            themeToggle.textContent = '🌙';
+            console.log('Cambiado a modo claro');
+        } else {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            localStorage.setItem('tachi_theme', 'dark');
+            themeToggle.textContent = '☀️';
+            console.log('Cambiado a modo oscuro');
+        }
     });
-  }
+}
 
-  // Refrescar tabs cada minuto por cambios de horario + page_view
-  window.addEventListener('DOMContentLoaded', ()=>{
+// Refrescar tabs cada minuto por cambios de horario + page_view
+window.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM completamente cargado');
     actualizarTabsPorHorario();
     setInterval(actualizarTabsPorHorario, 60*1000);
     ensureTrackVisibility(); // ⬅️ al cargar la página
     initSearch(); // Inicializar búsqueda
     initThemeToggle(); // Inicializar toggle de tema
-    logEvent('page_view',{title:document.title});
-  });
+    logEvent('page_view', {title: document.title});
+});
   </script>
 </body>
 </html>
