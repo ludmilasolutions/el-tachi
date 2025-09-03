@@ -41,6 +41,15 @@
       --radius: 12px;
       --transition: all 0.3s ease;
       --glow: 0 0 12px rgba(255, 204, 0, .45), 0 0 30px rgba(0, 64, 128, .25);
+
+      /* Neon */
+      --neon-primary: #00fff0;
+      --neon-secondary: #ff2dfd;
+      --neon-amber: #ffd400;
+      --neon-dark: #0a0f1d;
+      --tube-border: rgba(255,255,255,.18);
+      --tube-bg: rgba(0,0,0,.25);
+      --scan: rgba(255,255,255,.25);
     }
     :root[data-theme="dark"] {
       --azul: #004080;
@@ -158,53 +167,156 @@
       background: #4a3c00;color: #ffd54d;border-color: #ffb300;
     }
 
-    /* ---------- COUNTDOWN (nuevo) ---------- */
+    /* ---------- COUNTDOWN (NEON 24) ---------- */
     .countdown-bar{
       position: sticky;
-      top: 70px; /* queda debajo del buscador */
+      top: 70px;
       z-index: 9;
       margin: 0 auto .9rem;
-      padding: .8rem 1rem;
-      background: linear-gradient(135deg, rgba(255, 204, 0, .18), rgba(0, 64, 128, .12));
-      border: 1px solid rgba(255, 204, 0, .45);
-      border-radius: 14px;
-      box-shadow: var(--glow);
+      padding: .9rem 1rem;
+      border-radius: 16px;
+      background: radial-gradient(1200px 600px at 10% -100%, rgba(0,0,0,.0) 45%, rgba(0,0,0,.25)), linear-gradient(135deg, #0b1022, #0a0f1d 55%, #0b1022);
+      border: 1px solid var(--tube-border);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.05) inset,
+        0 0 24px rgba(0,0,0,.35),
+        0 0 28px rgba(0, 255, 240, .08),
+        0 0 38px rgba(255, 45, 253, .06);
       display: grid;
-      grid-template-columns: auto 1fr;
+      grid-template-columns: auto 1fr auto;
       gap: .8rem;
       align-items: center;
+      color:#eaf6ff;
+      overflow: hidden;
+    }
+    .countdown-bar::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        linear-gradient(90deg, transparent 0%, var(--scan) 35%, transparent 65%),
+        radial-gradient(200px 18px at 50% -20px, rgba(255,255,255,.16), transparent 60%);
+      mix-blend-mode: screen;
+      animation: scan 3.5s linear infinite;
+      pointer-events:none;
+      opacity:.55;
+    }
+    @keyframes scan{
+      0%{ transform: translateX(-60%); }
+      100%{ transform: translateX(60%); }
     }
     .countdown-bar.hide{ display:none; }
+
     .countdown-icon{
       font-size: 1.6rem;
       filter: drop-shadow(0 2px 8px rgba(0,0,0,.25));
+      margin-left:.2rem
     }
     .countdown-content{ display:flex; flex-direction:column; gap:.2rem }
     .countdown-title{
-      font-weight:900; font-size:1.05rem; color: var(--azul-3); letter-spacing:.2px;
-      text-transform: uppercase;
+      font-weight:900; font-size:1.05rem; letter-spacing:.2px; text-transform: uppercase;
+      background: linear-gradient(90deg, var(--neon-secondary), var(--neon-primary));
+      -webkit-background-clip:text; background-clip:text; color: transparent;
+      text-shadow: 0 0 10px rgba(0,255,240,.25), 0 0 16px rgba(255,45,253,.25);
     }
     .countdown-sub{ font-size:.95rem; opacity:.85 }
-    .flip-row{ display:flex; gap:.35rem; align-items:center; flex-wrap:wrap }
+
+    .flip-row{ display:flex; gap:.5rem; align-items:center; flex-wrap:wrap }
     .flip-digits{
-      display:inline-grid; grid-auto-flow: column; gap:.25rem; align-items:center;
+      display:inline-grid; grid-auto-flow: column; gap:.35rem; align-items:center;
       font-variant-numeric: tabular-nums;
     }
+
+    /* Flip digit estilo “24” con neon */
     .flip{
-      position:relative; display:inline-block; min-width: 2.6ch; text-align:center;
-      padding:.3rem .5rem; border-radius:10px; background: var(--card); color: var(--text);
-      border:1px solid var(--gris-borde); box-shadow: 0 8px 16px rgba(0,0,0,.08);
-      font-weight:900; font-size:1.15rem;
-      transition: transform .2s;
+      position:relative;
+      display:inline-grid;
+      grid-template-rows: 1fr 1fr;
+      min-width: 2.8ch;
+      text-align:center;
+      border-radius:10px;
+      background: linear-gradient(#0e1838, #0a0f1d);
+      color: #e7f8ff;
+      border:1px solid rgba(255,255,255,.09);
+      box-shadow:
+        0 8px 16px rgba(0,0,0,.28),
+        0 0 18px rgba(0, 255, 240, .22),
+        0 0 24px rgba(255, 45, 253, .18);
+      font-weight:900; font-size:1.3rem;
+      overflow:hidden;
+      transform: translateZ(0);
     }
-    .label{ font-size:.82rem; opacity:.75; margin-left:.2rem; margin-right:.5rem }
-    .flip:active{ transform: scale(.98) }
-    .pulse{
-      animation: pulse 1.4s ease-in-out infinite;
+    .flip .top, .flip .bottom{
+      padding:.28rem .6rem;
+      line-height:1.1;
     }
-    @keyframes pulse{
-      0%,100%{ box-shadow: var(--glow); }
-      50%{ box-shadow: 0 0 4px rgba(255, 204, 0, .25); }
+    .flip .top{
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .flip .bottom{
+      background: linear-gradient(#0a0f1d, #0d1634);
+    }
+    .flip .hinge{
+      position:absolute; left:0; right:0; top:50%;
+      height:1px; background: rgba(255,255,255,.08);
+      box-shadow: 0 0 0 1px rgba(0,0,0,.35) inset;
+      transform: translateY(-50%);
+    }
+
+    /* animación flip */
+    .flip.animate .top{
+      animation: flipTop .45s ease both;
+    }
+    .flip.animate .bottom{
+      animation: flipBottom .45s ease .12s both;
+    }
+    @keyframes flipTop{
+      0%{ transform-origin: bottom; transform: rotateX(0); }
+      100%{ transform-origin: bottom; transform: rotateX(-90deg); filter: brightness(.8); }
+    }
+    @keyframes flipBottom{
+      0%{ transform-origin: top; transform: rotateX(90deg); filter: brightness(.8); }
+      100%{ transform-origin: top; transform: rotateX(0); }
+    }
+    .label{
+      font-size:.82rem; opacity:.75;
+      color: #9fdcff;
+      text-shadow: 0 0 8px rgba(0, 255, 240, .25);
+      margin-left:.15rem; margin-right:.4rem
+    }
+
+    /* Botón de sonido */
+    .sound-toggle{
+      align-self:center;
+      margin-right:.3rem;
+      display:inline-flex; align-items:center; justify-content:center;
+      width:42px; height:42px; border-radius:10px;
+      border:1px solid rgba(255,255,255,.18);
+      background: var(--tube-bg);
+      color:#b4f7ff; cursor:pointer; -webkit-tap-highlight-color:transparent;
+      box-shadow: 0 0 12px rgba(0,255,240,.12) inset, 0 2px 10px rgba(0,0,0,.25);
+      transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+    }
+    .sound-toggle:hover{ transform: translateY(-1px); box-shadow:0 0 16px rgba(0,255,240,.18) inset, 0 4px 14px rgba(0,0,0,.3); }
+    .sound-toggle.muted{ opacity:.7; }
+
+    /* pulse sutil cuando quedan < 60s */
+    .countdown-bar.urgent{
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.05) inset,
+        0 0 30px rgba(255, 212, 0, .25),
+        0 0 60px rgba(255, 0, 120, .18);
+      animation: urgentPulse 1.4s ease-in-out infinite;
+    }
+    @keyframes urgentPulse{
+      0%,100%{ filter: brightness(1); }
+      50%{ filter: brightness(1.08); }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .countdown-bar::before,
+      .flip.animate .top,
+      .flip.animate .bottom,
+      .countdown-bar.urgent{ animation: none !important; }
     }
 
     /* ---------- Listados ---------- */
@@ -464,13 +576,24 @@
       <div class="countdown-content">
         <div class="countdown-title" id="cdTitle">Abrimos en</div>
         <div class="flip-row">
-          <span class="flip pulse" id="cdDays">0</span><span class="label">d</span>
-          <span class="flip" id="cdHours">00</span><span class="label">h</span>
-          <span class="flip" id="cdMins">00</span><span class="label">m</span>
-          <span class="flip" id="cdSecs">00</span><span class="label">s</span>
-          <span class="countdown-sub" id="cdHint" style="margin-left:.4rem;opacity:.75"></span>
+          <div class="flip-digits">
+            <div class="flip" id="cdDays">
+              <div class="top">0</div><div class="hinge"></div><div class="bottom">0</div>
+            </div><span class="label">d</span>
+            <div class="flip" id="cdHours">
+              <div class="top">00</div><div class="hinge"></div><div class="bottom">00</div>
+            </div><span class="label">h</span>
+            <div class="flip" id="cdMins">
+              <div class="top">00</div><div class="hinge"></div><div class="bottom">00</div>
+            </div><span class="label">m</span>
+            <div class="flip" id="cdSecs">
+              <div class="top">00</div><div class="hinge"></div><div class="bottom">00</div>
+            </div><span class="label">s</span>
+          </div>
+          <span class="countdown-sub" id="cdHint" style="margin-left:.4rem;opacity:.85"></span>
         </div>
       </div>
+      <button id="soundToggle" class="sound-toggle muted" title="Activar sonido" aria-pressed="false">🔇</button>
     </div>
 
     <div id="menu-rotiseria"></div>
@@ -797,20 +920,15 @@
   function getNextOpenDate(sec){
     const cfg = HORARIOS[sec];
     if(!cfg || !Array.isArray(cfg.dias) || !Array.isArray(cfg.rangos) || cfg.rangos.length===0) return null;
-    // Tomamos el primer rango del día válido como hora "desde"
-    // y también si hoy todavía no arrancó ese rango, arranca hoy.
     const now = new Date();
     const todayIdx = now.getDay(); // 0=Dom
-    const toMinutes = (hm)=>{ const [H,M]=hm.split(':').map(Number); return H*60 + (M||0); };
     const msInDay = 24*60*60*1000;
 
-    // Buscamos en los próximos 14 días por seguridad
     for(let offset=0; offset<14; offset++){
       const d = new Date(now.getTime() + offset*msInDay);
       const idx = d.getDay();
       if(!cfg.dias.includes(idx)) continue;
 
-      // Evaluar TODOS los rangos del día por si hay varios: abrimos al más próximo que esté en futuro
       const candidates = [];
       for(const r of cfg.rangos){
         const [h,m] = r.desde.split(':').map(Number);
@@ -836,7 +954,77 @@
     return { days, hours: pad(hours), mins: pad(mins), secs: pad(secs) };
   }
 
+  /* ======= SONIDO (WebAudio) ======= */
+  let audioCtx = null;
+  const SOUND_KEY = 'tachi_countdown_sound';
+  const prefersReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function ensureAudio(){
+    if(audioCtx) return audioCtx;
+    try{ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    catch(_){ audioCtx = null; }
+    return audioCtx;
+  }
+  function beep({freq=880, dur=0.08, vol=0.06}={}){
+    if(prefersReduce) return; // respeto accesibilidad (silencio si reduce)
+    if(localStorage.getItem(SOUND_KEY)!=='on') return;
+    const ctx = ensureAudio(); if(!ctx) return;
+    const t0 = ctx.currentTime;
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type='square'; o.frequency.value=freq;
+    g.gain.setValueAtTime(0, t0);
+    g.gain.linearRampToValueAtTime(vol, t0+0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(t0); o.stop(t0+dur);
+  }
+  function swoosh(){ // cambio de minuto
+    if(prefersReduce) return;
+    if(localStorage.getItem(SOUND_KEY)!=='on') return;
+    const ctx = ensureAudio(); if(!ctx) return;
+    const t0 = ctx.currentTime;
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type='sawtooth';
+    o.frequency.setValueAtTime(220, t0);
+    o.frequency.exponentialRampToValueAtTime(880, t0+0.25);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(0.08, t0+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0+0.35);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(t0); o.stop(t0+0.36);
+  }
+
+  function setSoundButtonUI(){
+    const btn = document.getElementById('soundToggle');
+    if(!btn) return;
+    const on = localStorage.getItem(SOUND_KEY)==='on';
+    btn.classList.toggle('muted', !on);
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.textContent = on ? '🔊' : '🔇';
+    btn.title = on ? 'Desactivar sonido' : 'Activar sonido';
+  }
+
   let CD_TIMER = null;
+  let lastShown = {days:null, hours:null, mins:null, secs:null};
+
+  function setFlipValue(el, val, play=true){
+    // el tiene .top y .bottom
+    const top = el.querySelector('.top');
+    const bottom = el.querySelector('.bottom');
+    if(!top || !bottom) return;
+    const cur = bottom.textContent;
+    if(cur === String(val)) return;
+    top.textContent = cur;
+    bottom.textContent = String(val);
+    if(play && !prefersReduce){
+      el.classList.remove('animate'); // restart
+      void el.offsetWidth;
+      el.classList.add('animate');
+    }
+  }
+
   function renderCountdown(sec){
     const wrap = document.getElementById('openCountdown');
     const title = document.getElementById('cdTitle');
@@ -850,22 +1038,25 @@
     // Si está abierta la sección: ocultar
     if(!seccionCerradaAhora(sec)){
       wrap.classList.add('hide');
+      wrap.classList.remove('urgent');
       if(CD_TIMER){ clearInterval(CD_TIMER); CD_TIMER=null; }
       return;
     }
 
     const next = getNextOpenDate(sec);
     if(!next){
-      // No sabemos próxima apertura
       title.textContent = 'Temporalmente cerrado';
       hint.textContent = CIERRE_MSGS[sec]?.trim() || 'Volvé más tarde 👀';
-      elD.textContent = '0'; elH.textContent='00'; elM.textContent='00'; elS.textContent='00';
+      setFlipValue(elD, '0', false);
+      setFlipValue(elH, '00', false);
+      setFlipValue(elM, '00', false);
+      setFlipValue(elS, '00', false);
       wrap.classList.remove('hide');
+      wrap.classList.remove('urgent');
       if(CD_TIMER){ clearInterval(CD_TIMER); CD_TIMER=null; }
       return;
     }
 
-    // Mostrar y actualizar cada segundo
     wrap.classList.remove('hide');
     title.textContent = 'Abrimos en';
     hint.textContent = proximoHorario(sec) || '';
@@ -874,23 +1065,21 @@
       const now = new Date();
       const diff = next.getTime() - now.getTime();
       const {days, hours, mins, secs} = formatDuration(diff);
-      // Flip suave: si cambió el valor, “salta” un poquito
-      const setFlip = (el,val)=>{
-        if(el.textContent!==String(val)){
-          el.textContent = val;
-          el.classList.remove('pulse'); // reinicia animación
-          void el.offsetWidth;
-          el.classList.add('pulse');
-        }
-      };
-      setFlip(elD, days);
-      setFlip(elH, hours);
-      setFlip(elM, mins);
-      setFlip(elS, secs);
+
+      // Urgencia visual cuando < 60s
+      const urgent = diff <= 60*1000;
+      wrap.classList.toggle('urgent', urgent);
+
+      // Actualizar flip con animación + sonido
+      if(lastShown.days !== days){ setFlipValue(elD, String(days)); lastShown.days = days; }
+      if(lastShown.hours !== hours){ setFlipValue(elH, String(hours)); lastShown.hours = hours; swoosh(); }
+      if(lastShown.mins !== mins){ setFlipValue(elM, String(mins)); lastShown.mins = mins; swoosh(); }
+      if(lastShown.secs !== secs){ setFlipValue(elS, String(secs)); lastShown.secs = secs; beep({freq: urgent? 1100: 880}); }
+
       if(diff<=0){
         clearInterval(CD_TIMER); CD_TIMER=null;
         actualizarTabsPorHorario(); // probablemente ahora esté abierta
-        updateCountdown(); // oculta o recalcula según corresponda
+        updateCountdown(); // recalcula/oculta según corresponda
       }
     };
     tick();
@@ -899,7 +1088,6 @@
   }
 
   function updateCountdown(){
-    // Sección activa: 'rotiseria' si menú rotisería visible
     const isRot = document.getElementById('menu-rotiseria')?.style.display !== 'none';
     const sec = isRot ? 'rotiseria' : 'bebidas';
     renderCountdown(sec);
@@ -1599,6 +1787,26 @@
     });
   }
 
+  // ======= SONIDO: botón =======
+  function initSoundToggle(){
+    const btn = document.getElementById('soundToggle');
+    if(!btn) return;
+    // default: silenciado, salvo que ya haya preferencia guardada
+    if(localStorage.getItem(SOUND_KEY)!=='on'){ localStorage.setItem(SOUND_KEY,'off'); }
+    setSoundButtonUI();
+    btn.addEventListener('click', ()=>{
+      const cur = localStorage.getItem(SOUND_KEY)==='on';
+      localStorage.setItem(SOUND_KEY, cur ? 'off' : 'on');
+      setSoundButtonUI();
+      if(!cur){ // si se enciende, pequeño ping de confirmación
+        beep({freq: 1200, dur: .09, vol:.08});
+        setTimeout(()=>beep({freq: 900, dur:.06, vol:.06}), 90);
+      }
+    }, {passive:true});
+    // activar contexto al primer gesto
+    ['click','touchstart'].forEach(evt=>window.addEventListener(evt, ()=>ensureAudio(), {once:true, passive:true}));
+  }
+
   // ======= Ready =======
   window.addEventListener('DOMContentLoaded', () => {
     actualizarTabsPorHorario();
@@ -1606,6 +1814,7 @@
     ensureTrackVisibility();
     initSearch();
     initThemeToggle();
+    initSoundToggle();
     updateCountdown(); // ⬅️ iniciar estado del contador
     logEvent('page_view', {title: document.title});
   });
