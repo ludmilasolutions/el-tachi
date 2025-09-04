@@ -40,15 +40,7 @@
       --shadow:0 10px 24px rgba(0,0,0,.18);
       --radius: 12px;
       --transition: all 0.3s ease;
-
-      /* Neon */
-      --neon-primary: #00fff0;
-      --neon-secondary: #ff2dfd;
-      --neon-amber: #ffd400;
-      --neon-dark: #0a0f1d;
-      --tube-border: rgba(255,255,255,.18);
-      --tube-bg: rgba(0,0,0,.25);
-      --scan: rgba(255,255,255,.25);
+      --glow: 0 0 12px rgba(255, 204, 0, .45), 0 0 30px rgba(0, 64, 128, .25);
     }
     :root[data-theme="dark"] {
       --azul: #004080;
@@ -61,6 +53,7 @@
       --gris-borde: #555;
       --resumen-bg: #4a3c00;
       --resumen-borde: #665200;
+      --glow: 0 0 16px rgba(255, 204, 0, .6), 0 0 36px rgba(0, 64, 128, .45);
     }
     
     *{box-sizing:border-box;margin:0;padding:0}
@@ -94,19 +87,31 @@
       z-index: 1200;
       -webkit-tap-highlight-color: transparent;
     }
-    .theme-toggle:hover { background: rgba(255,255,255,0.3); transform: rotate(30deg); }
+    .theme-toggle:hover {
+      background: rgba(255,255,255,0.3);
+      transform: rotate(30deg);
+    }
 
     main{padding:1rem 1rem 112px;max-width:900px;margin:auto}
 
     /* ---------- Buscador ---------- */
     .search-container {
-      position: sticky; top: 0; z-index: 10; background: var(--bg);
-      padding: 1rem 0; margin-bottom: 1rem; border-bottom: 1px solid var(--gris-borde);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--bg);
+      padding: 1rem 0;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--gris-borde);
       transition: var(--transition);
     }
     .search-box {
-      display: flex; align-items: center; background: var(--card);
-      border-radius: 30px; padding: 0.5rem 1rem; box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      background: var(--card);
+      border-radius: 30px;
+      padding: 0.5rem 1rem;
+      box-shadow: var(--shadow);
       transition: var(--transition);
     }
     .search-box:focus-within { box-shadow: 0 0 0 3px rgba(255,204,0,0.3); }
@@ -127,7 +132,9 @@
       display: flex;align-items: center;
     }
     .search-item:hover { background: var(--card-hover); }
-    .search-item img { width: 40px;height: 40px;object-fit: cover;border-radius: 8px;margin-right: 0.75rem; }
+    .search-item img {
+      width: 40px;height: 40px;object-fit: cover;border-radius: 8px;margin-right: 0.75rem;
+    }
     .no-results { padding: 1rem;text-align: center;color: #999; }
 
     /* ---------- Tabs ---------- */
@@ -139,6 +146,7 @@
     }
     .tabs button:hover{background:#0055aa}
     .tabs button.active{background:var(--azul-2);border-color:var(--amarillo);box-shadow:0 4px 12px rgba(0,0,0,.3)}
+
     .tab-closed{opacity:.55; cursor:not-allowed; filter:grayscale(60%)}
     .tab-closed::after{content:' (CERRADO)'; font-weight:800}
     .seccion-closed-overlay{
@@ -150,63 +158,58 @@
       background: #4a3c00;color: #ffd54d;border-color: #ffb300;
     }
 
-    /* ---------- COUNTDOWN (NUEVO: texto + barra) ---------- */
+    /* ---------- COUNTDOWN (nuevo) ---------- */
     .countdown-bar{
       position: sticky;
-      top: 70px;
+      top: 70px; /* queda debajo del buscador */
       z-index: 9;
       margin: 0 auto .9rem;
-      padding: .9rem 1rem;
-      border-radius: 16px;
-      background: linear-gradient(135deg, #0b1022, #0a0f1d 55%, #0b1022);
-      border: 1px solid var(--tube-border);
-      box-shadow:
-        0 0 0 1px rgba(255,255,255,.05) inset,
-        0 0 24px rgba(0,0,0,.35),
-        0 0 28px rgba(0, 255, 240, .08),
-        0 0 38px rgba(255, 45, 253, .06);
+      padding: .8rem 1rem;
+      background: linear-gradient(135deg, rgba(255, 204, 0, .18), rgba(0, 64, 128, .12));
+      border: 1px solid rgba(255, 204, 0, .45);
+      border-radius: 14px;
+      box-shadow: var(--glow);
       display: grid;
-      grid-template-columns: auto 1fr auto;
+      grid-template-columns: auto 1fr;
       gap: .8rem;
       align-items: center;
-      color:#eaf6ff;
-      overflow: hidden;
     }
     .countdown-bar.hide{ display:none; }
-    .countdown-icon{ font-size: 1.6rem; filter: drop-shadow(0 2px 8px rgba(0,0,0,.25)); margin-left:.2rem }
-    .countdown-content{ display:flex; flex-direction:column; gap:.45rem }
+    .countdown-icon{
+      font-size: 1.6rem;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,.25));
+    }
+    .countdown-content{ display:flex; flex-direction:column; gap:.2rem }
     .countdown-title{
-      font-weight:900; font-size:1.05rem; letter-spacing:.2px; text-transform: uppercase;
-      background: linear-gradient(90deg, var(--neon-secondary), var(--neon-primary));
-      -webkit-background-clip:text; background-clip:text; color: transparent;
-      text-shadow: 0 0 10px rgba(0,255,240,.25), 0 0 16px rgba(255,45,253,.25);
+      font-weight:900; font-size:1.05rem; color: var(--azul-3); letter-spacing:.2px;
+      text-transform: uppercase;
     }
-    .time-row{ display:flex; align-items:baseline; gap:.6rem; flex-wrap:wrap }
-    .big-time{
+    .countdown-sub{ font-size:.95rem; opacity:.85 }
+    .flip-row{ display:flex; gap:.35rem; align-items:center; flex-wrap:wrap }
+    .flip-digits{
+      display:inline-grid; grid-auto-flow: column; gap:.25rem; align-items:center;
       font-variant-numeric: tabular-nums;
-      font-weight: 900;
-      font-size: 1.45rem;
-      letter-spacing: .5px;
-      color:#e7f8ff;
-      text-shadow: 0 0 8px rgba(0, 255, 240, .18);
     }
-    .countdown-sub{ font-size:.92rem; opacity:.85 }
-    .progress-wrap{ width:100%; height:10px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden; border:1px solid rgba(255,255,255,.12) }
-    .progress-bar{ height:100%; width:0%; background: linear-gradient(90deg, #06f, #0ff); transition: width .6s ease }
-    .countdown-bar.urgent .progress-bar{ background: linear-gradient(90deg, #ffb703, #ff2dfd) }
-    .sound-toggle{
-      align-self:center; margin-right:.3rem; display:inline-flex; align-items:center; justify-content:center;
-      width:42px; height:42px; border-radius:10px; border:1px solid rgba(255,255,255,.18);
-      background: var(--tube-bg); color:#b4f7ff; cursor:pointer; -webkit-tap-highlight-color:transparent;
-      box-shadow: 0 0 12px rgba(0,255,240,.12) inset, 0 2px 10px rgba(0,0,0,.25);
-      transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+    .flip{
+      position:relative; display:inline-block; min-width: 2.6ch; text-align:center;
+      padding:.3rem .5rem; border-radius:10px; background: var(--card); color: var(--text);
+      border:1px solid var(--gris-borde); box-shadow: 0 8px 16px rgba(0,0,0,.08);
+      font-weight:900; font-size:1.15rem;
+      transition: transform .2s;
     }
-    .sound-toggle:hover{ transform: translateY(-1px); box-shadow:0 0 16px rgba(0,255,240,.18) inset, 0 4px 14px rgba(0,0,0,.3); }
-    .sound-toggle.muted{ opacity:.7; }
+    .label{ font-size:.82rem; opacity:.75; margin-left:.2rem; margin-right:.5rem }
+    .flip:active{ transform: scale(.98) }
+    .pulse{
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse{
+      0%,100%{ box-shadow: var(--glow); }
+      50%{ box-shadow: 0 0 4px rgba(255, 204, 0, .25); }
+    }
 
     /* ---------- Listados ---------- */
     details { border:1px solid var(--gris-borde); border-radius:8px; margin-bottom:1rem; overflow:hidden; background:var(--card); transition: var(--transition); }
-    details[open] { margin-bottom: 1.5rem; box-shadow:0 5px 15px rgba(0,0,0,0.1); }
+    details[open] { margin-bottom: 1.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
     details[open] summary { border-bottom: 1px solid var(--gris-borde); }
     summary {
       background:var(--azul); color:var(--amarillo); padding:1rem; cursor:pointer; font-weight:bold; font-size:1.1rem;
@@ -221,7 +224,7 @@
     .prod-thumb{ width:64px; height:64px; border-radius:10px; overflow:hidden; background:#eef2f7; display:grid; place-items:center; border:1px solid #e5e7eb; transition: var(--transition); }
     .prod-thumb img{width:100%; height:100%; object-fit:cover; transition: var(--transition);}
     .producto-info{display:flex; flex-direction:column; gap:.25rem}
-    .producto h3{margin:.2rem 0;color:#004c99;font-size:1rem; transition: var(--transition);}
+    .producto h3{margin:.2rem 0;color:var(--azul-3);font-size:1rem; transition: var(--transition);}
     .producto p{margin:.1rem 0;font-size:.9rem;color:var(--text); transition: var(--transition);}
     .contador{display:flex;align-items:center;gap:.5rem}
     .contador button{
@@ -314,6 +317,7 @@
     .track-header{display:flex;align-items:center;justify-content:space-between}
     .track-title{margin:0;font-size:1.2rem;color:var(--azul-3);display:flex;align-items:center;gap:.5rem;font-weight:900; transition: var(--transition);}
     .track-sub{margin:0;color:#6b7280;font-size:.95rem}
+
     .track-grid{display:grid;grid-template-columns:1fr;gap:.6rem;align-items:end}
     @media(min-width:700px){ .track-grid{grid-template-columns:1fr 1fr auto} }
     .track-btn{
@@ -324,6 +328,7 @@
     .track-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
     @media(min-width:700px){ .track-btn{width:auto} }
     .track label input{padding:1.05rem 1rem;font-size:1.06rem;border-radius:14px}
+
     .track-result{border:1px dashed var(--gris-borde);border-radius:12px;padding:.8rem; transition: var(--transition);}
     .status-badge{display:inline-flex;align-items:center;font-weight:900;border-radius:999px;padding:.2rem .6rem;font-size:.9rem}
     .st-new{background:#eef2ff;color:#1d4ed8;border:1px solid #c7d2fe}
@@ -375,7 +380,7 @@
     .sheet{
       position:fixed; top:0; right:0; bottom:0; width:90%; max-width:400px;
       transform:translateX(100%); background:var(--card); box-shadow:var(--shadow);
-      transition:transform .28s ease; display:grid; grid-template-rows:auto 1fr; z-index:99
+      transition:transform .28s easeout; display:grid; grid-template-rows:auto 1fr; z-index:99
     }
     .sheet.open{transform:translateX(0)}
     .sheet-header{ position:sticky; top:0; background:var(--card); border-bottom:1px solid var(--gris-borde); z-index:5; padding:1rem 1rem .8rem; padding-right:56px; }
@@ -453,20 +458,19 @@
       <button id="btn-bebidas"  onclick="mostrar('bebidas')">🥤 Bebidas</button>
     </div>
 
-    <!-- ====== COUNTDOWN NUEVO (aparece solo si la sección activa está cerrada) ====== -->
+    <!-- ====== COUNTDOWN (aparece solo si la sección activa está cerrada) ====== -->
     <div id="openCountdown" class="countdown-bar hide" role="status" aria-live="polite">
       <div class="countdown-icon">⏳</div>
       <div class="countdown-content">
         <div class="countdown-title" id="cdTitle">Abrimos en</div>
-        <div class="time-row">
-          <div class="big-time" id="cdTime">00:00:00</div>
-          <span class="countdown-sub" id="cdHint" style="opacity:.85"></span>
-        </div>
-        <div class="progress-wrap" aria-hidden="true">
-          <div class="progress-bar" id="cdProgress"></div>
+        <div class="flip-row">
+          <span class="flip pulse" id="cdDays">0</span><span class="label">d</span>
+          <span class="flip" id="cdHours">00</span><span class="label">h</span>
+          <span class="flip" id="cdMins">00</span><span class="label">m</span>
+          <span class="flip" id="cdSecs">00</span><span class="label">s</span>
+          <span class="countdown-sub" id="cdHint" style="margin-left:.4rem;opacity:.75"></span>
         </div>
       </div>
-      <button id="soundToggle" class="sound-toggle muted" title="Activar sonido" aria-pressed="false">🔇</button>
     </div>
 
     <div id="menu-rotiseria"></div>
@@ -758,7 +762,7 @@
         btn.classList.remove('tab-closed'); btn.removeAttribute('aria-disabled'); btn.removeAttribute('title');
       }
     });
-    updateCountdown(); // actualizar el contador cuando cambian estados
+    updateCountdown(); // ⬅️ actualizar el contador cuando cambian estados
   }
 
   /* ======= AJUSTES / CARGA PRODUCTOS ======= */
@@ -789,18 +793,24 @@
   let todosProductos = [];
   let detallesAbiertos = {};
 
-  /* ======= COUNTDOWN NUEVO ======= */
+  /* ======= COUNTDOWN: helpers ======= */
   function getNextOpenDate(sec){
     const cfg = HORARIOS[sec];
     if(!cfg || !Array.isArray(cfg.dias) || !Array.isArray(cfg.rangos) || cfg.rangos.length===0) return null;
+    // Tomamos el primer rango del día válido como hora "desde"
+    // y también si hoy todavía no arrancó ese rango, arranca hoy.
     const now = new Date();
     const todayIdx = now.getDay(); // 0=Dom
+    const toMinutes = (hm)=>{ const [H,M]=hm.split(':').map(Number); return H*60 + (M||0); };
     const msInDay = 24*60*60*1000;
 
+    // Buscamos en los próximos 14 días por seguridad
     for(let offset=0; offset<14; offset++){
       const d = new Date(now.getTime() + offset*msInDay);
       const idx = d.getDay();
       if(!cfg.dias.includes(idx)) continue;
+
+      // Evaluar TODOS los rangos del día por si hay varios: abrimos al más próximo que esté en futuro
       const candidates = [];
       for(const r of cfg.rangos){
         const [h,m] = r.desde.split(':').map(Number);
@@ -815,152 +825,72 @@
     return null;
   }
 
-  function getCurrentRange(sec){
-    const cfg = HORARIOS[sec]; if(!cfg) return null;
-    const now = new Date();
-    const idx = now.getDay();
-    if(!cfg.dias.includes(idx)) return null;
-    const curMin = ahoraMin();
-    for(const r of cfg.rangos){
-      const s = hmToMin(r.desde), e = hmToMin(r.hasta);
-      if(curMin < s){ // aún no abrió, usamos este rango
-        return { startMin: s, endMin: e, today: true };
-      }
-      if(curMin >= s && curMin <= e){ // está abierto
-        return { startMin: s, endMin: e, today: true, openNow:true };
-      }
-    }
-    // si no hay rango hoy, devolvemos el primero del próximo día válido
-    for(let i=1;i<=7;i++){
-      const nd=(idx+i)%7;
-      if(cfg.dias.includes(nd)){
-        const r=cfg.rangos[0];
-        return { startMin: hmToMin(r.desde), endMin: hmToMin(r.hasta), today:false };
-      }
-    }
-    return null;
-  }
-
-  function formatHHMMSS(ms){
+  function formatDuration(ms){
     if(ms<0) ms=0;
     const totalSec = Math.floor(ms/1000);
-    const h = Math.floor(totalSec/3600);
-    const m = Math.floor((totalSec%3600)/60);
-    const s = totalSec%60;
-    const pad=n=>String(n).padStart(2,'0');
-    return `${pad(h)}:${pad(m)}:${pad(s)}`;
+    const days  = Math.floor(totalSec / 86400);
+    const hours = Math.floor((totalSec % 86400) / 3600);
+    const mins  = Math.floor((totalSec % 3600) / 60);
+    const secs  = totalSec % 60;
+    const pad = (n)=> String(n).padStart(2,'0');
+    return { days, hours: pad(hours), mins: pad(mins), secs: pad(secs) };
   }
 
   let CD_TIMER = null;
-  const SOUND_KEY = 'tachi_countdown_sound';
-  let audioCtx = null;
-  const prefersReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function ensureAudio(){
-    if(audioCtx) return audioCtx;
-    try{ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-    catch(_){ audioCtx = null; }
-    return audioCtx;
-  }
-  function beep({freq=880, dur=0.08, vol=0.06}={}){
-    if(prefersReduce) return;
-    if(localStorage.getItem(SOUND_KEY)!=='on') return;
-    const ctx = ensureAudio(); if(!ctx) return;
-    const t0 = ctx.currentTime;
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
-    o.type='square'; o.frequency.value=freq;
-    g.gain.setValueAtTime(0, t0);
-    g.gain.linearRampToValueAtTime(vol, t0+0.01);
-    g.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
-    o.connect(g); g.connect(ctx.destination);
-    o.start(t0); o.stop(t0+dur);
-  }
-  function setSoundButtonUI(){
-    const btn = document.getElementById('soundToggle');
-    if(!btn) return;
-    const on = localStorage.getItem(SOUND_KEY)==='on';
-    btn.classList.toggle('muted', !on);
-    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-    btn.textContent = on ? '🔊' : '🔇';
-    btn.title = on ? 'Desactivar sonido' : 'Activar sonido';
-  }
-
   function renderCountdown(sec){
     const wrap = document.getElementById('openCountdown');
     const title = document.getElementById('cdTitle');
     const hint = document.getElementById('cdHint');
-    const timeEl = document.getElementById('cdTime');
-    const prog = document.getElementById('cdProgress');
-    if(!wrap||!title||!hint||!timeEl||!prog) return;
+    const elD = document.getElementById('cdDays');
+    const elH = document.getElementById('cdHours');
+    const elM = document.getElementById('cdMins');
+    const elS = document.getElementById('cdSecs');
+    if(!wrap||!title||!hint||!elD||!elH||!elM||!elS) return;
 
     // Si está abierta la sección: ocultar
     if(!seccionCerradaAhora(sec)){
       wrap.classList.add('hide');
-      wrap.classList.remove('urgent');
       if(CD_TIMER){ clearInterval(CD_TIMER); CD_TIMER=null; }
       return;
     }
 
-    // Próxima apertura
     const next = getNextOpenDate(sec);
     if(!next){
+      // No sabemos próxima apertura
       title.textContent = 'Temporalmente cerrado';
       hint.textContent = CIERRE_MSGS[sec]?.trim() || 'Volvé más tarde 👀';
-      timeEl.textContent = '00:00:00';
-      prog.style.width = '0%';
+      elD.textContent = '0'; elH.textContent='00'; elM.textContent='00'; elS.textContent='00';
       wrap.classList.remove('hide');
-      wrap.classList.remove('urgent');
       if(CD_TIMER){ clearInterval(CD_TIMER); CD_TIMER=null; }
       return;
     }
 
-    // Calcular progreso relativo dentro del rango del día correspondiente (si aplica)
-    const rangeInfo = getCurrentRange(sec);
-    let startMs = null, endMs = null;
-    if(rangeInfo && rangeInfo.today){
-      const base = new Date();
-      base.setSeconds(0,0);
-      const startH = Math.floor(rangeInfo.startMin/60), startM = rangeInfo.startMin%60;
-      const endH   = Math.floor(rangeInfo.endMin/60),   endM   = rangeInfo.endMin%60;
-      const sDate = new Date(base.getFullYear(), base.getMonth(), base.getDate(), startH, startM, 0, 0);
-      const eDate = new Date(base.getFullYear(), base.getMonth(), base.getDate(), endH, endM, 0, 0);
-      startMs = sDate.getTime();
-      endMs   = eDate.getTime();
-    } else {
-      // Si no es hoy, ponemos una barra desde ahora → apertura (progreso inverso)
-      startMs = Date.now();
-      endMs   = next.getTime();
-    }
-
+    // Mostrar y actualizar cada segundo
     wrap.classList.remove('hide');
     title.textContent = 'Abrimos en';
     hint.textContent = proximoHorario(sec) || '';
 
     const tick = ()=>{
-      const now = Date.now();
-      const diff = next.getTime() - now;
-      timeEl.textContent = formatHHMMSS(diff);
-      const urgent = diff <= 60*1000;
-      wrap.classList.toggle('urgent', urgent);
-      if(urgent){ beep({freq: 950, dur:.05, vol:.05}); }
-
-      // progreso: desde ahora (o inicio del rango) hasta apertura
-      const total = Math.max(1, (endMs - startMs));
-      const done  = Math.max(0, Math.min(total, now - startMs));
-      let pct;
-      if(rangeInfo && rangeInfo.today){
-        // si hoy todavía no abrió, el progreso muestra cuánto falta (llenándose hacia la apertura)
-        pct = Math.max(0, Math.min(100, (done/total)*100));
-      } else {
-        // si es otro día, barra simple de “acercamiento”
-        pct = Math.max(0, Math.min(100, (done/total)*100));
-      }
-      prog.style.width = pct.toFixed(1)+'%';
-
+      const now = new Date();
+      const diff = next.getTime() - now.getTime();
+      const {days, hours, mins, secs} = formatDuration(diff);
+      // Flip suave: si cambió el valor, “salta” un poquito
+      const setFlip = (el,val)=>{
+        if(el.textContent!==String(val)){
+          el.textContent = val;
+          el.classList.remove('pulse'); // reinicia animación
+          void el.offsetWidth;
+          el.classList.add('pulse');
+        }
+      };
+      setFlip(elD, days);
+      setFlip(elH, hours);
+      setFlip(elM, mins);
+      setFlip(elS, secs);
       if(diff<=0){
         clearInterval(CD_TIMER); CD_TIMER=null;
         actualizarTabsPorHorario(); // probablemente ahora esté abierta
-        updateCountdown(); // recalcula/oculta según corresponda
+        updateCountdown(); // oculta o recalcula según corresponda
       }
     };
     tick();
@@ -969,6 +899,7 @@
   }
 
   function updateCountdown(){
+    // Sección activa: 'rotiseria' si menú rotisería visible
     const isRot = document.getElementById('menu-rotiseria')?.style.display !== 'none';
     const sec = isRot ? 'rotiseria' : 'bebidas';
     renderCountdown(sec);
@@ -1290,7 +1221,7 @@
       const contOtra=document.getElementById(`menu-${otra}`); if(contOtra) contOtra.style.display='none';
       const btnSec=document.getElementById(`btn-${sec}`), btnOtra=document.getElementById(`btn-${otra}`);
       btnSec?.classList?.add('active'); btnOtra?.classList?.remove('active');
-      updateCountdown(); // mostrar contador para esta sección
+      updateCountdown(); // ⬅️ mostrar contador para esta sección
       return;
     }
     const r1=document.getElementById('menu-rotiseria'), r2=document.getElementById('menu-bebidas');
@@ -1298,7 +1229,7 @@
     if(r2) r2.style.display = (sec==='bebidas')?'block':'none';
     document.getElementById('btn-rotiseria')?.classList?.toggle('active', sec==='rotiseria');
     document.getElementById('btn-bebidas')?.classList?.toggle('active', sec==='bebidas');
-    updateCountdown(); // recalcular/ocultar si corresponde
+    updateCountdown(); // ⬅️ recalcular/ocultar si corresponde
   }
 
   /* ======= WhatsApp ======= */
@@ -1549,7 +1480,7 @@
 
     if(badge) setBadge(badge, data.estado);
     if(totalEl) totalEl.textContent = formatARS(Number(data.total||0));
-    if(entrega) entrega.textContenido = data.method==='envio' ? 'Envío a domicilio' : 'Retiro en el local';
+    if(entrega) entrega.textContent = data.method==='envio' ? 'Envío a domicilio' : 'Retiro en el local';
     if(addrLi) addrLi.classList.toggle('track-hide', data.method!=='envio');
     if(addr)   addr.textContent = data.address || '-';
     if(ready)  ready.classList.toggle('track-hide', String(data.estado||'').toLowerCase()!=='listo');
@@ -1642,7 +1573,10 @@
   // ======= TOGGLE DE MODO OSCURO/CLARO =======
   function initThemeToggle() {
     const themeToggle = document.getElementById('themeToggle');
-    if (!themeToggle) return;
+    if (!themeToggle) {
+      console.error('No se encontró el botón themeToggle');
+      return;
+    }
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     const savedTheme = localStorage.getItem('tachi_theme');
     if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
@@ -1665,24 +1599,6 @@
     });
   }
 
-  // ======= SONIDO: botón =======
-  function initSoundToggle(){
-    const btn = document.getElementById('soundToggle');
-    if(!btn) return;
-    if(localStorage.getItem(SOUND_KEY)!=='on'){ localStorage.setItem(SOUND_KEY,'off'); }
-    setSoundButtonUI();
-    btn.addEventListener('click', ()=>{
-      const cur = localStorage.getItem(SOUND_KEY)==='on';
-      localStorage.setItem(SOUND_KEY, cur ? 'off' : 'on');
-      setSoundButtonUI();
-      if(!cur){
-        beep({freq: 1200, dur: .09, vol:.08});
-        setTimeout(()=>beep({freq: 900, dur:.06, vol:.06}), 90);
-      }
-    }, {passive:true});
-    ['click','touchstart'].forEach(evt=>window.addEventListener(evt, ()=>ensureAudio(), {once:true, passive:true}));
-  }
-
   // ======= Ready =======
   window.addEventListener('DOMContentLoaded', () => {
     actualizarTabsPorHorario();
@@ -1690,8 +1606,7 @@
     ensureTrackVisibility();
     initSearch();
     initThemeToggle();
-    initSoundToggle();
-    updateCountdown(); // iniciar estado del contador
+    updateCountdown(); // ⬅️ iniciar estado del contador
     logEvent('page_view', {title: document.title});
   });
   </script>
